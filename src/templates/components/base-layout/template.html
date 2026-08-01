@@ -808,6 +808,11 @@
     <!--/* Checking whether it is enabled is too complicated, so just include it directly. */-->
     <th:block th:insert="~{components/menu/template :: head}"></th:block>
     <!--/* Menu Style end */-->
+    <!--/* 搜索插件的配色接到主题令牌上——条件与菜单里的搜索按钮一致 */-->
+    <th:block
+      th:if="${pluginFinder.available('PluginSearchWidget')}"
+      th:insert="~{components/halo-search-widget/template :: head}"
+    ></th:block>
   </head>
 
   <body

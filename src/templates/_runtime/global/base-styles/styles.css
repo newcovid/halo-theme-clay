@@ -259,9 +259,10 @@
         filter: none;
       }
 
-      /* 黑色遮罩类型 */
+      /* 黑色遮罩类型。用 base-content 而不是写死 #000——遮罩要成为一个看得出来的色块，
+         暗色下 #000 压在 #141413 上几乎分辨不出，就不像「有东西被挡住了」。 */
       &.black {
-        background-color: #000;
+        background-color: var(--color-base-content);
         color: transparent;
         filter: none;
         transition: all 0.2s var(--clay-ease);

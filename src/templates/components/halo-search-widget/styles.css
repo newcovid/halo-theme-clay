@@ -1,0 +1,26 @@
+/* Official Search Widget Colors */
+/* Adapted for https://github.com/halo-dev/plugin-search-widget */
+
+/* 挂在 <search-modal> 上而不是 :root——插件自带的暗色块选择器是
+   `.dark, [data-color-scheme=dark]`（作用在 <html> 上），而它的样式表比主题的后加载。
+   自定义属性按继承就近生效，宿主元素比 <html> 离用例更近，所以无需比特异性、
+   也无需 !important 就能盖住，明暗两套一并接管。
+   插件默认的强调色是 #4CCBA0（薄荷绿），底色是冷灰 #f8fafc / #fff，
+   在 Clay 的暖灰底上是两处显眼的异色。 */
+search-modal {
+  --halo-search-widget-base-bg-color: var(--color-base-100);
+  --halo-search-widget-base-border-radius: var(--clay-radius-md);
+  --halo-search-widget-base-font-family: var(--clay-font-family);
+  --halo-search-widget-base-rounded: var(--clay-radius-sm);
+  --halo-search-widget-content-color: var(--color-base-content);
+  --halo-search-widget-divider-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  --halo-search-widget-hit-bg-color: var(--color-base-200);
+  --halo-search-widget-kbd-border-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+
+  /* 层级靠字号与字重，不靠投影 */
+  --halo-search-widget-kbd-shadow: none;
+  --halo-search-widget-modal-bg-color: var(--color-base-100);
+  --halo-search-widget-modal-layer-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+  --halo-search-widget-muted-color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+  --halo-search-widget-primary-color: var(--color-primary);
+}

@@ -123,6 +123,10 @@ function getBuildInputs(extraEntries: BuildEntryMap = {}): BuildEntryMap {
       import.meta.dirname,
       "src/templates/components/halo-comment-widget/template.html",
     ),
+    "components-halo-search-widget": resolve(
+      import.meta.dirname,
+      "src/templates/components/halo-search-widget/template.html",
+    ),
     "components-color-scheme-light": resolve(
       import.meta.dirname,
       "src/templates/components/color-scheme-light/template.html",

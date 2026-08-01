@@ -8,7 +8,7 @@ metadata:
 spec:
   displayName: Clay
   author:
-    name: a280310454
+    name: newcovid
     website: ""
   description: A Halo theme replicating Anthropic / Claude's visual language — warm grey grounds, serif headings against sans-serif body copy, hierarchy from type scale and weight rather than rules and shadows. Built on HowieHz/halo-theme-higan-hz.
   logo: /themes/halo-theme-clay/assets/images/logo.png
@@ -17,7 +17,7 @@ spec:
   issues: "https://github.com/newcovid/halo-theme-clay/issues"
   settingName: halo-theme-clay-setting
   configMapName: halo-theme-clay-configmap
-  version: 0.1.0
+  version: 0.1.1
   requires: ">=2.25.0"
   license:
     - name: "MIT"

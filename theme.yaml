@@ -8,7 +8,7 @@ metadata:
 spec:
   displayName: Clay
   author:
-    name: a280310454
+    name: newcovid
     website: ""
   description: 复刻 Anthropic / Claude 官网视觉语言的 Halo 主题。暖灰底色、衬线标题、无衬线正文，以字号与字重而非线框建立层级。基于 HowieHz/halo-theme-higan-hz 二次开发。
   logo: /themes/halo-theme-clay/assets/images/logo.png
@@ -17,7 +17,7 @@ spec:
   issues: "https://github.com/newcovid/halo-theme-clay/issues"
   settingName: halo-theme-clay-setting
   configMapName: halo-theme-clay-configmap
-  version: 0.1.0
+  version: 0.1.1
   requires: ">=2.25.0"
   license:
     - name: "MIT"

@@ -1300,7 +1300,7 @@ spec:
           name: is_resume_show
           key: is_resume_show
           label: Personal profile/Announcement
-          value: false
+          value: true
         - $formkit: code
           name: resume
           key: resume
@@ -1698,7 +1698,7 @@ spec:
           key: is_show_post_upvote_count
           if: "$is_post_upvote_button_show === true"
           label: Display post upvote count
-          value: false
+          value: true
         - $formkit: select
           name: post_upvote_button_position
           key: post_upvote_button_position

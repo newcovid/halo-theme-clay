@@ -58,7 +58,7 @@ export default {
       true,
       {
         // 允许自定义标签名
-        ignoreTypes: ["hide", "spoiler", "comment-widget"],
+        ignoreTypes: ["hide", "spoiler", "comment-widget", "search-modal"],
       },
     ],
 

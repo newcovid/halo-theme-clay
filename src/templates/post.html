@@ -1,0 +1,504 @@
+<!doctype html>
+<th:block
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{components/base-layout/template :: html(
+    title = ${#annotations.getOrDefault(post, 'halo-theme-clay/page-title', post.spec?.title)}, 
+    head = ~{:: head},
+    content = ~{:: body}, 
+    header = ~{}, 
+    navbar = ~{components/nav-post/template :: body}, 
+    language=${#annotations.get(post, 'halo-theme-clay/page-language')}
+  )}"
+>
+  <head th:remove="tag">
+    <link
+      rel="canonical"
+      th:if="${theme.config?.post_styles?.is_enable_canonical_link}"
+      th:href="${siteUrl} + @{${post.status.permalink}}"
+    />
+    <th:block th:if="${pluginFinder.available('PluginFeed')}">
+      <th:block th:each="contributor : ${post?.contributors}">
+        <link
+          th:unless="${#strings.equals(contributor.permalink, '/authors/ghost')}"
+          rel="alternate"
+          type="application/rss+xml"
+          th:title="'Posts - Author: ' + ${contributor?.displayName}"
+          th:href="@{'/feed/authors/' + ${contributor.metadata?.name} + '.xml'}"
+        />
+      </th:block>
+
+      <th:block th:unless="${#lists.isEmpty(post.categories)}">
+        <th:block th:each="categoryLeafNode, categoryLeafNodeIterStat : ${post.categories}">
+          <th:block>
+            <th:block th:each="category, iterStat : ${categoryFinder.getBreadcrumbs(categoryLeafNode.metadata?.name)}">
+              <link
+                rel="alternate"
+                type="application/rss+xml"
+                th:title="'Posts - Category: ' + ${category.spec?.displayName}"
+                th:href="@{'/feed/categories/' + ${category.spec?.slug} + '.xml'}"
+              />
+            </th:block>
+          </th:block>
+        </th:block>
+      </th:block>
+
+      <th:block th:unless="${#lists.isEmpty(post.tags)}">
+        <th:block th:each="tag, iterStat : ${post.tags}">
+          <link
+            rel="alternate"
+            type="application/rss+xml"
+            th:title="'Posts - Tag: ' + ${tag.spec?.displayName}"
+            th:href="@{'/feed/tags/' + ${tag.spec?.slug} + '.xml'}"
+          />
+        </th:block>
+      </th:block>
+    </th:block>
+    <script
+      src="@runtime/pages/post/index.ts"
+      type="module"
+    ></script>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_post_upvote_button_show}"
+      th:insert="~{components/upvote-runtime/template :: head}"
+    ></th:block>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_show_post_nav_share_button
+               or theme.config?.post_styles?.is_show_share_footer}"
+      th:insert="~{components/share/template :: head}"
+    ></th:block>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_post_comment_section_show
+               and haloCommentEnabled}"
+      th:insert="~{components/halo-comment-widget/template :: head}"
+    ></th:block>
+    <th:block
+      th:if="${theme.config?.styles?.is_show_color_scheme_toggle_button}"
+      th:insert="~{components/theme-toggle-button/template :: head}"
+    ></th:block>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_show_footer_nav}"
+      th:insert="~{components/footer-nav-post/template :: head}"
+    ></th:block>
+    <th:block th:insert="~{components/nav-post/template :: head}"></th:block>
+  </head>
+  <body th:remove="tag">
+    <th:block
+      th:if="${theme.config?.post_styles?.is_custom_toc_max_width}"
+      th:insert="~{components/toc-max-width-style/template :: body}"
+    ></th:block>
+    <style th:if="${theme.config?.post_styles?.is_optimize_content_paragraph_spacing}">
+      .content > p {
+        min-height: 1.1em;
+      }
+    </style>
+    <!--/* 默认编辑器插入图片会有一个 display: inline-block，以及其他样式，因此需要排除避免产生以外缩进 */-->
+    <th:block
+      th:if="${theme.config?.post_styles?.is_enable_paragraph_first_line_indent}"
+      th:insert="~{components/paragraph-first-line-indent-style/template :: body(
+        indentValue=${theme.config?.post_styles?.paragraph_first_line_indent_value}
+      )}"
+    ></th:block>
+    <th:block th:insert="~{components/heading-anchor-symbol-style/template :: body}"></th:block>
+    <th:block th:insert="~{components/heading-anchor-svg/template :: body}"></th:block>
+    <article
+      class="post"
+      itemscope
+      itemtype="http://schema.org/BlogPosting"
+    >
+      <header id="article-header">
+        <h1
+          class="tw:my-0 tw:leading-tight"
+          th:classappend="${theme.config?.post_styles?.post_title_uppper} ? 'tw:uppercase'"
+          itemprop="name headline"
+        >
+          <span
+            class="article-title-text"
+            th:text="${post.spec?.title}"
+            >标题替换位</span
+          >
+          <th:block
+            th:if="${theme.config?.styles?.is_show_color_scheme_toggle_button}"
+            th:insert="~{components/theme-toggle-button/template :: body}"
+          ></th:block>
+        </h1>
+        <div class="meta">
+          <!--/* 展示文章作者名 */-->
+          <span
+            class="tw:inline-flex tw:font-bold tw:tracking-wider tw:uppercase"
+            itemprop="author"
+            itemscope
+            th:each="contributor : ${post?.contributors}"
+          >
+            <a
+              th:unless="${#strings.equals(contributor.permalink, '/authors/ghost')}"
+              th:href="${contributor.permalink}"
+              itemprop="name"
+              th:text="${contributor?.displayName}"
+              style="background-image: none"
+            ></a>
+          </span>
+          <!--/* 使用 sm:inline-block 避免发布时间被断到两行 */-->
+          <div
+            class="post-publish-time tw:block tw:basis-full tw:sm:inline-block tw:sm:basis-auto"
+            th:if="${theme.config?.post_styles?.is_show_post_publish_time}"
+          >
+            <span
+              class="tw:me-[1ch]"
+              th:text="#{page.post.published-on}"
+              th:if="${theme.config?.post_styles?.is_show_post_publish_time_left_text}"
+            ></span>
+            <time
+              th:datetime="${post.spec?.publishTime}"
+              itemprop="datePublished"
+              th:text="${#temporals.format(post.spec?.publishTime, 'yyyy-MM-dd')}"
+              >文章发布时间替换位</time
+            >
+          </div>
+          <!--/* 使用 sm:inline-block 避免更新时间被断到两行 */-->
+          <div
+            class="post-update-time tw:block tw:basis-full tw:sm:inline-block tw:sm:basis-auto"
+            th:if="${theme.config?.post_styles?.is_show_post_updated_time}"
+          >
+            <span
+              class="tw:me-[1ch]"
+              th:text="#{page.post.updated-on}"
+              th:if="${theme.config?.post_styles?.is_show_post_updated_time_left_text}"
+            ></span>
+            <time
+              th:datetime="${post.status?.lastModifyTime}"
+              itemprop="dateModified"
+              th:text="${#temporals.format(post.status?.lastModifyTime, 'yyyy-MM-dd')}"
+              >文章更新时间替换位</time
+            >
+          </div>
+
+          <div
+            class="article-category tw:flex tw:basis-full tw:flex-wrap tw:items-center tw:gap-x-[1ch] tw:align-middle tw:sm:inline-flex tw:sm:basis-auto"
+            th:unless="${#lists.isEmpty(post.categories)}"
+          >
+            <th:block th:each="categoryLeafNode, categoryLeafNodeIterStat : ${post.categories}">
+              <!--/* inline-flex 使一个“分类面包屑”不会被分到两行 */-->
+              <span class="categoryBreadcrumbs tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle">
+                <!--/* 分类图标和第一个“分类面包屑”保持在一行。 */-->
+                <span
+                  th:if="${categoryLeafNodeIterStat.first}"
+                  class="tw:iconify tw:fa-solid--archive"
+                ></span>
+                <th:block
+                  th:each="category, iterStat : ${categoryFinder.getBreadcrumbs(categoryLeafNode.metadata?.name)}"
+                >
+                  <a
+                    class="category-link"
+                    th:href="@{${category.status?.permalink}}"
+                    th:text="${category.spec?.displayName}"
+                  >
+                    文章分类名替换位 </a
+                  ><!--/*
+                  */--><span th:unless="${iterStat.last}">></span>
+                </th:block>
+                <!--/* 除最后一个“分类面包屑”没有逗号，其他“分类面包屑”末尾都有逗号，
+                并且和这个“分类面包屑”保持在一行（被 tw:inline-flex 包含）。
+                tw:ms-[-1ch] 是为了抵消 tw:gap-x-[1ch] */-->
+                <span
+                  th:if="${!categoryLeafNodeIterStat.last}"
+                  class="tw:ms-[-1ch]"
+                  >,</span
+                >
+              </span>
+            </th:block>
+          </div>
+
+          <div
+            class="article-tag tw:flex tw:basis-full tw:flex-wrap tw:items-center tw:gap-x-[1ch] tw:align-middle tw:sm:inline-flex tw:sm:basis-auto"
+            th:unless="${#lists.isEmpty(post.tags)}"
+          >
+            <th:block th:each="tag, iterStat : ${post.tags}">
+              <!--/* inline-flex 保证一个标签项的内容保持在一行。 */-->
+              <span class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle">
+                <!--/* 标签图标和第一个标签项保持在一行。 */-->
+                <span
+                  th:if="${iterStat.first}"
+                  class="tw:iconify tw:fa-solid--tag"
+                ></span>
+                <a
+                  class="tag-link"
+                  th:with="tagColor = ${tag.spec?.color}"
+                  th:href="@{${tag.status?.permalink}}"
+                  th:text="${tag.spec?.displayName}"
+                  th:style="${tagColor != null
+                            and !#strings.equalsIgnoreCase(tagColor, '#ffffff')}
+                          ? |--tag-hash-color:${tagColor};|
+                          : null"
+                >
+                  文章标签名替换位 </a
+                ><!--/*
+                */--><span
+                  th:unless="${iterStat.last}"
+                  class="tw:ms-[-1ch]"
+                  >,</span
+                >
+              </span>
+            </th:block>
+          </div>
+
+          <!--/* inline-flex 保证图标和数字在一行 */-->
+          <span
+            class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
+            th:if="${theme.config?.post_styles?.is_show_post_views}"
+            th:title="|#{page.post.visit-stats} ${post.stats?.visit}|"
+          >
+            <span class="tw:iconify tw:mdi--eye-outline"></span>
+            <span th:text="${post.stats?.visit}">文章阅读量替换位</span>
+          </span>
+          <!--/* 预计阅读时长 
+          inline-flex 保证图标和数字在一行 */-->
+          <span
+            class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
+            th:if="${theme.config?.post_styles?.is_show_post_estimated_reading_time}"
+            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
+                                   ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
+                                   : #strings.length(post.content?.content) / 2 }"
+            th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
+          >
+            <span class="tw:iconify tw:mdi--clock-outline"></span>
+            <span
+              class="readtime"
+              th:text="#{common.min(${#numbers.formatDecimal(wordCount * 1.0 / 450, 1, 1) + '~' + #numbers.formatDecimal(wordCount * 1.0 / 350, 1, 1)})}"
+            >
+              文章预计阅读时间替换位
+            </span>
+          </span>
+
+          <!--/* 字数统计 
+          inline-flex 保证图标和数字在一行 */-->
+          <span
+            class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
+            th:if="${theme.config?.post_styles?.is_show_post_word_count}"
+            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
+                                   ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
+                                   : #strings.length(post.content?.content) / 2 }"
+            th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
+          >
+            <span class="tw:iconify tw:mdi--format-text"></span>
+            <span
+              class="word-count"
+              th:text="${wordCount}"
+              >文章字数替换位</span
+            >
+          </span>
+        </div>
+      </header>
+
+      <div
+        class="content tw:flex-auto"
+        itemprop="articleBody"
+        th:utext="${post.content?.content}"
+      >
+        文章内容填充处
+      </div>
+      <th:block th:if="${theme.config?.post_styles?.is_dividing_line_at_the_end_of_post_show}">
+        <hr class="divide tw:mt-10 tw:mb-0" />
+      </th:block>
+      <th:block th:if="${theme.config?.post_styles?.is_post_upvote_button_show}">
+        <!--/* 如果下面的推荐文章，评论区等都没开，直接接上页脚。
+        是 article 里最后一个元素会设置为 mb-0（也就是 last:mb-0） */-->
+        <!--/* 定位交给外层容器：按钮本身要是内容宽度的胶囊，
+               撑满整行就不像可点的东西了。位置仍由配置驱动。 */-->
+        <!--/* 图标尺寸走自定义属性传给 CSS。上游写的是 th:width / th:height——
+               width/height 是 <img> 一类替换元素的表现属性，放在 <span> 上浏览器直接
+               忽略，这两个设置项一直是空转的。值为空时不输出，让 CSS 回落到 1em。 */-->
+        <div
+          class="upvote-row tw:mt-2 tw:mb-0"
+          th:with="iconW = ${theme.config?.post_styles?.post_upvote_button_width},
+                   iconH = ${theme.config?.post_styles?.post_upvote_button_height}"
+          th:style="${'display: flex; justify-content:' + theme.config?.post_styles?.post_upvote_button_position + ';'
+                      + (#strings.isEmpty(iconW) ? '' : '--upvote-icon-w:' + iconW + ';')
+                      + (#strings.isEmpty(iconH) ? '' : '--upvote-icon-h:' + iconH + ';')}"
+        >
+          <a
+            class="upvote-button"
+            href="#"
+            th:data-post-name="${post.metadata.name}"
+          >
+          <span
+            class="tw:iconify"
+            style="
+              --svg: url(&quot;data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20fill%3D%22currentColor%22%20d%3D%22m12.1%2018.55l-.1.1l-.11-.1C7.14%2014.24%204%2011.39%204%208.5C4%206.5%205.5%205%207.5%205c1.54%200%203.04%201%203.57%202.36h1.86C13.46%206%2014.96%205%2016.5%205c2%200%203.5%201.5%203.5%203.5c0%202.89-3.14%205.74-7.9%2010.05M16.5%203c-1.74%200-3.41.81-4.5%202.08C10.91%203.81%209.24%203%207.5%203C4.42%203%202%205.41%202%208.5c0%203.77%203.4%206.86%208.55%2011.53L12%2021.35l1.45-1.32C18.6%2015.36%2022%2012.27%2022%208.5C22%205.41%2019.58%203%2016.5%203Z%22%20%2F%3E%3C%2Fsvg%3E&quot;);
+            "
+          >
+          </span>
+            <span
+              th:if="${theme.config?.post_styles?.is_show_post_upvote_count}"
+              th:data-post-name="${post.metadata.name}"
+              th:text="${post.stats.upvote}"
+            ></span>
+          </a>
+        </div>
+        <th:block
+          th:insert="~{components/upvote-runtime/template :: body(
+            storageKey='clay.likes.post.ids',
+            group='content.halo.run',
+            plural='posts',
+            nameAttribute='data-post-name',
+            triggerSelector='a.upvote-button[data-post-name]',
+            countSelector='span[data-post-name]',
+            networkRequestFailedMsg=#{common.error.networkRequestFailed}
+          )}"
+        ></th:block>
+      </th:block>
+
+      <!--/* 推荐文章 */-->
+      <!--/* 根据文章的第一个类别，找相同类别的文章 */-->
+      <!--/* 文章无分类则不进行推荐 */-->
+      <th:block
+        th:if="${theme.config?.post_styles?.is_post_recommended_articles_show
+                 and !#lists.isEmpty(post.categories)}"
+        th:with="firstCategoryName = ${post.categories[0].metadata.name},
+                 n = ${#conversions.convert(theme.config?.post_styles?.post_recommended_articles_count, 'java.lang.Integer')},
+                 postFinderResult = ${postFinder.list({
+                                      size: n,
+                                      categoryName: firstCategoryName,
+                                      sort: {'spec.publishTime,desc', 'metadata.creationTimestamp,asc'}
+                                    })},
+                 firstPagePostList = ${postFinderResult.items}"
+      >
+        <!--/* 分类下无文章则不进行推荐 */-->
+        <!--/* 用 postFinderResult.totalPages 生成 randomPageNumber，然后查询 randomPageNumber 页的结果 */-->
+        <!--/* 这个分类只有当前一篇就不启用推荐，因此 > 1 */-->
+        <th:block
+          th:if="${#lists.size(firstPagePostList) > 1}"
+          th:with="randomPageNumber = ${T(java.lang.Math).floor(T(java.lang.Math).random() * (postFinderResult.totalPages) + 1)},
+                   targetPagePostFinderResult = ${postFinder.list({
+                                                  page: randomPageNumber,
+                                                  size: n,
+                                                  categoryName: firstCategoryName,
+                                                  sort: {'spec.publishTime,desc', 'metadata.creationTimestamp,asc'}
+                                                })},
+                   targetPagePostList = ${targetPagePostFinderResult.items}"
+        >
+          <div class="recommendations tw:mt-10">
+            <h4
+              class="tw:mb-2"
+              th:text="#{fragment.post-nav.recommended}"
+            >
+              推荐文章 标题填充位
+            </h4>
+            <th:block th:each="iterPost: ${targetPagePostList}">
+              <!--/* 进行检查让推荐列表不出现当前页面文章 */-->
+              <div th:if="${post.metadata.name != iterPost.metadata.name}">
+                <span class="meta">
+                  <time
+                    class="color-time"
+                    th:datetime="${iterPost.spec?.publishTime}"
+                    itemprop="datePublished"
+                    th:text="${#temporals.format(iterPost.spec?.publishTime, 'yyyy-MM-dd')}"
+                    >文章发布时间替换位</time
+                  >
+                </span>
+                <a
+                  class="post-title"
+                  th:href="@{${iterPost.status?.permalink}}"
+                  th:text="${iterPost.spec?.title}"
+                ></a>
+              </div>
+            </th:block>
+            <!--/* 如果是最后一页，而且不是第一页（如果是最后一页也是第一页，说明本来就不够）。
+            看下有没有缺项，缺则从第一页补。 */-->
+            <th:block
+              th:if="${targetPagePostFinderResult.last and not targetPagePostFinderResult.first}"
+              th:with="itemsNeeded = ${n - #lists.size(targetPagePostList)}"
+            >
+              <!--/* 缺项则补 */-->
+              <th:block th:if="${itemsNeeded > 0}">
+                <th:block th:each="index : ${#numbers.sequence(0,itemsNeeded-1)}">
+                  <th:block th:with="iterPost = ${firstPagePostList[index]}">
+                    <!--/* 进行检查让推荐列表不出现当前页面文章 */-->
+                    <div th:if="${post.metadata.name != iterPost.metadata.name}">
+                      <span class="meta">
+                        <time
+                          class="color-time"
+                          th:datetime="${iterPost.spec?.publishTime}"
+                          itemprop="datePublished"
+                          th:text="${#temporals.format(iterPost.spec?.publishTime, 'yyyy-MM-dd')}"
+                          >文章发布时间替换位</time
+                        >
+                      </span>
+                      <a
+                        class="post-title"
+                        th:href="@{${iterPost.status?.permalink}}"
+                        th:text="${iterPost.spec?.title}"
+                      ></a>
+                    </div>
+                  </th:block>
+                </th:block>
+              </th:block>
+            </th:block>
+          </div>
+        </th:block>
+      </th:block>
+
+      <!--/* 相邻文章导航 */-->
+      <th:block
+        th:with="postCursor = ${postFinder.cursor(post.metadata?.name)}"
+        th:if="${theme.config?.post_styles?.is_post_prev_next_navigation_show}"
+      >
+        <span
+          class="post-navigation tw:mt-10 tw:mb-0"
+          th:if="${postCursor.hasPrevious()
+                  or postCursor.hasNext()}"
+        >
+          <div th:if="${postCursor.hasPrevious()}">
+            <span th:text="#{fragment.post-nav.prev}">上一篇 填充位</span>
+            <a
+              class="post-title"
+              th:href="@{${postCursor.previous?.status?.permalink}}"
+              th:text="${postCursor.previous?.spec?.title}"
+            ></a>
+          </div>
+          <div th:if="${postCursor.hasNext()}">
+            <span th:text="#{fragment.post-nav.next}">下一篇 填充位</span>
+            <a
+              class="post-title"
+              th:href="@{${postCursor.next?.status?.permalink}}"
+              th:text="${postCursor.next?.spec?.title}"
+            ></a>
+          </div>
+        </span>
+      </th:block>
+
+      <!--/* 上一个也是分隔线或者点赞按钮，这个 hr 就会隐藏，这个隐藏逻辑是 CSS 样式做的工作 */-->
+      <hr
+        th:if="${theme.config?.post_styles?.is_dividing_line_at_the_end_of_post_show}"
+        class="divide tw:mt-10 tw:mb-0"
+      />
+
+      <div
+        th:if="${theme.config?.post_styles?.is_post_comment_section_show and haloCommentEnabled}"
+        class="tw:mt-5"
+      >
+        <halo:comment
+          group="content.halo.run"
+          kind="Post"
+          th:name="${post.metadata?.name}"
+        ></halo:comment>
+      </div>
+    </article>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_show_footer_nav}"
+      th:insert="~{components/footer-nav-post/template :: body}"
+    ></th:block>
+    <script type="module">
+      import { initTOCs } from "@runtime/scripts/toc.ts";
+      import { initHeadingAnchors } from "@runtime/scripts/heading-anchor.ts";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initTOCs("article > .content", ["#toc-desktop", "#toc-tablet", "#toc-footer"]);
+        initHeadingAnchors("article > .content");
+      });
+    </script>
+    <th:block
+      th:if="${theme.config?.post_styles?.is_post_upvote_button_show}"
+      th:insert="~{components/upvote-runtime/template :: inlineInit}"
+    ></th:block>
+  </body>
+</th:block>

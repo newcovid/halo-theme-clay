@@ -1,0 +1,84 @@
+<head th:remove="tag">
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+</head>
+<body
+  th:remove="tag"
+  th:fragment="body(media)"
+>
+  <div
+    th:if="${#strings.equals(media.type, 'VIDEO')}"
+    x-data="{openVideoModal:false}"
+    class="aspect-h-1 aspect-w-1"
+  >
+    <video
+      preload="metadata"
+      th:src="${media.url}"
+      class="tw:m-0 tw:h-full tw:object-cover"
+    ></video>
+    <div
+      th:if="${#strings.equals(media.type, 'VIDEO')}"
+      class="color-base-200 v-cursor-pointer tw:absolute tw:flex tw:h-full tw:w-full tw:items-center tw:justify-center tw:rounded-lg tw:opacity-50 tw:transition-all tw:hover:opacity-70"
+      @click="openVideoModal = true"
+    >
+      <span class="iconify-large tw:iconify tw:material-symbols--play-circle-outline"></span>
+    </div>
+
+    <template x-teleport="body">
+      <div>
+        <div
+          class="tw:fixed tw:inset-0 tw:z-50 tw:bg-[#0006] tw:opacity-100 tw:backdrop-blur-xs"
+          aria-hidden="true"
+          x-show="openVideoModal"
+          x-transition:enter="tw:ease-in-out tw:duration-200"
+          x-transition:enter-start="tw:opacity-0"
+          x-transition:enter-end="tw:opacity-100"
+          x-transition:leave="tw:ease-in-out tw:duration-200"
+          x-transition:leave-start="tw:opacity-100"
+          x-transition:leave-end="tw:opacity-0"
+        ></div>
+        <div
+          class="tw:fixed tw:inset-0 tw:z-50 tw:overflow-y-auto"
+          tabindex="-1"
+          x-show="openVideoModal"
+          x-transition:enter="tw:ease-out tw:duration-200"
+          x-transition:enter-start="tw:opacity-0 tw:translate-y-4 tw:sm:translate-y-0 tw:sm:scale-95"
+          x-transition:enter-end="tw:opacity-100 tw:translate-y-0 tw:sm:scale-100"
+          x-transition:leave="tw:ease-in tw:duration-200"
+          x-transition:leave-start="tw:opacity-100 tw:translate-y-0 tw:sm:scale-100"
+          x-transition:leave-end="tw:opacity-0 tw:translate-y-4 tw:sm:translate-y-0 tw:sm:scale-95"
+        >
+          <template x-if="openVideoModal">
+            <div
+              class="tw:flex tw:min-h-full tw:flex-col tw:items-center tw:justify-center tw:p-4 tw:text-center tw:sm:p-0"
+            >
+              <div
+                @click.outside="openVideoModal = false"
+                class="color-base-300 tw:relative tw:my-4 tw:transform tw:overflow-hidden tw:rounded-xs tw:text-left tw:shadow-xl tw:transition-all tw:sm:w-full tw:sm:max-w-xl"
+              >
+                <video
+                  preload="metadata"
+                  th:src="${media.url}"
+                  class="tw:w-full"
+                  controls
+                ></video>
+              </div>
+              <div>
+                <div
+                  @click="openVideoModal = false;"
+                  class="color-base-300 group tw:inline-flex tw:items-center tw:justify-center tw:rounded-full tw:p-1.5"
+                >
+                  <span
+                    class="iconify-large color-base-content-80 group-hover-text-base-content tw:iconify tw:block tw:material-symbols--cancel-rounded"
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
+  </div>
+</body>

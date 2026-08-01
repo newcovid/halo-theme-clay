@@ -1,0 +1,137 @@
+<!doctype html>
+<th:block
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{components/base-layout/template :: html(
+    title = |${author.spec.displayName} - ${site.title}|,
+    head = ~{:: head},
+    content = ~{:: body},
+    header = ~{components/header/template :: body},
+    navbar = ~{}
+  )}"
+>
+  <head th:remove="tag">
+    <meta
+      name="description"
+      th:attr="content=${#strings.isEmpty(author.spec.bio) ? site?.seo?.description : author.spec.bio}"
+    />
+    <link
+      th:if="${pluginFinder.available('PluginFeed')}"
+      rel="alternate"
+      type="application/rss+xml"
+      th:title="'Posts - Author: ' + ${author.spec.displayName}"
+      th:href="@{'/feed/authors/' + ${author.metadata?.name} + '.xml'}"
+    />
+    <link
+      rel="canonical"
+      th:if="${theme.config?.author_page_styles?.is_enable_canonical_link}"
+      th:href="${siteUrl} + @{/authors/{slug}(slug = ${author.metadata?.name})}"
+    />
+    <script
+      src="@runtime/pages/author/index.ts"
+      type="module"
+    ></script>
+    <th:block th:insert="~{components/header/template :: head}"></th:block>
+    <th:block th:insert="~{components/list-post-simple/template :: head(showPagination = true)}"></th:block>
+  </head>
+  <body th:remove="tag">
+    <article
+      class="author"
+      itemscope
+      itemtype="http://schema.org/BlogPosting"
+    >
+      <section class="about">
+        <div class="tw:relative">
+          <div
+            class="head-cover tw:absolute tw:inset-x-0 tw:inset-y-0 tw:-z-20"
+            th:style="|background-image: url(${#annotations.getOrDefault(author, 'halo-theme-clay/author-header-image', '')});|"
+          ></div>
+          <div class="profile-wrap tw:z-20">
+            <div class="profile-content">
+              <picture>
+                <source
+                  th:with="defaultAvifAvatar = '/themes/halo-theme-clay/assets/images/logo.avif',
+                           avatarUri = ${#strings.defaultString(author.spec.avatar, defaultAvifAvatar)},
+                           ext=  ${avatarUri.substring(avatarUri.lastIndexOf('.') + 1).toLowerCase()},
+                           imageType = ${ext == 'avif' 
+                                         ? 'image/avif'
+                                         : (ext == 'webp'
+                                            ? 'image/webp'
+                                            : (ext == 'png'
+                                               ? 'image/png'
+                                               : (ext == 'apng'
+                                                  ? 'image/apng'
+                                                  : ((ext == 'jpg'
+                                                      or ext == 'jpeg'
+                                                      or ext == 'jfif'
+                                                      or ext == 'pjpeg'
+                                                      or ext == 'pjp')
+                                                     ? 'image/jpeg'
+                                                     : (ext == 'gif'
+                                                        ? 'image/gif'
+                                                        : (ext == 'svg'
+                                                           ? 'image/svg+xml'
+                                                           : (ext == 'bmp'
+                                                              ? 'image/bmp'
+                                                              : ((ext == 'ico'
+                                                                  or ext == 'cur')
+                                                                 ? 'image/x-icon'
+                                                                 : ((ext == 'tif' 
+                                                                     or ext == 'tiff') 
+                                                                    ? 'image/tiff'
+                                                                    : 'image/png')))))))))}"
+                  th:srcset="|${thumbnail.gen(avatarUri, 's')} 400w|"
+                  sizes="400px"
+                  th:type="${imageType}"
+                />
+                <source
+                  th:with="defaultWebpAvatar = '/themes/halo-theme-clay/assets/images/logo.webp'"
+                  th:srcset="|${thumbnail.gen(defaultWebpAvatar, 's')} 400w|"
+                  sizes="400px"
+                  type="image/webp"
+                />
+                <img
+                  th:with="defaultPngAvatar = '/themes/halo-theme-clay/assets/images/logo.png'"
+                  th:src="${defaultPngAvatar}"
+                  th:srcset="|${thumbnail.gen(defaultPngAvatar, 's')} 400w|"
+                  sizes="400px"
+                  class="profile-avatar"
+                  width="100%"
+                  height="100%"
+                  th:alt="#{page.author.avatar-img.alt}"
+                />
+              </picture>
+              <div class="profile-nickname-container">
+                <p class="profile-nickname">
+                  <span th:text="${author.spec.displayName}">作者名填充位置</span>
+                  <th:block
+                    th:if="${pluginFinder.available('PluginFeed') and theme.config?.author_page_styles?.is_show_rss_button}"
+                  >
+                    <a
+                      class="icon"
+                      th:aria-label="#{common.subscribeThisPage}"
+                      th:href="@{'/feed/authors/' + ${author.metadata?.name} + '.xml'}"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      <span class="tw:iconify tw:fa--rss-square"></span
+                    ></a>
+                  </th:block>
+                </p>
+                <p
+                  class="profile-bio"
+                  th:text="${author.spec.bio}"
+                ></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="tw:mt-16 tw:flex tw:flex-auto tw:flex-col tw:sm:mt-20">
+        <th:block
+          th:insert="~{components/list-post-simple/template :: body(posts = ${posts}, showPagination = true, pageTemplateName = 'author')}"
+        ></th:block>
+      </div>
+    </article>
+  </body>
+</th:block>

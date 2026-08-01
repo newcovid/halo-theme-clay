@@ -1,0 +1,167 @@
+#header-component {
+  margin: 0 auto 2rem;
+  width: 100%;
+
+  & .h1 {
+    align-items: center;
+    color: var(--color-base-content);
+    display: flex;
+    flex-wrap: wrap;
+
+    /* Clay 字标：衬线 + 收紧的光学字距，跟随前景色。
+       Anthropic 用手绘 SVG 字标，但主题的站点名是用户配置的，只能用实时文字。 */
+    font-family: var(--clay-font-serif);
+    font-size: 1.625rem;
+    font-style: normal;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 2rem;
+    margin-block: 0;
+
+    @media (width < 640px) {
+      margin-right: 5rem;
+      min-height: 3.125rem;
+    }
+
+    & .title-text {
+      min-width: 0;
+      overflow-wrap: break-word;
+    }
+  }
+
+  & a {
+    background: none;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  & #logo {
+    background-repeat: no-repeat;
+    background-size: 3.125rem 3.125rem;
+    border-radius: var(--clay-radius-xs);
+    display: block;
+    float: left;
+    height: 3.125rem;
+    margin-right: 1.25rem;
+    width: 3.125rem;
+
+    &.circle-avatar {
+      border-radius: 50% !important;
+      box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-base-content) 80%, transparent);
+    }
+
+    &.avatar-grayscale {
+      filter: grayscale(100%);
+    }
+  }
+
+  & #nav {
+    color: var(--color-base-content);
+    font-size: var(--tw-text-sm);
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+
+    & ul {
+      align-items: flex-start;
+      display: flex;
+      line-height: 0.9375rem;
+      list-style-type: none;
+      margin: 8px 0 0;
+      padding: 0;
+
+      @media (width < 640px) {
+        flex-direction: column;
+      }
+
+      & a {
+        color: var(--color-base-content);
+        font-size: var(--text);
+        margin-right: 0.9375rem;
+
+        @media (width >= 640px) {
+          &:hover {
+            background-image: linear-gradient(
+              transparent,
+              transparent 0.3125rem,
+              var(--color-primary) 0.3125rem,
+              var(--color-primary)
+            );
+            background-position: bottom;
+            background-repeat: repeat-x;
+            background-size: 100% 0.375rem;
+          }
+        }
+      }
+
+      & li {
+        border-color: color-mix(in oklab, var(--color-base-content) 25%, transparent);
+        border-right: 1px dotted;
+        margin-right: 0.9375rem;
+        vertical-align: middle;
+
+        &:last-child {
+          border-right: 0;
+          margin-right: 0;
+
+          & a {
+            margin-right: 0;
+          }
+        }
+
+        &.has-submenu {
+          & .submenu-container {
+            & .submenu-toggle {
+              color: var(--color-base-content);
+
+              &:hover {
+                color: var(--color-accent);
+              }
+            }
+          }
+        }
+
+        @media (width < 640px) {
+          border-right: 0;
+
+          /* display: none; 为了覆盖上面的 display: inline-block; */
+          display: none;
+
+          &:not(:first-child) {
+            font-size: 1rem;
+            padding-left: 4.375rem;
+            padding-top: 1rem;
+          }
+
+          /* 菜单按钮样式 */
+          &.icon {
+            display: inline-block;
+            position: absolute;
+            right: 1rem;
+            top: 4.8125rem;
+
+            &.iconify {
+              color: var(--color-primary);
+            }
+          }
+
+          &.has-submenu {
+            & .submenu-container {
+              align-self: flex-start;
+              display: flex;
+              flex-direction: row;
+            }
+          }
+        }
+      }
+
+      & .icon {
+        display: none;
+      }
+    }
+  }
+
+  &:hover #logo {
+    filter: none;
+  }
+}

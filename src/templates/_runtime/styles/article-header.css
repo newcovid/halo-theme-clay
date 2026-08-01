@@ -1,0 +1,35 @@
+#article-header {
+  & h1 {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    /* 标题位于页首，复位全局 h1 的上边距；字号仍走 --text-h1，保证标题 > 章节标题 */
+    margin-block: 0 1rem;
+
+    & .article-title-text {
+      min-width: 0;
+      overflow-wrap: break-word;
+    }
+  }
+
+  & .meta:has(> *) {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+
+    /* :has(> *) -> margin-bottom is only applied when there are child elements */
+    margin-bottom: 1rem;
+    margin-top: 0;
+    vertical-align: middle;
+
+    & > :is(span, div):not(:last-child) {
+      margin-inline-end: 1ch;
+    }
+
+    & * {
+      color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+      font-size: var(--tw-text-sm);
+    }
+  }
+}

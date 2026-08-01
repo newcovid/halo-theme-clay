@@ -1,0 +1,67 @@
+<!doctype html>
+<th:block
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{components/base-layout/template :: html(
+    title = |${#annotations.getOrDefault(tag, 'halo-theme-clay/page-title', tag.spec?.displayName)} - ${site.title}|,
+    head = ~{:: head},
+    content = ~{:: body},
+    header = ~{components/header/template :: body},
+    navbar = ~{},
+    language=${#annotations.get(tag, 'halo-theme-clay/page-language')}
+  )}"
+>
+  <head th:remove="tag">
+    <link
+      rel="canonical"
+      th:if="${theme.config?.tag_page_styles?.is_enable_canonical_link}"
+      th:href="${siteUrl} + @{{prefix}/{slug}(prefix = ${site.routes.tagsUri}, slug = ${tag.spec?.slug})}"
+    />
+    <link
+      th:if="${pluginFinder.available('PluginFeed')}"
+      rel="alternate"
+      type="application/rss+xml"
+      th:title="'Posts - Tag: ' + ${tag.spec?.displayName}"
+      th:href="@{'/feed/tags/' + ${tag.spec?.slug} + '.xml'}"
+    />
+    <script
+      src="@runtime/pages/tag/index.ts"
+      type="module"
+    ></script>
+    <th:block th:insert="~{components/header/template :: head}"></th:block>
+    <th:block th:insert="~{components/list-post-simple/template :: head(showPagination = true)}"></th:block>
+  </head>
+  <body th:remove="tag">
+    <div
+      id="archive"
+      class="content tw:flex-auto"
+    >
+      <h1
+        th:with="tagColor = ${tag.spec?.color}"
+        th:style="${tagColor != null
+                  and !#strings.equalsIgnoreCase(tagColor, '#ffffff')}
+                ? |--tag-hash-color:${tagColor};|
+                : null"
+      >
+        <span th:text="${tag.spec?.displayName}">标签页标题替换位</span>
+        <th:block
+          th:if="${pluginFinder.available('PluginFeed') 
+                   and theme.config?.tag_page_styles?.is_show_rss_button}"
+        >
+          <a
+            class="icon"
+            th:aria-label="#{common.subscribeThisPage}"
+            th:href="@{'/feed/tags/' + ${tag.spec?.slug} + '.xml'}"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="tw:iconify tw:fa--rss-square"></span
+          ></a>
+        </th:block>
+      </h1>
+
+      <th:block
+        th:insert="~{components/list-post-simple/template :: body(posts = ${posts}, showPagination = true, pageTemplateName = 'tag')}"
+      ></th:block>
+    </div>
+  </body>
+</th:block>

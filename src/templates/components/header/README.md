@@ -1,0 +1,22 @@
+# Header Component
+
+## Description
+
+The page header (Header) component is responsible for displaying the site title/logo, navigation, on-site search, theme toggling,
+and other global top-of-page interactive elements. It is typically injected into page templates as part of the layout.
+
+## Usage
+
+Head Content (for including necessary scripts/styles)
+
+```html
+<th:block th:insert="~{components/header/template :: head}"></th:block>
+```
+
+Included as a fragment in layout templates:
+
+- Referenced in the layout file (example): [`components/base-layout/template :: html`](/src/templates/components/base-layout/template.html) passes the header as a parameter:
+
+  ```html
+  th:replace="~{components/base-layout/template :: html(..., header = ~{components/header/template :: body}, ...)}"
+  ```

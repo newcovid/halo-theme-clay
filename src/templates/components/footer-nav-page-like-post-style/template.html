@@ -1,0 +1,90 @@
+<head th:remove="tag">
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+</head>
+<body th:remove="tag">
+  <div id="footer-post-container">
+    <div id="footer-post">
+      <div
+        id="nav-footer"
+        style="display: none"
+      >
+        <th:block th:insert="~{components/menu/template :: menu(showIcon=false)}"></th:block>
+      </div>
+      <div
+        id="toc-footer"
+        style="display: none"
+      ></div>
+      <div
+        id="share-footer"
+        style="display: none"
+        th:if="${theme.config?.post_styles?.is_show_share_footer}"
+      >
+        <th:block
+          th:insert="~{components/share/template :: body(originPermalink=${singlePage.status.permalink},title=${singlePage.spec.title})}"
+        ></th:block>
+      </div>
+      <div id="actions-footer">
+        <a
+          id="footer-home"
+          class="icon"
+          th:href="@{/}"
+          th:aria-label="#{common.backToHome}"
+          th:if="${theme.config?.post_styles?.is_show_home_footer}"
+        >
+          <span class="tw:iconify tw:mdi--home-circle"></span>
+          <span th:text="#{common.home}"></span>
+        </a>
+        <a
+          id="footer-menu"
+          class="icon"
+          href="#"
+          onclick="event.preventDefault()"
+          role="button"
+          aria-expanded="false"
+          aria-controls="nav-footer"
+        >
+          <span class="tw:iconify tw:ic--baseline-menu"></span>
+          <span th:text="#{fragment.footer-nav.menu}"></span>
+        </a>
+        <a
+          id="footer-toc"
+          class="icon"
+          href="#"
+          onclick="event.preventDefault()"
+          role="button"
+          aria-expanded="false"
+          aria-controls="toc-footer"
+        >
+          <span class="tw:iconify tw:ic--baseline-toc"></span>
+          <span th:text="#{fragment.footer-nav.toc}"></span>
+        </a>
+        <a
+          id="footer-share"
+          class="icon"
+          href="#"
+          onclick="event.preventDefault()"
+          role="button"
+          aria-expanded="false"
+          aria-controls="share-footer"
+          th:if="${theme.config?.post_styles?.is_show_share_footer}"
+        >
+          <span class="tw:iconify tw:ic--baseline-share"></span>
+          <span th:text="#{fragment.footer-nav.share}"></span>
+        </a>
+        <a
+          id="footer-top"
+          style="transform: scale(0); width: 0"
+          class="icon tw:transition-transform tw:duration-200 tw:ease-in-out"
+          href="#"
+          role="button"
+          data-scroll-to-top
+        >
+          <span class="tw:iconify tw:ic--baseline-arrow-upward"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,30 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: halo-theme-clay
+  annotations:
+    # https://www.halo.run/store/apps/app-di1jh8gd
+    "store.halo.run/recommended-apps": '["app-di1jh8gd"]'
+spec:
+  displayName: Clay
+  author:
+    name: a280310454
+    website: ""
+  description: A Halo theme replicating Anthropic / Claude's visual language — warm grey grounds, serif headings against sans-serif body copy, hierarchy from type scale and weight rather than rules and shadows. Built on HowieHz/halo-theme-higan-hz.
+  logo: /themes/halo-theme-clay/assets/images/logo.png
+  homepage: "https://github.com/newcovid/halo-theme-clay"
+  repo: "https://github.com/newcovid/halo-theme-clay"
+  issues: "https://github.com/newcovid/halo-theme-clay/issues"
+  settingName: halo-theme-clay-setting
+  configMapName: halo-theme-clay-configmap
+  version: 0.1.0
+  requires: ">=2.25.0"
+  license:
+    - name: "MIT"
+      url: "https://github.com/HowieHz/halo-theme-higan-hz/blob/main/LICENSE"
+  customTemplates:
+    page:
+      - name: Article page style
+        description: Customized pages will use a layout and style similar to article/post pages. This is mainly reflected in the desktop top menu (side table of contents, back-to-top button, share menu) and the mobile bottom menu (similar to article pages). Menu and table-of-contents related settings remain consistent with those under "Article page style".
+        screenshot:
+        file: page-like-post-style.html

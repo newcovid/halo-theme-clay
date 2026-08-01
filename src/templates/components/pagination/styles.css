@@ -1,0 +1,50 @@
+@reference "../../_runtime/global/styles.css";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule, at-rule-prelude-no-invalid -- Tailwind CSS v4 @import prelude syntax after @reference */
+@import "tailwindcss/utilities.css" layer(utilities) source(".") prefix(tw);
+/* stylelint-disable at-rule-prelude-no-invalid -- Tailwind @source not uses custom prelude syntax */
+@source not "./README.md";
+@source not "./index.ts";
+/* stylelint-enable at-rule-prelude-no-invalid */
+
+/* Clay 分页：与列表之间用一条发丝线分隔，页码弱化为次级信息，
+   链接给出可点击的命中区与 hover 反馈。 */
+div.pager {
+  border-top: 1px solid color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  display: inline-block;
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  text-align: center;
+  width: 100%;
+
+  & .page-number {
+    color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+  }
+
+  & a {
+    background-image: none;
+    border-radius: var(--clay-radius-sm);
+    color: var(--color-base-content);
+    padding: 0.375rem 0.625rem;
+    text-decoration: none;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+    transition-timing-function: var(--clay-ease);
+
+    &:hover {
+      background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+      background-image: none;
+
+      &:not(.active) {
+        color: var(--color-primary);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: halo-theme-clay
+  annotations:
+    # https://www.halo.run/store/apps/app-di1jh8gd
+    "store.halo.run/recommended-apps": '["app-di1jh8gd"]'
+spec:
+  displayName: Clay
+  author:
+    name: a280310454
+    website: ""
+  description: 复刻 Anthropic / Claude 官网视觉语言的 Halo 主题。暖灰底色、衬线标题、无衬线正文，以字号与字重而非线框建立层级。基于 HowieHz/halo-theme-higan-hz 二次开发。
+  logo: /themes/halo-theme-clay/assets/images/logo.png
+  homepage: "https://github.com/newcovid/halo-theme-clay"
+  repo: "https://github.com/newcovid/halo-theme-clay"
+  issues: "https://github.com/newcovid/halo-theme-clay/issues"
+  settingName: halo-theme-clay-setting
+  configMapName: halo-theme-clay-configmap
+  version: 0.1.0
+  requires: ">=2.25.0"
+  license:
+    - name: "MIT"
+      url: "https://github.com/HowieHz/halo-theme-higan-hz/blob/main/LICENSE"
+  customTemplates:
+    page:
+      - name: 文章页样式
+        description: 自定义页面将使用类似文章页的布局和样式，主要体现在桌面端顶部菜单（侧边目录，回到顶端按钮，分享菜单），移动端底部菜单（类似文章页）。菜单、目录相关设置与“文章页样式”下的设置保持一致。
+        screenshot:
+        file: page-like-post-style.html

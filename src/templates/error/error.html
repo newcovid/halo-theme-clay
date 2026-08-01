@@ -1,0 +1,94 @@
+<!doctype html>
+<html
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{/components/base-layout/template :: html(
+    title=${error.status},
+    head = ~{:: head},
+    content = ~{:: body},
+    header = ~{components/header/template :: body},
+    navbar = ~{}
+  )}"
+>
+  <head th:remove="tag">
+    <script
+      src="@runtime/pages/error/index.ts"
+      type="module"
+    ></script>
+    <th:block th:insert="~{components/header/template :: head}"></th:block>
+  </head>
+  <body th:remove="tag">
+    <article
+      class="post"
+      itemscope
+      itemtype="http://schema.org/BlogPosting"
+    >
+      <div
+        class="content"
+        itemprop="articleBody"
+      >
+        <h1>
+          <th:block th:text="${error.status}">标题替换位</th:block>
+        </h1>
+        <p
+          th:if="${#strings.isEmpty(error.title)}"
+          th:text="#{common.error.internalServerError}"
+        ></p>
+        <p
+          th:unless="${#strings.isEmpty(error.title)}"
+          th:text="${error.title}"
+        ></p>
+        <!--/* error.detail 是服务端框架给出的字符串（404 时形如“No static resource …”），
+               对访客没有帮助，也会暴露内部信息，因此默认不显示。 */-->
+        <p
+          th:if="${theme.config?.error_page_styles?.is_show_error_detail
+                   and !#strings.isEmpty(error.detail)}"
+          th:text="${error.detail}"
+        ></p>
+        <th:block
+          th:if="${theme.config?.error_page_styles?.is_auto_redirect}"
+          th:with="siteUrl = ${#strings.substring(site.url, #strings.length(site.url) - 1) == '/'
+                               ? #strings.substring(site.url, 0, #strings.length(site.url) - 1)
+                               : site.url}"
+        >
+          <p
+            id="countdown"
+            style="opacity: 0%; transition: opacity 1s"
+          ></p>
+          <script
+            th:data-site-url="${siteUrl}"
+            th:data-target-url="${theme.config?.error_page_styles?.target_url}"
+            th:data-redirect-wait-time="${theme.config?.error_page_styles?.redirect_wait_time}"
+            th:data-origin-text="#{page.error.auto-refresh}"
+          >
+            const currentScript = document.currentScript;
+            const countdownElement = document.getElementById("countdown");
+            const siteUrl = currentScript?.dataset.siteUrl ?? "";
+            let targetUrl = currentScript?.dataset.targetUrl ?? "/";
+            if (targetUrl.startsWith("/")) {
+              targetUrl = siteUrl + targetUrl;
+            }
+            let currentTimeLeft = Number(currentScript?.dataset.redirectWaitTime ?? "5");
+            const originText = currentScript?.dataset.originText ?? "";
+            document.addEventListener("DOMContentLoaded", () => {
+              countdownElement.innerHTML = `${originText
+                .replace("{0}", currentTimeLeft)
+                .replace("{1}", `<a href="${targetUrl}">${targetUrl}</a>`)}`;
+              countdownElement.style.opacity = 1; // <!--/* 此处动画耗时一秒 */-->
+              currentTimeLeft -= 1;
+              const countdownInterval = setInterval(() => {
+                if (currentTimeLeft <= 0) {
+                  clearInterval(countdownInterval);
+                  window.location.href = targetUrl;
+                }
+                countdownElement.innerHTML = `${originText
+                  .replace("{0}", currentTimeLeft)
+                  .replace("{1}", `<a href="${targetUrl}">${targetUrl}</a>`)}`;
+                currentTimeLeft -= 1;
+              }, 1000);
+            });
+          </script>
+        </th:block>
+      </div>
+    </article>
+  </body>
+</html>

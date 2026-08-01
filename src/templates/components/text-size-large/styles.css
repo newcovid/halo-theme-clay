@@ -1,0 +1,14 @@
+/* Clay 宽松档 */
+.text-size-large {
+  --text-xs: 0.875rem;
+  --tw-text-sm: 0.9375rem;
+  --text: clamp(1.0625rem, 0.2vw + 1rem, 1.1875rem);
+  --text-th: 1rem;
+  --text-toc-level-2: 0.9375rem;
+  --text-toc-level-3: 0.875rem;
+  --text-toc-level-4: 0.8125rem;
+  --text-h1: clamp(2.25rem, 2.2vw + 1.7rem, 3.75rem);
+  --text-h2: clamp(1.625rem, 1vw + 1.4rem, 2.25rem);
+  --text-h3: 1.5rem;
+  --text-h4: 1.3125rem;
+}

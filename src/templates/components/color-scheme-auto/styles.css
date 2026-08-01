@@ -1,0 +1,16 @@
+/* Set color-scheme */
+[data-color-scheme="auto"] {
+  color-scheme: normal;
+}
+
+@media (prefers-color-scheme: light) {
+  [data-color-scheme="auto"] {
+    color-scheme: only light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-color-scheme="auto"] {
+    color-scheme: only dark;
+  }
+}

@@ -1,0 +1,55 @@
+@reference "../../global/styles.css";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule, at-rule-prelude-no-invalid -- Tailwind CSS v4 @import prelude syntax after @reference */
+@import "tailwindcss/utilities.css" layer(utilities) source(none) prefix(tw);
+
+@source "../../../index.html";
+
+/* Clay 首页主视觉
+   Anthropic 首页是「超大字号主张 + 大量留白」。这里把 #about 区做成主视觉：
+   简介以展示级衬线呈现并限制在 headline 行宽内，上下留出大块空白。
+   字号刻意没有用官网 hero 的 clamp(42px,7vw,112px)——那是给一句话主张的，
+   而主题的简介字段长度不可控，太大会在长文案下失控。 */
+#about {
+  padding-block: clamp(2.5rem, 5vw, 6rem) clamp(2rem, 4vw, 4rem);
+
+  &:empty {
+    display: none;
+    padding-block: 0;
+  }
+
+  & .blog-description {
+    font-family: var(--clay-font-serif);
+    font-size: clamp(1.75rem, 2.4vw + 1.1rem, 2.75rem);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-block: 0;
+    max-width: var(--text-width-headline);
+    text-wrap: balance;
+  }
+
+  /* stylelint-disable-next-line selector-id-pattern -- id 沿用上游模板与脚本，不能改名 */
+  & #randomSentence {
+    color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+    font-size: var(--text);
+    margin-block: 1.5rem 0;
+    max-width: var(--text-width-title);
+  }
+}
+
+/* stylelint-disable-next-line selector-id-pattern -- id 沿用上游模板与脚本，不能改名 */
+#findMe {
+  color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+  margin-block: 2rem 0;
+}
+
+/* 文章列表标题（「近期发布」）是栏目标签，不是页面主张，理应排在 hero 之下。
+   模板给它用的是 h1，走全局 --text-h1（52px），反而盖过了被刻意压到 44px 上限的
+   #about hero —— 层级是倒的。这里按栏目标签重设字号，并降一档对比度：
+   四种 list_layout 各有一个同样的 h1，用页面级选择器一并覆盖。 */
+main > h1 {
+  color: color-mix(in oklab, var(--color-base-content) 78%, transparent);
+  font-size: clamp(1.375rem, 0.9vw + 1.1rem, 1.75rem);
+  letter-spacing: -0.01em;
+  margin-block: clamp(3rem, 5vw, 4.5rem) 1rem;
+}

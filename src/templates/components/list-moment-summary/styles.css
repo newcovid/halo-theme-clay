@@ -1,0 +1,163 @@
+@reference "../../_runtime/global/styles.css";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule, at-rule-prelude-no-invalid -- Tailwind CSS v4 @import prelude syntax after @reference */
+@import "tailwindcss/utilities.css" layer(utilities) source(".") prefix(tw);
+/* stylelint-disable at-rule-prelude-no-invalid -- Tailwind @source not uses custom prelude syntax */
+@source not "./README.md";
+@source not "./index.ts";
+@source not "./alpine-data";
+/* stylelint-enable at-rule-prelude-no-invalid */
+
+video {
+  height: auto;
+  max-width: 100%;
+}
+
+.moment {
+  & .moment-comment {
+    margin-top: 1rem;
+
+    &:target {
+      display: block;
+    }
+  }
+
+  & .moment-list {
+    margin: 0;
+    padding: 0;
+
+    & li {
+      list-style: none;
+    }
+
+    & .moment-item {
+      padding-bottom: 1.5rem;
+    }
+  }
+
+  & .moment-content {
+    overflow-wrap: break-word;
+  }
+
+  & .avatar-user {
+    border-radius: 50% !important;
+  }
+
+  & .avatar {
+    background-color: var(--color-base-100);
+    display: inline-block;
+    flex-shrink: 0;
+    line-height: 1;
+    overflow: hidden;
+    vertical-align: middle;
+
+    &:hover {
+      box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-base-content) 80%, transparent);
+      transition: box-shadow 0.2s var(--clay-ease);
+    }
+  }
+
+  & .moment-header {
+    padding-bottom: 0.375rem;
+
+    & a {
+      background: none;
+
+      &:hover {
+        background: none;
+      }
+    }
+  }
+
+  /* 「图标 + 数字」这一对默认是 inline 排版：iconify 图标是 vertical-align: middle 的
+     inline-block，对齐点是「基线 + 半个 x-height」，比数字的视觉中心低约 0.09em
+     （17px 下实测 1.5px）——心形的下尖会明显坠到数字下面，评论气泡的尾巴更甚。
+     改用 flex 按盒中心对齐；行内空白在 flex 里不成盒，所以间距改由 gap 给。
+     .moment-comment 是同级的块，占满整行不参与这一行。 */
+  & .operation {
+    align-items: center;
+    color: var(--color-base-content);
+    column-gap: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+
+    & a {
+      background: none;
+
+      &:hover {
+        background: none;
+      }
+    }
+
+    & > a {
+      align-items: center;
+      display: inline-flex;
+      gap: 0.25em;
+
+      & > span:first-child {
+        transform: translateY(var(--clay-icon-optical-shift));
+      }
+    }
+
+    & .moment-comment {
+      flex-basis: 100%;
+    }
+  }
+
+  & .medium {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    & img {
+      height: 100%;
+      max-height: 9rem;
+      object-fit: cover;
+      width: 100%;
+    }
+  }
+
+  & .tag {
+    background-color: var(--color-base-200);
+    background-image: none;
+    border: 1px solid var(--color-base-300);
+    border-radius: var(--clay-radius-xs);
+    color: var(--color-base-content);
+    font-size: var(--tw-text-sm);
+    padding: 0 6px;
+    text-decoration: none;
+
+    &::before {
+      color: var(--color-primary);
+      content: "#";
+    }
+  }
+
+  & ul {
+    @media (width < 640px) {
+      margin-block-start: 0;
+      padding-inline-start: 0;
+    }
+  }
+
+  & .moment-body {
+    & .moment-content-box {
+      background-color: var(--color-base-100);
+
+      /* 层级用 1px 描边而非投影——见 docs/DESIGN.md 的视觉原则 */
+      border: 1px solid var(--color-base-300);
+      padding: 1rem;
+
+      & .moment-content {
+        & li {
+          list-style: initial !important;
+        }
+
+        & p {
+          overflow-wrap: break-word;
+          text-align: left;
+        }
+      }
+    }
+  }
+}

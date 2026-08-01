@@ -1,0 +1,90 @@
+<head th:remove="tag">
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+  <th:block
+    th:if="${theme.config?.styles?.is_show_color_scheme_toggle_button}"
+    th:insert="~{components/theme-toggle-button/template :: head}"
+  ></th:block>
+</head>
+<body th:remove="tag">
+  <header id="header-component">
+    <a
+      th:href="@{/}"
+      th:title="#{common.backToHome}"
+    >
+      <th:block
+        th:with="styles = ${theme.config?.styles},
+                 fallbackLogoAvif = '/themes/halo-theme-clay/assets/images/logo.avif',
+                 fallbackLogoWebp = '/themes/halo-theme-clay/assets/images/logo.webp',
+                 fallbackLogoPng = '/themes/halo-theme-clay/assets/images/logo.png',
+                 logoUri = ${#strings.defaultString(#objects.nullSafe(styles?.icon, site?.logo), fallbackLogoAvif)},
+                 ext = ${logoUri.substring(logoUri.lastIndexOf('.') + 1).toLowerCase()},
+                 imageType = ${ext == 'avif'
+                               ? 'image/avif'
+                               : (ext == 'webp'
+                                  ? 'image/webp'
+                                  : (ext == 'png'
+                                     ? 'image/png'
+                                     : (ext == 'apng'
+                                        ? 'image/apng'
+                                        : ((ext == 'jpg'
+                                            or ext == 'jpeg'
+                                            or ext == 'jfif'
+                                            or ext == 'pjpeg'
+                                            or ext == 'pjp')
+                                           ? 'image/jpeg'
+                                           : (ext == 'gif'
+                                              ? 'image/gif'
+                                              : (ext == 'svg'
+                                                 ? 'image/svg+xml'
+                                                 : (ext == 'bmp'
+                                                    ? 'image/bmp'
+                                                    : ((ext == 'ico'
+                                                        or ext == 'cur')
+                                                       ? 'image/x-icon'
+                                                       : ((ext == 'tif'
+                                                           or ext == 'tiff')
+                                                          ? 'image/tiff'
+                                                          : 'image/png')))))))))}"
+      >
+        <div
+          id="logo"
+          th:class="${styles?.avatar_circle == true ? 'circle-avatar' : ''}"
+          th:classappend="${styles?.avatar_grayout == true ? 'avatar-grayscale' : ''}"
+          th:if="${theme.config?.styles?.is_show_header_icon}"
+        ></div>
+        <th:block
+          th:insert="~{components/header-logo-style/template :: body(
+            fallbackLogoPng=${fallbackLogoPng},
+            logoUri=${logoUri},
+            imageType=${imageType},
+            fallbackLogoWebp=${fallbackLogoWebp}
+          )}"
+        ></th:block>
+      </th:block>
+
+      <div
+        id="title"
+        class="h1"
+      >
+        <span
+          class="title-text"
+          th:text="${site?.title}"
+          >站点标题替换位</span
+        >
+        <th:block
+          th:if="${theme.config?.styles?.is_show_color_scheme_toggle_button}"
+          th:insert="~{components/theme-toggle-button/template :: body}"
+        ></th:block>
+      </div>
+    </a>
+    <div
+      id="nav"
+      th:if="${theme.config?.styles?.is_show_header_menu}"
+    >
+      <th:block th:insert="~{components/menu/template :: menu(showIcon=true)}"></th:block>
+    </div>
+  </header>
+</body>

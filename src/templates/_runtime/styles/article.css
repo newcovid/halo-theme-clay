@@ -1,0 +1,213 @@
+/* 语义化 HTML5 标签 内部一般嵌套一个 .content */
+article {
+  display: flex;
+  flex: auto;
+  flex-direction: column;
+  min-height: 100%;
+
+  & .content {
+    & h1,
+    & h2,
+    & h3,
+    & h4,
+    & h5,
+    & h6 {
+      position: relative;
+
+      & .heading-anchor {
+        background-image: none;
+        color: color-mix(in oklab, var(--color-base-content) 45%, transparent);
+        font-weight: 400;
+        opacity: 0%;
+        padding-inline-end: 0.26em;
+        position: absolute;
+        right: 100%;
+        text-decoration: none;
+        transition:
+          color 0.25s,
+          opacity 0.25s;
+        transition-timing-function: var(--clay-ease);
+        user-select: none;
+
+        &::before {
+          content: var(--heading-anchor-symbol, "#");
+        }
+
+        &:has(.heading-anchor-icon)::before {
+          content: none;
+        }
+
+        & .heading-anchor-icon {
+          align-items: center;
+        }
+
+        /* 在小屏幕（手机端）上，heading-anchor 作为一个独立的元素显示在标题后面，方便用户点击 */
+        @media (width < 640px) {
+          /* 使 heading-anchor 成为一个独立的块级元素，避免继承 body h3 的 text-decoration 下划线 */
+          display: inline-block;
+          margin-inline-start: 0.25em;
+          padding-inline-end: unset;
+          position: static;
+          right: unset;
+        }
+
+        /* 在锚点上悬停时变色
+           使锚点在获得焦点时变色 */
+        &:hover,
+        &:focus {
+          color: var(--color-primary);
+        }
+      }
+
+      /* 在标题上/锚点上悬停时显示锚点
+         使锚点在获得焦点时显示，提升键盘导航的可访问性 */
+      &:hover .heading-anchor,
+      & .heading-anchor:focus {
+        opacity: 100%;
+      }
+    }
+
+    & .caption,
+    & figcaption {
+      color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+      display: block;
+      font-size: 0.9em;
+      margin-top: 0.5em;
+      position: relative;
+      text-align: center;
+    }
+
+    & img,
+    & video {
+      display: block;
+      height: auto;
+      margin: auto;
+      max-width: 100%;
+    }
+
+    /* http://webdesignerwall.com/tutorials/css-elastic-videos */
+    & .video-container {
+      height: 0;
+      overflow: hidden;
+      padding-top: calc(9 / 16 * 100%); /*  16:9 ratio */
+      position: relative;
+
+      & iframe,
+      & object,
+      & embed {
+        height: 100%;
+        left: 0;
+        margin-top: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    }
+
+    & blockquote {
+      background: inherit;
+      color: var(--color-secondary);
+      font-weight: bold;
+      margin: 1rem 0.625rem;
+      padding: 0.5em 0.625rem;
+      quotes: "\201C" "\201D" "\2018" "\2019";
+
+      & p {
+        margin: 0;
+      }
+
+      & footer {
+        color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+        font-size: var(--text-xs);
+        margin: calc(var(--text) * 1.725) 0;
+
+        & a {
+          background-image: linear-gradient(
+            transparent,
+            transparent 0.3125rem,
+            color-mix(in oklab, var(--color-base-content) 80%, transparent) 0.3125rem,
+            color-mix(in oklab, var(--color-base-content) 80%, transparent)
+          );
+          color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+
+          &:hover {
+            background-image: linear-gradient(
+              transparent,
+              transparent 0.25rem,
+              var(--color-accent) 0.25rem,
+              var(--color-accent)
+            );
+            color: var(--color-accent);
+          }
+        }
+
+        & cite::before {
+          content: "—";
+          padding: 0 0.5em;
+        }
+      }
+    }
+
+    & .pullquote {
+      margin: 0;
+      text-align: left;
+      width: 45%;
+
+      &.left {
+        float: left;
+        margin-left: 0.5em;
+        margin-right: 1em;
+      }
+
+      &.right {
+        float: right;
+        margin-left: 1em;
+        margin-right: 0.5em;
+      }
+    }
+  }
+}
+
+/* 明暗控制显示 样式块 开始 */
+/* 明暗控制显示 样式块 明亮模式（默认值） */
+article .content div {
+  &.light {
+    display: block;
+  }
+
+  &.dark {
+    display: none;
+  }
+}
+
+/* 明暗控制显示 样式块 自动模式 */
+html[data-color-scheme="auto"] article .content {
+  & div {
+    &.light {
+      @media (prefers-color-scheme: dark) {
+        display: none;
+      }
+    }
+
+    &.dark {
+      @media (prefers-color-scheme: dark) {
+        display: block;
+      }
+    }
+  }
+}
+
+/* 明暗控制显示 样式块 暗黑模式 */
+html[data-color-scheme="dark"] article .content {
+  & div {
+    &.light {
+      display: none;
+    }
+
+    &.dark {
+      display: block;
+    }
+  }
+}
+
+/* 明暗控制显示 样式块 结束 */

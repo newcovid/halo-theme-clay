@@ -1,0 +1,17 @@
+@import "./clay/styles.css";
+
+:root {
+  --clay-font-family: var(--clay-font-sans);
+  --clay-font-mono:
+    "JetBrains Mono", ui-monospace, "SFMono-Regular", "Cascadia Mono", consolas, "Liberation Mono", monospace;
+  --clay-font-sans:
+    "Inter", -apple-system, blinkmacsystemfont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
+  /* 拉丁字面在前（自托管的只有拉丁子集，CJK 会逐字回落到后面的中文衬线）。
+     中文段按装机率排：思源宋体的三个常见族名 → macOS 自带 → Windows 兜底。
+     我们不自托管 CJK 字体——常用字子集也要 1～2 MB，相对整站 ~40 KB 的体量不成比例。 */
+  --clay-font-serif:
+    "Source Serif 4", "Iowan Old Style", "Palatino Linotype", georgia, "Source Han Serif SC", "Noto Serif CJK SC",
+    "Noto Serif SC", "Songti SC", "STSong", simsun, serif;
+}

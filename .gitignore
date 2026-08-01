@@ -1,0 +1,62 @@
+# 本地 Halo 运行时（119MB jar + 工作数据），非项目产物
+.halo/
+
+# 构建产物
+/templates/
+/tmp/
+/.tw-patch/
+/.vite-inspect/
+/src/generated/
+.oxlintrc.json.bak
+
+# 依赖
+node_modules/
+jspm_packages/
+
+# 日志
+logs
+*.log
+npm-debug.log*
+*.local
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# 缓存
+*.tsbuildinfo
+.npm
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+
+# 打包产物
+*.tgz
+*.zip
+
+# 环境变量
+.env
+.env.*
+!.env.example
+
+# Vite 临时文件
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# 编辑器 / 操作系统
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.sw?
+
+# 智能体侧的工具链：Claude Code 的配置、skill 包与其参考资料。
+# 它们服务于本地开发流程，不是主题的一部分，也不随发行包分发，因此不纳入仓库。
+# （.claude/skills 是指向 .agents/skills 的 junction。）
+.agents/
+.claude/
+skills-lock.json
+
+# 打包产物
+/dist/

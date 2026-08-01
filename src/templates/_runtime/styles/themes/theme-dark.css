@@ -1,0 +1,14 @@
+:root {
+  --color-accent: #de8b6f;
+  --color-accent-content: #141413;
+  --color-base-100: #141413;
+  --color-base-200: #1f1e1d;
+  --color-base-300: #30302e;
+  --color-base-content: #f5f4ed;
+  --color-neutral: #262624;
+  --color-neutral-content: #f5f4ed;
+  --color-primary: #d97757;
+  --color-primary-content: #141413;
+  --color-secondary: #f5f4ed;
+  --color-secondary-content: #141413;
+}

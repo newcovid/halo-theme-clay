@@ -1,0 +1,96 @@
+@reference "../../_runtime/global/styles.css";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule, at-rule-prelude-no-invalid -- Tailwind CSS v4 @import prelude syntax after @reference */
+@import "tailwindcss/utilities.css" layer(utilities) source(".") prefix(tw);
+/* stylelint-disable at-rule-prelude-no-invalid -- Tailwind @source not uses custom prelude syntax */
+@source not "./README.md";
+@source not "./index.ts";
+/* stylelint-enable at-rule-prelude-no-invalid */
+
+/* 文章列表样式 */
+.color-accent {
+  color: var(--color-accent);
+}
+
+/* Clay 简洁列表
+   归档 / 分类 / 标签 / 作者页共用这套清单。它的职责是「密集可扫」，
+   所以不改成首页那种带摘要的卡片；要改的是清单本身的呼吸与噪音：
+   行距拉开、日期弱化并用等宽数字对齐、标题的常驻下划线改为悬停才出。 */
+.common-post-list {
+  margin: 0;
+  padding: 0;
+
+  @media (width >= 640px) {
+    /* 日期与标题字号不同（13px vs 15~17px），行高又都继承正文的 1.725，
+       所以两栏的行盒高度差约 7px。默认的 align-items: stretch 让各自的首行
+       从行盒顶端起排，基线因此错开约 5px——日期看着比标题高一截。
+       baseline 对齐首行基线，正是清单该有的对齐方式。 */
+    align-items: baseline;
+    display: grid;
+    gap: 0.875rem 1.5rem;
+
+    /* .content has overflow-wrap: break-word; actually minmax is not needed, just 1fr is enough, but minmax is used here as a fallback in advance */
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  & .post-item {
+    list-style-type: none;
+    margin-bottom: 0.875rem;
+    margin-left: 0;
+
+    @media (width >= 640px) {
+      /* Makes the <li> box disappear so its children (.meta and .post-item-content) become direct grid items of the parent, enabling two-column alignment across rows */
+      display: contents;
+    }
+
+    & .meta {
+      color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+      display: block;
+
+      /* 等宽数字让各行日期竖向对齐 */
+      font-size: var(--text-xs);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+
+      @media (width >= 640px) {
+        grid-column: 1;
+      }
+    }
+
+    & .post-item-content {
+      @media (width >= 640px) {
+        grid-column: 2;
+        min-width: 0;
+      }
+
+      /* 阅读量的「眼睛图标 + 数字」同瞬间那处：iconify 图标按
+         vertical-align: middle 对齐到基线加半个 x-height，比数字视觉中心低约 0.09em。
+         按盒中心对齐；行内空白在 flex 里不成盒，间距改由 gap 给。 */
+      & > .color-time {
+        align-items: center;
+        display: inline-flex;
+        gap: 0.25em;
+
+        & > span:first-child {
+          transform: translateY(var(--clay-icon-optical-shift));
+        }
+      }
+
+      & > a {
+        /* 常驻下划线对密集清单太吵，只在悬停时给 */
+        background-image: none;
+
+        &:hover {
+          background-image: linear-gradient(
+            transparent,
+            transparent calc(100% - 0.125rem),
+            var(--color-accent) calc(100% - 0.125rem)
+          );
+          background-position: bottom;
+          background-repeat: repeat-x;
+          background-size: 100% 100%;
+          color: var(--color-accent);
+        }
+      }
+    }
+  }
+}

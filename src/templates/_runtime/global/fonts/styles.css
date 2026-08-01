@@ -1,0 +1,28 @@
+@import "$clay-font-family";
+
+body {
+  font-family: var(--clay-font-family);
+}
+
+/* Clay：衬线用于展示级标题，与无衬线正文形成对比——Anthropic 视觉语言的核心识别点 */
+h1,
+h2 {
+  font-family: var(--clay-font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+blockquote {
+  font-family: var(--clay-font-serif);
+}
+
+code,
+kbd,
+samp,
+pre,
+tt,
+xmp,
+plaintext,
+listing {
+  font-family: var(--clay-font-mono);
+}

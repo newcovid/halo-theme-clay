@@ -1,0 +1,55 @@
+<!doctype html>
+<th:block
+  xmlns:th="https://www.thymeleaf.org"
+  th:replace="~{components/base-layout/template :: html(
+    title = |${title ?: #messages.msg('page.moments.page-title')} - ${site.title}|,
+    head = ~{:: head},
+    content = ~{:: body},
+    header = ~{components/header/template :: body},
+    navbar = ~{}
+  )}"
+>
+  <head th:remove="tag">
+    <link
+      rel="canonical"
+      th:if="${theme.config?.moments_styles?.is_enable_canonical_link}"
+      th:href="${siteUrl} + @{/moments}"
+    />
+    <link
+      th:if="${pluginFinder.available('PluginFeed')}"
+      rel="alternate"
+      type="application/rss+xml"
+      title="Moments - All"
+      th:href="@{'/moments/rss.xml'}"
+    />
+    <script
+      src="@runtime/pages/moments/index.ts"
+      type="module"
+    ></script>
+    <th:block th:insert="~{components/header/template :: head}"></th:block>
+    <th:block th:insert="~{components/list-moment-summary/template :: head(pageTemplateName = 'moments')}"></th:block>
+  </head>
+  <body th:remove="tag">
+    <th:block
+      th:if="${pluginFinder.available('PluginMoments')}"
+      th:insert="~{components/list-moment-summary/template :: body(moments = ${moments}, pageTemplateName = 'moments')}"
+    ></th:block>
+    <!--/* PluginMoments 未安装时，插件路由注入的模型变量不存在，页面会静默空白。
+           与 index.html 一致：给出明确提示与文档入口。 */-->
+    <div
+      class="content"
+      th:unless="${pluginFinder.available('PluginMoments')}"
+    >
+      <p th:text="#{page.index.momentsPluginNotAvailable}">插件未启用提示替换位</p>
+      <p>
+        <span th:text="#{page.index.momentsPluginNotAvailableDescription}"></span>
+        <a
+          th:text="#{page.index.momentsPluginDocsLinkText}"
+          th:href="#{page.index.momentsPluginDocsLink}"
+          rel="noopener"
+          target="_blank"
+        ></a>
+      </p>
+    </div>
+  </body>
+</th:block>

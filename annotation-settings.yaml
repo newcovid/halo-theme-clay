@@ -1,0 +1,86 @@
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: halo-theme-clay-user-annotation-setting
+spec:
+  targetRef:
+    group: ""
+    kind: User
+  formSchema:
+    - $formkit: attachment
+      name: "halo-theme-clay/author-header-image"
+      label: 作者页头图
+
+---
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: halo-theme-clay-post-annotation-setting
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: Post
+  formSchema:
+    - $formkit: "text"
+      name: "halo-theme-clay/page-title"
+      label: "页面标题"
+    - $formkit: "text"
+      name: "halo-theme-clay/page-language"
+      label: "页面语言"
+    - $formkit: "switch"
+      label: "显示在文章列表中"
+      name: "halo-theme-clay/show-in-post-list"
+      value: "true"
+      onValue: "true"
+      offValue: "false"
+
+---
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: halo-theme-clay-single-page-annotation-setting
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: SinglePage
+  formSchema:
+    - $formkit: "text"
+      name: "halo-theme-clay/page-title"
+      label: "页面标题"
+    - $formkit: "text"
+      name: "halo-theme-clay/page-language"
+      label: "页面语言"
+
+---
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: halo-theme-clay-category-annotation-setting
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: Category
+  formSchema:
+    - $formkit: "text"
+      name: "halo-theme-clay/page-title"
+      label: "页面标题"
+    - $formkit: "text"
+      name: "halo-theme-clay/page-language"
+      label: "页面语言"
+
+---
+apiVersion: v1alpha1
+kind: AnnotationSetting
+metadata:
+  name: halo-theme-clay-tag-annotation-setting
+spec:
+  targetRef:
+    group: content.halo.run
+    kind: Tag
+  formSchema:
+    - $formkit: "text"
+      name: "halo-theme-clay/page-title"
+      label: "页面标题"
+    - $formkit: "text"
+      name: "halo-theme-clay/page-language"
+      label: "页面语言"

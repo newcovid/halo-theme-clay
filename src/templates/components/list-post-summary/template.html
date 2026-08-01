@@ -1,0 +1,227 @@
+<head th:remove="tag">
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+  <th:block th:insert="~{components/pagination/template :: head}"></th:block>
+</head>
+<body
+  th:remove="tag"
+  th:fragment="body(posts, pageTemplateName)"
+>
+  <section class="post-list-summary tw:flex tw:flex-auto tw:flex-col">
+    <div class="tw:flex tw:flex-auto tw:flex-col tw:space-y-10">
+      <th:block th:each="post : ${posts}">
+        <th:block th:if="${#annotations.getOrDefault(post, 'halo-theme-clay/show-in-post-list', 'true') == 'true'}">
+          <div class="tw:grid tw:grid-cols-1 tw:md:grid-cols-4 tw:md:items-baseline">
+            <div class="group tw:relative tw:flex tw:flex-col tw:md:col-span-3">
+              <h2 class="color-text tw:static tw:m-0 tw:text-base tw:font-semibold tw:tracking-tight">
+                <div
+                  class="post-card-hover tw:absolute tw:-inset-x-4 tw:-inset-y-2 tw:z-0 tw:opacity-0 tw:sm:-inset-x-6 tw:sm:rounded-2xl"
+                ></div>
+                <span
+                  class="iconify-middle color-accent tw:relative tw:z-10 tw:iconify tw:typcn--pin-outline"
+                  th:if="${post.spec.pinned
+                           and theme.config?.index_styles?.is_pin_icon_show
+                           and theme.config?.index_styles?.pin_icon_position == 'left'}"
+                ></span>
+                <a th:href="@{${post.status?.permalink}}">
+                  <span
+                    class="tw:absolute tw:-inset-x-4 tw:-inset-y-2 tw:z-20 tw:sm:-inset-x-6 tw:sm:rounded-2xl"
+                  ></span>
+                  <span
+                    class="tw:relative tw:z-10"
+                    th:text="${post.spec?.title}"
+                    >文章标题替换位</span
+                  >
+                </a>
+                <span
+                  class="iconify-middle color-accent tw:relative tw:z-10 tw:iconify tw:typcn--pin-outline"
+                  th:if="${post.spec.pinned
+                           and theme.config?.index_styles?.is_pin_icon_show
+                           and theme.config?.index_styles?.pin_icon_position == 'right'}"
+                ></span>
+              </h2>
+              <time
+                th:if="${!#strings.equals(pageTemplateName, 'index')
+                         or (#strings.equals(pageTemplateName, 'index')
+                             and theme.config?.index_styles?.is_show_post_pubdate_in_post_list_summary)}"
+                class="color-base-content-80 tw:relative tw:z-10 tw:order-first tw:mb-3 tw:flex tw:items-center tw:pl-3.5 tw:text-sm tw:md:hidden"
+                th:datetime="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+              >
+                <span
+                  class="tw:absolute tw:inset-y-0 tw:left-0 tw:flex tw:items-center"
+                  aria-hidden="true"
+                >
+                  <span class="tw:h-4 tw:w-0.5 tw:rounded-full tw:bg-[var(--color-base-300)]"></span>
+                </span>
+                <th:block th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"></th:block>
+              </time>
+              <th:block th:if="${theme.config?.index_styles?.is_show_post_categories_in_post_list_summary}">
+                <div
+                  class="article-category color-time tw:relative tw:z-20 tw:mt-0.5 tw:mb-0 tw:flex tw:flex-wrap tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm tw:sm:inline-flex"
+                  th:unless="${#lists.isEmpty(post.categories)}"
+                >
+                  <th:block th:each="categoryLeafNode, categoryLeafNodeIterStat : ${post.categories}">
+                    <!--/* inline-flex 使一个“分类面包屑”不会被分到两行 */-->
+                    <span class="categoryBreadcrumbs tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle">
+                      <!--/* 分类图标和第一个“分类面包屑”保持在一行。 */-->
+                      <span
+                        th:if="${categoryLeafNodeIterStat.first}"
+                        class="tw:iconify tw:fa-solid--archive"
+                      ></span>
+                      <th:block
+                        th:each="category, iterStat : ${categoryFinder.getBreadcrumbs(categoryLeafNode.metadata?.name)}"
+                      >
+                        <a
+                          class="category-link"
+                          th:href="@{${category.status?.permalink}}"
+                          th:text="${category.spec?.displayName}"
+                        >
+                          文章分类名替换位 </a
+                        ><!--/*
+                        */--><span th:unless="${iterStat.last}">></span>
+                      </th:block>
+                      <!--/* 除最后一个“分类面包屑”没有逗号，其他“分类面包屑”末尾都有逗号，
+                      并且和这个“分类面包屑”保持在一行（被 tw:inline-flex 包含）。
+                      tw:ms-[-1ch] 是为了抵消 tw:gap-x-[1ch] */-->
+                      <span
+                        th:if="${!categoryLeafNodeIterStat.last}"
+                        class="tw:ms-[-1ch]"
+                        >,</span
+                      >
+                    </span>
+                  </th:block>
+                </div>
+              </th:block>
+              <th:block th:if="${theme.config?.index_styles?.is_show_post_tags_in_post_list_summary}">
+                <div
+                  class="article-tag color-time tw:relative tw:z-20 tw:mt-0.5 tw:mb-0 tw:flex tw:flex-wrap tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm tw:sm:inline-flex"
+                  th:unless="${#lists.isEmpty(post.tags)}"
+                >
+                  <th:block th:each="tag, iterStat : ${post.tags}">
+                    <!--/* inline-flex 保证一个标签项的内容保持在一行。 */-->
+                    <span class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle">
+                      <!--/* 标签图标和第一个标签项保持在一行。 */-->
+                      <span
+                        th:if="${iterStat.first}"
+                        class="tw:iconify tw:fa-solid--tag"
+                      ></span>
+                      <a
+                        class="tag-link"
+                        th:with="tagColor = ${tag.spec?.color}"
+                        th:href="@{${tag.status?.permalink}}"
+                        th:text="${tag.spec?.displayName}"
+                        th:style="${tagColor != null
+                            and !#strings.equalsIgnoreCase(tagColor, '#ffffff')}
+                          ? |--tag-hash-color:${tagColor};|
+                          : null"
+                      >
+                        文章标签名替换位 </a
+                      ><!--/*
+                      */--><span
+                        th:unless="${iterStat.last}"
+                        class="tw:ms-[-1ch]"
+                        >,</span
+                      >
+                    </span>
+                  </th:block>
+                </div>
+              </th:block>
+              <th:block th:if="${theme.config?.index_styles?.is_show_post_views_in_post_list_summary}">
+                <div
+                  class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
+                  th:title="|#{page.post.visit-stats} ${post.stats?.visit}|"
+                >
+                  <span class="tw:iconify tw:mdi--eye-outline"></span>
+                  <span th:text="${post.stats?.visit}">文章阅读量替换位</span>
+                </div>
+              </th:block>
+              <!--/* 列表里的 post 是 ListedPostVo，不带 content——SpEL 的 ?. 只挡 null，
+                     挡不住属性不存在，写 post.content?.content 会抛 EL1008E 并把响应截断。
+                     没有 extra-api 插件时改用 postFinder.content()，代价是每篇一次取正文
+                     （4 篇约 +40ms）。装了 extra-api 则走它的统计接口，无此开销。 */-->
+              <th:block th:if="${theme.config?.index_styles?.is_show_post_estimated_reading_time_in_post_list_summary}">
+                <div
+                  class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
+                  th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
+                                         ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
+                                         : #strings.length(postFinder.content(post.metadata.name)?.content) / 2 }"
+                  th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
+                >
+                  <span class="tw:iconify tw:mdi--clock-outline"></span>
+                  <span
+                    class="readtime"
+                    th:text="#{common.min(${#numbers.formatDecimal(wordCount * 1.0 / 450, 1, 1) + '~' + #numbers.formatDecimal(wordCount * 1.0 / 350, 1, 1)})}"
+                  >
+                    文章预计阅读时间替换位
+                  </span>
+                </div>
+              </th:block>
+              <th:block th:if="${theme.config?.index_styles?.is_show_post_word_count_in_post_list_summary}">
+                <span
+                  class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
+                  th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
+                                         ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
+                                         : #strings.length(postFinder.content(post.metadata.name)?.content) / 2 }"
+                  th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
+                >
+                  <span class="tw:iconify tw:mdi--format-text"></span>
+                  <span
+                    class="word-count"
+                    th:text="${wordCount}"
+                    >文章字数替换位</span
+                  >
+                </span>
+              </th:block>
+              <th:block
+                th:if="${theme.config?.index_styles?.is_show_post_excerpt_in_post_list_summary}"
+                th:with="max_lines = ${theme.config?.index_styles?.post_excerpt_max_lines}"
+              >
+                <p
+                  class="color-base-content-80 tw:relative tw:z-10 tw:mt-2 tw:mb-0 tw:p-0 tw:text-sm"
+                  th:text="${post.status?.excerpt}"
+                  th:classappend="|${max_lines == '1' ? 'tw:line-clamp-1' : ''} ${max_lines == '2' ? 'tw:line-clamp-2' : ''} ${max_lines == '3' ? 'tw:line-clamp-3' : ''} ${max_lines == '4' ? 'tw:line-clamp-4' : ''} ${max_lines == '5' ? 'tw:line-clamp-5' : ''}|"
+                >
+                  文章概要替换位
+                </p>
+              </th:block>
+              <div
+                aria-hidden="true"
+                class="color-primary tw:relative tw:z-10 tw:mt-4 tw:flex tw:items-center tw:text-sm tw:font-medium"
+                th:text="#{page.index.postListPermalinkText}"
+                th:if="${theme.config?.index_styles?.is_show_index_post_list_permalink_text}"
+              >
+                跳转文章链接所用提示文字替换位
+              </div>
+              <img
+                th:if="${theme.config?.index_styles?.is_show_post_cover_in_post_list_summary
+                         and !#strings.isEmpty(post.spec.cover)}"
+                th:src="${post.spec.cover}"
+                th:alt="${post.spec?.title}"
+                th:srcset="|
+              ${thumbnail.gen(post.spec.cover, 's')} 400w,
+              ${thumbnail.gen(post.spec.cover, 'm')} 800w,
+              ${thumbnail.gen(post.spec.cover, 'l')} 1200w,
+              ${thumbnail.gen(post.spec.cover, 'xl')} 1600w
+              |"
+                sizes="(max-width: 1600px) 100vw, 1600px"
+                class="tw:z-10 tw:mt-4 tw:h-full tw:w-full tw:rounded-lg tw:object-cover"
+              />
+            </div>
+            <time
+              th:if="${!#strings.equals(pageTemplateName, 'index')
+                       or (#strings.equals(pageTemplateName, 'index')
+                           and theme.config?.index_styles?.is_show_post_pubdate_in_post_list_summary)}"
+              class="color-base-content-80 tw:relative tw:z-10 tw:order-first tw:mt-1 tw:mb-3 tw:hidden tw:items-center tw:text-sm tw:md:flex"
+              th:datetime="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+              th:text="${#temporals.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+            >
+            </time>
+          </div>
+        </th:block>
+      </th:block>
+    </div>
+    <th:block th:insert="~{components/pagination/template :: body(${posts})}"></th:block>
+  </section>
+</body>

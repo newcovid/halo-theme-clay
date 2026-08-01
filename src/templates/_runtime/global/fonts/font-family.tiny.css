@@ -1,0 +1,9 @@
+:root {
+  --clay-font-family: var(--clay-font-sans);
+  --clay-font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", consolas, "Liberation Mono", monospace;
+  --clay-font-sans:
+    -apple-system, blinkmacsystemfont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --clay-font-serif:
+    "Iowan Old Style", "Palatino Linotype", georgia, "Noto Serif SC", "Songti SC", simsun, serif;
+}

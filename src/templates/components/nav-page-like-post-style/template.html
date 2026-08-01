@@ -1,0 +1,161 @@
+<head th:remove="tag">
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+</head>
+<body th:remove="tag">
+  <div
+    id="header-post"
+    class="tw:fixed tw:top-8 tw:right-0 tw:z-50 tw:float-right tw:hidden tw:sm:block"
+  >
+    <!--/* only show on tablet start, display when the page is not at the top */-->
+    <a
+      id="top-icon-tablet"
+      class="tw:hidden tw:lg:hidden!"
+      href="#"
+      role="button"
+      data-scroll-to-top
+      th:aria-label="#{fragment.post-nav.actions.to-top-icon.aria-label}"
+      ><span class="iconify-large tw:iconify tw:material-symbols--keyboard-arrow-up"></span
+    ></a>
+    <a
+      id="toc-icon-tablet"
+      class="tw:hidden tw:lg:hidden!"
+      href="#"
+      role="button"
+      onclick="event.preventDefault()"
+      aria-expanded="false"
+      aria-controls="toc-overlay-tablet"
+      th:aria-label="#{fragment.post-nav.toc-icon.aria-label}"
+      ><span class="iconify-large tw:iconify tw:ic--baseline-toc"></span
+    ></a>
+    <!--/* only show on tablet end */-->
+    <span
+      id="menu"
+      class="tw:mr-8"
+    >
+      <div class="tw:flex tw:items-center tw:justify-end">
+        <span
+          id="nav"
+          class="tw:hidden tw:lg:block"
+        >
+          <th:block th:insert="~{components/menu/template :: menu(showIcon=false)}"></th:block>
+        </span>
+        <a
+          id="menu-icon"
+          href="#"
+          onclick="event.preventDefault()"
+          th:aria-label="#{fragment.post-nav.menu-icon.aria-label}"
+          class="active"
+          role="button"
+          aria-expanded="true"
+          aria-controls="nav actions toc-desktop-panel"
+        >
+          <span class="iconify-middle tw:iconify tw:material-symbols--menu"></span>
+        </a>
+      </div>
+      <span
+        id="actions"
+        class="tw:float-right tw:mt-8 tw:mr-8 tw:hidden tw:text-right tw:lg:block"
+      >
+        <ul class="tw:float-right tw:block">
+          <li>
+            <a
+              th:href="@{/}"
+              class="icon"
+              th:aria-label="#{fragment.post-nav.actions.home-icon.aria-label}"
+              role="button"
+              th:data-text="#{fragment.post-nav.backToHome}"
+            >
+              <span class="iconify-large tw:iconify tw:mdi--home-circle"></span>
+            </a>
+          </li>
+          <!--/* only show to top button on desktop */-->
+          <li class="tw:hidden tw:lg:inline-block">
+            <a
+              class="icon"
+              href="#"
+              data-scroll-to-top
+              th:aria-label="#{fragment.post-nav.actions.to-top-icon.aria-label}"
+              role="button"
+              th:data-text="#{fragment.post-nav.toTop}"
+            >
+              <span class="iconify-large tw:iconify tw:material-symbols--keyboard-arrow-up"></span>
+            </a>
+          </li>
+          <!--/* only show toc button on tablet */-->
+          <li class="tw:lg:hidden">
+            <a
+              class="icon"
+              href="#"
+              onclick="event.preventDefault()"
+              aria-expanded="false"
+              aria-controls="toc-overlay-tablet"
+              th:aria-label="#{fragment.post-nav.toc-icon.aria-label}"
+              id="action-toc-tablet-menu"
+              role="button"
+              th:data-text="#{fragment.post-nav.toc}"
+            >
+              <span class="iconify-large tw:iconify tw:ic--baseline-toc"></span>
+            </a>
+          </li>
+          <li th:if="${theme.config?.post_styles?.is_show_post_nav_share_button}">
+            <a
+              class="icon"
+              href="#"
+              id="action-share"
+              onclick="event.preventDefault()"
+              th:aria-label="#{fragment.post-nav.actions.share-icon.aria-label}"
+              role="button"
+              aria-expanded="false"
+              aria-controls="share-list"
+              th:data-text="#{fragment.post-nav.sharePost}"
+            >
+              <span class="iconify-middle tw:iconify tw:mdi--share-variant-outline"></span>
+            </a>
+          </li>
+        </ul>
+
+        <span class="info tw:hidden"></span>
+      </span>
+      <div
+        th:if="${theme.config?.post_styles?.is_show_post_nav_share_button}"
+        id="share-list"
+        class="tw:clear-both tw:ml-auto tw:hidden tw:w-max tw:pt-4 tw:pr-8 tw:text-right"
+      >
+        <th:block
+          th:insert="~{components/share/template :: body(originPermalink = ${singlePage.status.permalink},
+                                                 title = ${singlePage.spec.title})}"
+        ></th:block>
+      </div>
+      <div id="toc-desktop-panel">
+        <div
+          id="toc-desktop"
+          class="tw:hidden tw:lg:block"
+        ></div>
+      </div>
+    </span>
+  </div>
+  <div
+    id="toc-overlay-tablet"
+    class="tw:hidden"
+  >
+    <div id="toc-overlay-backdrop"></div>
+    <div id="toc-overlay-content">
+      <div id="toc-overlay-header">
+        <span th:text="#{fragment.post-nav.toc}">目录</span>
+        <a
+          id="toc-overlay-close"
+          href="#"
+          role="button"
+          onclick="event.preventDefault()"
+          th:aria-label="#{fragment.post-nav.close-toc.aria-label}"
+        >
+          <span class="iconify-large tw:iconify tw:ic--baseline-close"></span>
+        </a>
+      </div>
+      <div id="toc-tablet"></div>
+    </div>
+  </div>
+</body>

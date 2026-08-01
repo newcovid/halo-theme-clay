@@ -1,0 +1,33 @@
+# Pagination Component
+
+## Description
+
+This component provides pagination controls for navigating paginated content such as posts, moments, or archives.  
+It shows previous and next navigation buttons, optionally including page number information, and is designed for easy integration into various templates.
+
+## Usage
+
+Head Content (for including necessary scripts/styles)
+
+```html
+<th:block th:insert="~{components/pagination/template :: head}"></th:block>
+```
+
+Content Insertion (for displaying pagination controls)
+
+For UrlContextListResult:
+
+```html
+<th:block th:insert="~{components/pagination/template :: body(posts)}"></th:block>
+```
+
+For ListResult:
+
+```html
+<th:block th:insert="~{components/pagination/template :: body(posts = ${posts}, isListResult = true)}"></th:block>
+```
+
+## Parameters
+
+- `posts`: A pagination object containing pagination data with methods like `hasPrevious()`, `hasNext()` and properties including `prevUrl`, `nextUrl`, `totalPages`, and `page`.
+  - If `posts` does not have `prevUrl` or `nextUrl`, pass `isListResult=true`.

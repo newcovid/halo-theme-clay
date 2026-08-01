@@ -1,0 +1,20 @@
+# 仓库内一律以 LF 存储，检出时也用 LF。
+# 本主题跨平台分发（打包成 zip 上传到 Halo），CRLF 混入会让 .properties/.yaml 出问题，
+# 也会让与上游 halo-theme-higan-hz 的 diff 完全没法看。
+* text=auto eol=lf
+
+# 二进制资源不做换行处理
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+pnpm-lock.yaml linguist-generated
+.github/page_size_audit_results/*.json linguist-generated
+src/templates/components/fonts/assets/fonts/meslo-LG/result-*.css linguist-generated
+src/templates/public/assets/lib/** linguist-vendored

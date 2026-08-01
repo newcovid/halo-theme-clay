@@ -1,0 +1,20 @@
+<head th:remove="tag">
+  <script
+    id="mermaid-config"
+    type="application/json"
+    th:inline="javascript"
+  >
+    {
+      "contentScopeSelector": /*[[${theme.config?.global?.mermaid_content_scope_selector}]]*/ "main",
+      "extraSourceElementSelector": /*[[${theme.config?.global?.mermaid_extra_source_element_selector}]]*/ "",
+      "config": /*[[${theme.config?.global?.mermaid_config}]]*/ "{startOnLoad: false}"
+    }
+  </script>
+  <script
+    src="$mermaid-injection"
+    type="module"
+  ></script>
+</head>
+<!--/*-->
+<body th:remove="tag"></body>
+<!--*/-->

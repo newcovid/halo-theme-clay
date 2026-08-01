@@ -1,0 +1,44 @@
+@reference "../../_runtime/global/styles.css";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule, at-rule-prelude-no-invalid -- Tailwind CSS v4 @import prelude syntax after @reference */
+@import "tailwindcss/utilities.css" layer(utilities) source(".") prefix(tw);
+/* stylelint-disable at-rule-prelude-no-invalid -- Tailwind @source not uses custom prelude syntax */
+@source not "./README.md";
+@source not "./index.ts";
+/* stylelint-enable at-rule-prelude-no-invalid */
+
+/* moment-video-modal start */
+.color-base-200 {
+  background-color: var(--color-base-200);
+}
+
+.color-base-300 {
+  background-color: var(--color-base-300);
+}
+
+.color-base-content-80 {
+  color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+}
+
+.group:hover .group-hover-text-base-content {
+  color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+}
+
+.aspect-w-1 > * {
+  height: 100%;
+  inset: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.aspect-w-1 {
+  padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
+  position: relative;
+
+  --tw-aspect-w: 1;
+}
+
+.aspect-h-1 {
+  --tw-aspect-h: 1;
+}
+
+/* moment-video-modal end */

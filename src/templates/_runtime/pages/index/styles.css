@@ -63,10 +63,32 @@
 }
 /* stylelint-enable selector-id-pattern */
 
+/* 「与我联系」那一行。图标是 vertical-align: middle 的 inline-block，对齐点是
+   「基线 + 半个 x-height」——那是给小写西文的，不是文字的视觉中心。中文标签更明显：
+   CJK 字面下沿低于西文基线，17px 下实测图标盒心比文字墨迹中心低 1.89px（约 0.11em）。
+   改成 flex 按盒中心对齐，同「图标 + 数字」那处的做法。
+   顺带把间距交给 gap：原先只有折行空白塌缩出的约 4.7px，图标挤在一起；
+   而且那段空白落在 <a> 内部，把点击区往右拖长了约 0.3em——
+   给 <a> 也用 inline-flex，纯空白的匿名项会被丢弃。 */
 /* stylelint-disable-next-line selector-id-pattern -- id 沿用上游模板与脚本，不能改名 */
 #findMe {
+  align-items: center;
   color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
   margin-block: 2rem 0;
+
+  & > a {
+    align-items: center;
+    display: inline-flex;
+
+    /* 盒对齐之后还差约 1.1px：文字的墨迹中心并不在自己的行盒中心上
+       （CJK 实测 17px 下 ascent 15 / descent 2，明显上重）。同「图标 + 数字」那处补一样的量。 */
+    & > span {
+      transform: translateY(var(--clay-icon-optical-shift));
+    }
+  }
 }
 
 /* 文章列表标题（「近期发布」）是栏目标签，不是页面主张，理应排在 hero 之下。

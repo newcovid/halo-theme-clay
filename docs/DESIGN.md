@@ -617,6 +617,33 @@ v0.1.0 的主视觉只挂在 `.blog-description` 上：只开一言的站点完�
 覆盖按同样的就近原则已经生效（实测明暗两态都是 `#c0502b` / `#d97757`）；
 超链接卡片插件用的是中性 zinc 灰，非异色，暂不接管。
 
+## 14. v0.1.2：「与我联系」那一行
+
+用户报「与我联系」和后面的社交图标不平齐——属实，而且是**第三次**撞上同一个根因：
+iconify 图标是 `vertical-align: middle` 的 inline-block，对齐点是「基线 + 半个 x-height」，
+那是给小写西文的，不是文字的视觉中心。中文标签下更明显：CJK 字面下沿低于西文基线，
+17px 下实测**图标盒心比文字墨迹中心低 1.89px**（约 0.11em）。
+
+顺手量出第二个问题：图标之间**没有间距**。模板里的换行空白塌缩成约 4.7px 的一个空格，
+而且那段空白落在 `<a>` 内部——链接实际宽度 25.12px、图标只有 20.4px，
+多出来的 4.7px 是被拖长的点击区。
+
+改法与前两处一致：`#findMe` 用 flex + `align-items: center`，间距交给 `gap`；
+`<a>` 也用 `inline-flex`，纯空白的匿名项在 flex 里会被丢弃，链接宽度回到 20.4px。
+盒对齐后仍差 1.14px（墨迹中心不在行盒中心上），补 `--clay-icon-optical-shift`
+后降到 0.33px，落进测量噪声内。
+
+> 量这一处时又踩了一次 flex 的坑，与 §12 量 `<time>` 时同源：
+> 往 flex 容器里塞零高探针，探针会**成为它自己的 flex item** 被居中，
+> 量到的是行中心而不是文字基线，会得出 6.49px 的假偏差。
+> 正解是先在 `display: block` 下标定「Range 顶边 → 基线」的距离（实测 16.67px，
+> 与 `fontBoundingBoxAscent` 的 16 接近但不等），再拿这个关系去推 flex 下的基线。
+
+补正量对西文是否过头，按实际标签核过——五个语言包的 `page.index.findMeLeftText`
+（`Find me on` / `Encuéntrame en` / `与我联系` / `與我聯繫`）**都没有下伸部**，
+补后偏差分别是 CJK +0.33px、西文 −0.17px，都在噪声内。
+构造一个带下伸部的串（`Reach me typography`）会到 −1.67px，但现行语言包里不存在这种情况。
+
 ## 附录：调研方法
 
 §4 全部数值来自实际抓取：`curl https://claude.com/` 取原始 HTML（209KB）→ 提取 5 个 CSS chunk 引用 → 下载共 327KB → 正则提取自定义属性、`@font-face`、`border-radius`、`letter-spacing`、`cubic-bezier` 并按频次排序。

@@ -367,6 +367,7 @@
     & #footer-post {
       background: var(--color-base-100);
       border-radius: var(--clay-radius-2xl) var(--clay-radius-2xl) 0 0;
+
       /* 上游写死 #666，不跟配色走：暗色下它在 #141413 上是一条偏亮的线。 */
       border-top: 1px solid color-mix(in oklab, var(--color-base-content) 20%, transparent);
       bottom: 0;

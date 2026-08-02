@@ -880,6 +880,94 @@ UA 默认的 `1em`，主题从未声明。两者叠起来就偏松：
 
 体积：JS 0.28 KB + CSS 0.29 KB brotli。
 
+## 18. v0.2.3：配色预设的名实核对
+
+起因是一句提问：设置里的绿、蓝、灰粉是否确实有效，名称和视觉是否对应。
+逐档实测（改配置 → 拉页面 → 核对 `<html theme>` 属性、载入的样式表、样式表里的选择器与令牌值）
+之后发现三件事。
+
+### 一、名称是上游的，不是本主题的
+
+「绿」对应的取值是 `auto` / `light` / `dark`，即本主题的陶土色 `#c0502b` / `#d97757`——
+整套配色里没有一点绿。「灰粉」对应 `gray`，实测 `#5e5d59` / `#262624`，是暖中性灰，没有粉。
+两个名字都来自上游 higan-hz 的调色板，随代码一起 fork 过来。
+
+主「配色方案」那个下拉此前改过，但「深浅色模式切换按钮」下面的三个漏了。
+同一份枚举分散在四处、改一处不改其余，是这类漂移的固定成因——见下方第三点。
+
+### 二、12 个令牌里只有 7 个在用
+
+| 令牌 | 引用次数 |
+| --- | --- |
+| `--color-base-content` | 111 |
+| `--color-primary` | 39 |
+| `--color-accent` | 25 |
+| `--color-base-100 / 200 / 300` | 12 / 6 / 5 |
+| `--color-secondary` | 3 |
+| `--color-primary-content` | 0 |
+| `--color-accent-content` | 0 |
+| `--color-neutral` | 0 |
+| `--color-neutral-content` | 0 |
+| `--color-secondary-content` | 0 |
+
+而且这些令牌全部经由手写 CSS 的 `var()` 消费，没有一处走 Tailwind 的 `bg-primary` 之类工具类。
+五个零引用的令牌留着，是因为 `generate-theme-css.ts` 要求固定 12 项的形状。
+
+于是各预设的实际差异比令牌表看着小：
+
+- **蓝**只改 `primary` 与 `accent` 两项。背景、正文、卡片、分隔线与陶土档完全一致——
+  同一套暖灰外壳换了交互色。
+- **灰**改 6 项，其中两项零引用，实际生效四项：`primary`、`accent`、`base-content`、`secondary`。
+
+### 三、灰的 accent 与正文同色
+
+正文链接的样式是「常态下划线用 `--color-base-content`，悬停下划线用 `--color-accent`」
+（同时 1px 加粗到 2px）。而灰档的 `--color-accent` 是 `#262624`，
+与 `--color-base-content` 完全相同——悬停只剩粗细变化，没有颜色反馈。
+
+改用陶土 `#9f4224`（与浅色档的 accent 同值）。灰档因此不再是纯无彩色，
+而是「灰底 + 陶土悬停」：常态克制，反馈明确。对比度 6.08:1。
+
+### 补齐灰的深色与自动档
+
+灰此前只有浅色，因为根本没有 `theme-dark-gray.css`——同样是从上游继承的形状。
+后果是开了切换按钮的站点一旦选灰，深色档会渲染成浅色。
+
+新增 `theme-dark-gray`，并由生成器合成 `theme-auto-gray`：
+
+| 令牌 | 浅色灰 | 深色灰 |
+| --- | --- | --- |
+| `--color-base-100` | `#faf9f5` | `#141413` |
+| `--color-base-content` | `#262624` | `#e8e6dc` |
+| `--color-primary` | `#5e5d59`（6.26:1） | `#99958d`（6.18:1） |
+| `--color-accent` | `#9f4224` | `#de8b6f` |
+
+`primary` 的对比度对齐浅色灰的 6.26 与深蓝的 6.30，三档观感一致。
+
+取值名保持 `gray` 而不是改成 `light-gray`：上游就叫这个，改名会让已保存的配置失效。
+新增的两档按 blue 系命名为 `dark-gray` / `auto-gray`。
+
+### 顺带：把枚举从六处收到三处
+
+`base-layout` 里预设的分发原本按「切换按钮关 / 开」拆成两大块，各自重复一遍完整列表。
+加一个预设要动六个地方，删一个也是——「绿 / 灰粉」当年漏改是同一类原因。
+
+现在在 `<html>` 的 `th:with` 里先算出 `selected_schemes`：
+
+```text
+关掉切换按钮 → {color_schema}
+打开切换按钮 → {color_schema, theme_auto, theme_light, theme_dark}
+```
+
+下面统一用 `selected_schemes.contains('x')`，两大块合并成一份。
+明暗档声明从六处收到三处，令牌声明从十四处收到九处（每个预设各一行）。
+
+### 顺带：theme-color 是中性灰
+
+`meta-theme-color` 里写的是 `#fafafa` / `#212326`，上游留下的中性灰，
+而本主题的灰是暖的。手机浏览器把地址栏染成中性灰、和页面差半档，
+是最容易被忽略的一处不一致。改成 `--color-base-100` 的字面量 `#faf9f5` / `#141413`。
+
 ## 附录：调研方法
 
 §4 全部数值来自实际抓取：`curl https://claude.com/` 取原始 HTML（209KB）→ 提取 5 个 CSS chunk 引用 → 下载共 327KB → 正则提取自定义属性、`@font-face`、`border-radius`、`letter-spacing`、`cubic-bezier` 并按频次排序。

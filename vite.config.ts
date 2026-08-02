@@ -230,6 +230,14 @@ function getBuildInputs(extraEntries: BuildEntryMap = {}): BuildEntryMap {
       "src/templates/components/theme-light-blue/template.html",
     ),
     "components-theme-gray": resolve(import.meta.dirname, "src/templates/components/theme-gray/template.html"),
+    "components-theme-dark-gray": resolve(
+      import.meta.dirname,
+      "src/templates/components/theme-dark-gray/template.html",
+    ),
+    "components-theme-auto-gray": resolve(
+      import.meta.dirname,
+      "src/templates/components/theme-auto-gray/template.html",
+    ),
     "components-theme-auto": resolve(import.meta.dirname, "src/templates/components/theme-auto/template.html"),
     "components-theme-auto-blue": resolve(
       import.meta.dirname,

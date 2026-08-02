@@ -59,16 +59,21 @@ const themeDark = parseThemeTokens(resolve(themesDir, "theme-dark.css"));
 const themeLightBlue = parseThemeTokens(resolve(themesDir, "theme-light-blue.css"));
 const themeDarkBlue = parseThemeTokens(resolve(themesDir, "theme-dark-blue.css"));
 const themeGray = parseThemeTokens(resolve(themesDir, "theme-gray.css"));
+const themeDarkGray = parseThemeTokens(resolve(themesDir, "theme-dark-gray.css"));
+// 浅色灰的取值名是 `gray` 而不是 `light-gray`——上游就叫这个，改名会让已保存的配置失效。
+// 深色与自动两档是后补的，按 blue 系的命名走。
 const staticThemes = [
   ["theme-light.css", 'html[theme="light"]', themeLight],
   ["theme-dark.css", 'html[theme="dark"]', themeDark],
   ["theme-light-blue.css", 'html[theme="light-blue"]', themeLightBlue],
   ["theme-dark-blue.css", 'html[theme="dark-blue"]', themeDarkBlue],
   ["theme-gray.css", 'html[theme="gray"]', themeGray],
+  ["theme-dark-gray.css", 'html[theme="dark-gray"]', themeDarkGray],
 ] as const;
 const autoThemes = [
   ["theme-auto.css", 'html[theme="auto"]', themeLight, themeDark],
   ["theme-auto-blue.css", 'html[theme="auto-blue"]', themeLightBlue, themeDarkBlue],
+  ["theme-auto-gray.css", 'html[theme="auto-gray"]', themeGray, themeDarkGray],
 ] as const;
 
 mkdirSync(generatedDir, { recursive: true });

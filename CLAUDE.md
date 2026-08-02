@@ -137,6 +137,15 @@ each *setting* (`text-size-small`, `theme-dark`, `layout-max-width-style`, …) 
 It is how a 2500-line settings surface still ships ~70 KiB per page.
 **Adding a template requires registering it in `getBuildInputs()`** — it will not be discovered automatically.
 
+**Adding a colour preset touches six places**: the token source under `_runtime/styles/themes/`, the
+`staticThemes` / `autoThemes` tables in `generate-theme-css.ts`, a `components/theme-<name>/` trio, a
+`getBuildInputs()` entry, two `th:if` lines in `base-layout` (the `color-scheme-*` group and the
+`theme-*` group, both keyed off `selected_schemes`), and the `themeColorSchemeMap` in
+`theme-toggle-button`. Plus the option lists in **four** selects × two languages. The `selected_schemes`
+variable in `base-layout`'s root `th:with` exists to keep the template side at two lines instead of six —
+before it, the dispatch was duplicated across "toggle button off / on" branches, which is how upstream's
+stale preset labels survived so long.
+
 Four build modes (`default` / `dev` / `full` / `tiny`) select scope, precompression, minification, and manifest via `BUILD_MODE`.
 
 `src/templates/` is the Vite root; output goes to `templates/` (gitignored — never edit directly). `src/templates/_runtime/` holds shared TS/CSS, aliased as `@runtime`.
@@ -152,9 +161,18 @@ A 404 on `/moments` is expected until that page is created.
 
 Tokens live in two places, both derived from `docs/DESIGN.md`:
 
-- `src/templates/_runtime/styles/themes/*.css` — five presets, each a single `:root` block of exactly 12
-  semantic tokens, parsed by `src/scripts/generate-theme-css.ts` (which requires that exact shape and
-  alphabetical property order). `primary` is the resting interactive color, `accent` the brighter hover step.
+- `src/templates/_runtime/styles/themes/*.css` — six sources (light / dark / light-blue / dark-blue / gray /
+  dark-gray), each a single `:root` block of exactly 12 semantic tokens, parsed by
+  `src/scripts/generate-theme-css.ts` (which requires that exact shape and alphabetical property order).
+  The three `auto-*` presets are *synthesised* from a light + dark pair, not authored. `primary` is the
+  resting interactive color, `accent` the hover step.
+  **Only 7 of the 12 tokens are referenced anywhere** — `primary-content`, `accent-content`, `neutral`,
+  `neutral-content` and `secondary-content` have zero uses; they exist to satisfy the generator's fixed shape.
+  Nothing consumes these through Tailwind utilities either, only hand-written `var()`. So a preset's real
+  reach is smaller than its token diff suggests: the blue presets change exactly `primary` + `accent`.
+  Body links are `--color-base-content` with an underline that turns `--color-accent` on hover — if a preset
+  sets those two to the same value the hover loses its colour cue (that was the gray preset's bug).
+  The light gray's value is `gray`, not `light-gray`: renaming it would invalidate saved configs.
 - `src/templates/_runtime/global/fonts/font-family.css` — three font roles: `--clay-font-sans`,
   `--clay-font-serif`, `--clay-font-mono`. `--clay-font-family` aliases sans and is what `body` uses.
 

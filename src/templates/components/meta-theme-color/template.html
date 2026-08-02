@@ -5,16 +5,20 @@
   <!--/*
     Keep two media-qualified tags so Halo 2.25+ preserves native
     light/dark theme-color candidates before runtime scripts execute.
+
+    取值是 --color-base-100 的字面量。上游留下的 #fafafa / #212326 是中性灰，
+    而本主题的灰是暖的（黄偏移）——手机浏览器把地址栏染成中性灰，和页面差半档，
+    是最容易被忽略的一处不一致。
   */-->
   <!--/*/
     <meta
       name="theme-color"
-      content="#fafafa"
+      content="#faf9f5"
       media="(prefers-color-scheme: light)"
     >
     <meta
       name="theme-color"
-      content="#212326"
+      content="#141413"
       media="(prefers-color-scheme: dark)"
     >
   /*/-->

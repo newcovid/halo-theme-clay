@@ -579,6 +579,10 @@ spec:
               value: "dark-blue"
             - label: "浅色 · 灰"
               value: "gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
+            - label: "跟随系统 · 灰"
+              value: "auto-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -767,6 +771,10 @@ spec:
               value: "dark-blue"
             - label: "浅色 · 灰"
               value: "gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
+            - label: "跟随系统 · 灰"
+              value: "auto-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -799,6 +807,10 @@ spec:
               value: "dark-blue"
             - label: "浅色 · 灰"
               value: "gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
+            - label: "跟随系统 · 灰"
+              value: "auto-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -831,6 +843,10 @@ spec:
               value: "dark-blue"
             - label: "浅色 · 灰"
               value: "gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
+            - label: "跟随系统 · 灰"
+              value: "auto-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number

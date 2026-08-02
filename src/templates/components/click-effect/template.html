@@ -1,0 +1,27 @@
+<head
+  th:remove="tag"
+  th:fragment="head"
+>
+  <script
+    src="index.ts"
+    type="module"
+  ></script>
+</head>
+<body
+  th:remove="tag"
+  th:fragment="body"
+>
+  <!--/*
+    这个 div 同时是特效的容器和配置的载体。
+    模块脚本读不到 document.currentScript（模块执行时它恒为 null），
+    所以右键开关不能像其它组件那样挂在 <script> 的 data-* 上。
+
+    用 `?: true` 而不是直接取值：Halo 只对**从未保存过**的配置项套用默认值，
+    老站点升上来这一项是 null，写成真值判断就成了默认关闭。
+  */-->
+  <div
+    id="clay-click-effect"
+    aria-hidden="true"
+    th:data-secondary="${theme.config?.styles?.is_click_effect_secondary_enable ?: true}"
+  ></div>
+</body>

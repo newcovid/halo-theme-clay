@@ -2,12 +2,19 @@
 
 ## Description
 
-This component outputs the custom cursor style declarations, including the fallback pointer style when custom cursor files are disabled.
+Overrides the `--clay-cursor-*` variables with the cursor files the site owner uploaded, and
+loads the shared selector table those variables feed.
+
+Only the variables whose attachment field is non-empty are emitted; the rest stay undefined and
+the selector table falls back to the system keyword — same behaviour as before the built-in set
+existed.
+
+Used when the `styles.cursor_style` setting is `custom`.
 
 ## Usage
 
-Body Content
+Head Content
 
 ```html
-<th:block th:insert="~{components/custom-cursor-style/template :: body}"></th:block>
+<th:block th:insert="~{components/custom-cursor-style/template :: head}"></th:block>
 ```

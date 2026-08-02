@@ -1,0 +1,92 @@
+/*
+  左键落一个圆、右键落一个圆角方——正是站点标识「方圆」拆开的两半。
+  两者共用一条时长和主题唯一的那条缓动 --clay-ease，靠形状而不是颜色区分，
+  所以在任何配色方案下都还分得清是哪一键。
+
+  只画一圈发丝线，不填色：主题的层级来自字号与字重，不来自阴影和色块，
+  点击反馈没有理由比正文更响。
+
+  尺寸走 width / height 而不是 transform: scale()——缩放会把边框一起放大，
+  轮廓越扩越粗，方向正好和「扩散淡出」相反。translate(-50%, -50%) 的百分比
+  是相对元素自身尺寸算的，尺寸每帧变它也每帧重算，圆心自动钉在点击点上。
+*/
+
+#clay-click-effect {
+  --clay-click-duration: 420ms;
+  height: 0;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  width: 0;
+  z-index: 2147483000;
+}
+
+#clay-click-effect > i {
+  border: 1.5px solid var(--color-primary);
+  box-sizing: border-box;
+  display: block;
+  position: fixed;
+  transform: translate(-50%, -50%);
+}
+
+#clay-click-effect > .primary {
+  animation: clay-click-primary var(--clay-click-duration) var(--clay-ease) forwards;
+  border-radius: 50%;
+}
+
+#clay-click-effect > .secondary {
+  animation: clay-click-secondary var(--clay-click-duration) var(--clay-ease) forwards;
+  border-radius: 26%;
+}
+
+/*
+  中间那一档只写 opacity。缓动是 ease-out，尺寸前快后慢，大半个时长都停在最大尺寸上；
+  透明度若跟着线性走，能看清的窗口只剩最初一百多毫秒。补一档把它按住，
+  尺寸仍在 from → to 之间整段插值，曲线不会因此出现折点。
+*/
+
+@keyframes clay-click-primary {
+  0% {
+    height: 8px;
+    opacity: 100%;
+    width: 8px;
+  }
+
+  55% {
+    opacity: 62%;
+  }
+
+  100% {
+    height: 34px;
+    opacity: 0%;
+    width: 34px;
+  }
+}
+
+@keyframes clay-click-secondary {
+  0% {
+    height: 8px;
+    opacity: 100%;
+    rotate: -18deg;
+    width: 8px;
+  }
+
+  55% {
+    opacity: 62%;
+  }
+
+  100% {
+    height: 28px;
+    opacity: 0%;
+    rotate: 0deg;
+    width: 28px;
+  }
+}
+
+/* 脚本里也拦了一道，这里是给「浏览时才改系统设置」的情况兜底 */
+@media (prefers-reduced-motion: reduce) {
+  #clay-click-effect {
+    display: none;
+  }
+}

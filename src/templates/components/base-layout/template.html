@@ -182,19 +182,39 @@
     >
     </th:block>
     <!--/* footer-sidebar head end */-->
-    <!--/* Custom Cursor Declarations start */-->
-    <th:block
-      th:if="${theme.config?.styles?.is_custom_cursor_files_enable}"
-      th:insert="~{components/custom-cursor-style/template :: body}"
-    ></th:block>
-    <th:block th:unless="${theme.config?.styles?.is_custom_cursor_files_enable}">
-      <style>
-        .v-cursor-pointer {
-          cursor: pointer;
-        }
-      </style>
+    <!--/* Cursor Declarations start */-->
+    <!--/*
+      三档光标：clay 用内置光标组，custom 用站长上传的文件，system 什么都不改。
+      前两档共用 _runtime/global/cursors/selectors.css 那份选择器表，
+      区别只在谁来定义 --clay-cursor-* 变量。
+
+      用 `?: 'clay'` 而不是直接取值：Halo 只对**从未保存过**的配置项套用默认值，
+      老站点升上来这一项是 null，直接比较就三档都不中，等于默认关掉了内置光标。
+    */-->
+    <th:block th:with="cursor_style = ${theme.config?.styles?.cursor_style ?: 'clay'}">
+      <th:block
+        th:if="${cursor_style == 'clay'}"
+        th:insert="~{components/cursor-clay-style/template :: head}"
+      ></th:block>
+      <th:block
+        th:if="${cursor_style == 'custom'}"
+        th:insert="~{components/custom-cursor-style/template :: head}"
+      ></th:block>
+      <th:block th:if="${cursor_style == 'system'}">
+        <style>
+          .v-cursor-pointer {
+            cursor: pointer;
+          }
+        </style>
+      </th:block>
     </th:block>
-    <!--/* Custom Cursor Declarations end */-->
+    <!--/* Cursor Declarations end */-->
+    <!--/* Click Effect head start */-->
+    <th:block
+      th:if="${theme.config?.styles?.is_click_effect_enable ?: true}"
+      th:insert="~{components/click-effect/template :: head}"
+    ></th:block>
+    <!--/* Click Effect head end */-->
     <!--/* Generate the allCustomColorSchema array to set the data-color-scheme attribute */-->
     <th:block
       th:if="${color_schema == 'custom'
@@ -1165,5 +1185,11 @@
       th:if="${theme.config?.global?.is_instant_page_enable}"
       th:insert="~{components/instantpage-injection/template :: head}"
     ></th:block>
+    <!--/* Click Effect body start */-->
+    <th:block
+      th:if="${theme.config?.styles?.is_click_effect_enable ?: true}"
+      th:insert="~{components/click-effect/template :: body}"
+    ></th:block>
+    <!--/* Click Effect body end */-->
   </body>
 </html>

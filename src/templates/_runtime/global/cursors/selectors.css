@@ -1,0 +1,167 @@
+/*
+  光标选择器表。三种光标模式（内置 Clay / 自定义上传）共用这一份，
+  它只负责「哪类元素用哪种光标」，具体贴哪张图由 --clay-cursor-* 变量决定：
+  - 内置模式由 src/generated/clay-cursors.css 定义变量
+  - 自定义模式由 components/custom-cursor-style 内联覆写同名变量
+
+  每处都写了关键字兜底（`var(--x, keyword)`）。自定义模式下用户只传了一部分光标时，
+  没传的那些变量是未定义的——自定义属性缺省会让整条 cursor 变成
+  invalid at computed-value time 进而回落到继承值，兜底关键字把它挡在系统光标上。
+
+  相对上游选择器表的三处修正：
+  1. 移除 main / section / aside。上游把 text 指针铺到这三个版面容器上，
+     等于整个内容区（包括大片空白）都显示 I 型指针。
+  2. 链接内部改为跟随链接显示手型（`a *`），而不是上游的 `a p` 显示 I 型。
+     浏览器原生行为就是链接内文字显示手型，上游那条反而是特例。
+  3. help 指针从 `[title]` 收窄到 `abbr[title]` 与 `[role="tooltip"]`。
+     `[title]`(0,1,0) 会压过 `button`(0,0,1)，于是主题自己那颗带 title 的
+     深浅色切换按钮显示的是问号而不是手型。
+*/
+
+:root {
+  cursor: var(--clay-cursor-default, auto);
+}
+
+/* 文本 */
+address,
+blockquote,
+code,
+dd,
+dt,
+figcaption,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+kbd,
+li,
+p,
+pre,
+samp,
+td,
+textarea,
+th,
+var,
+input:not([type]),
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="url"],
+[contenteditable="true"],
+[role="searchbox"],
+[role="textbox"] {
+  cursor: var(--clay-cursor-text, text);
+}
+
+[style*="writing-mode: vertical"] {
+  cursor: var(--clay-cursor-vertical-text, vertical-text);
+}
+
+/* 可点击。排在文本之后，同特异度下靠源码顺序取胜 */
+a,
+a *,
+area,
+button,
+button *,
+label,
+label *,
+option,
+select,
+summary,
+summary *,
+video,
+audio,
+video::-webkit-media-controls,
+audio::-webkit-media-controls,
+img[role="button"],
+input[type="button"],
+input[type="checkbox"],
+input[type="color"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="file"],
+input[type="image"],
+input[type="month"],
+input[type="radio"],
+input[type="reset"],
+input[type="submit"],
+input[type="time"],
+input[type="week"],
+[role="button"],
+[role="button"] *,
+[role="checkbox"],
+[role="combobox"],
+[role="link"],
+[role="link"] *,
+[role="menuitem"],
+[role="menuitemcheckbox"],
+[role="menuitemradio"],
+[role="option"],
+[role="radio"],
+[role="switch"],
+[role="tab"],
+[role="treeitem"],
+*::-webkit-calendar-picker-indicator,
+*::-webkit-clear-button,
+*::-webkit-file-upload-button,
+*::-webkit-scrollbar-thumb,
+*::-webkit-search-cancel-button,
+.v-cursor-pointer,
+.v-cursor-pointer * {
+  cursor: var(--clay-cursor-pointer, pointer);
+}
+
+/* 提示 */
+abbr[title],
+[role="tooltip"] {
+  cursor: var(--clay-cursor-help, help);
+}
+
+/* 网格 */
+[role="grid"],
+[role="gridcell"] {
+  cursor: var(--clay-cursor-cell, cell);
+}
+
+canvas {
+  cursor: var(--clay-cursor-crosshair, crosshair);
+}
+
+/* 拖拽 */
+[draggable="true"],
+input[type="range"]::-webkit-slider-thumb {
+  cursor: var(--clay-cursor-grab, grab);
+}
+
+[draggable="true"]:active,
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: var(--clay-cursor-grabbing, grabbing);
+}
+
+input[type="range"],
+[role="slider"] {
+  cursor: var(--clay-cursor-ew-resize, ew-resize);
+}
+
+/*
+  单独成条：`:-moz-native-anonymous` 在非 Firefox 里是无效选择器，
+  而一条规则里只要有一个选择器无效整条就会被丢弃。混进上面的分组会把整组带走。
+*/
+.mozGrabber:-moz-native-anonymous {
+  cursor: var(--clay-cursor-move, move);
+}
+
+/* 状态。排在最后，压过可点击 */
+[aria-busy="true"] {
+  cursor: var(--clay-cursor-wait, wait);
+}
+
+:disabled,
+[aria-disabled="true"] {
+  cursor: var(--clay-cursor-not-allowed, not-allowed);
+}

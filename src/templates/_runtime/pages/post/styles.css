@@ -265,7 +265,7 @@
       & a {
         background: none;
         color: inherit;
-        cursor: pointer;
+        cursor: var(--clay-cursor-pointer, pointer);
         text-decoration: none;
 
         &:hover {

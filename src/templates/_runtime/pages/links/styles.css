@@ -24,7 +24,7 @@
   & .fir-clickcircle {
     border: 0.1rem solid color-mix(in oklab, var(--color-base-content) 80%, transparent);
     border-radius: 999px;
-    cursor: pointer;
+    cursor: var(--clay-cursor-pointer, pointer);
     height: 3.75rem;
     width: 3.75rem;
   }

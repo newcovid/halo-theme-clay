@@ -188,7 +188,7 @@
 
       &[title] {
         border-bottom: 1px dotted;
-        cursor: help;
+        cursor: var(--clay-cursor-help, help);
 
         @media (hover: none), print {
           /* 样式将应用于以下任一情况：
@@ -258,7 +258,7 @@
     /* 自定义 hide, spolier 标签默认模糊 */
     & hide,
     & spoiler {
-      cursor: pointer;
+      cursor: var(--clay-cursor-pointer, pointer);
       filter: blur(0.3125rem);
       transition: filter 0.2s var(--clay-ease);
 

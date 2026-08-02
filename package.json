@@ -23,7 +23,7 @@
     "lint:style": "stylelint --fix '**/*.{css,html}' --ignore-path .gitignore",
     "lint:type-check:tsgo": "tsgo -b",
     "migrate:oxlint": "pnpm dlx @oxlint/migrate --type-aware --with-nursery && pnpm oxfmt -- --write .oxlintrc.json",
-    "prebuild": "node --experimental-strip-types src/scripts/generate-theme-css.ts && tw-patch extract --css src/templates/_runtime/global/styles.css",
+    "prebuild": "node --experimental-strip-types src/scripts/generate-theme-css.ts && node --experimental-strip-types src/scripts/generate-cursor-css.ts && tw-patch extract --css src/templates/_runtime/global/styles.css",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky && tw-patch install",
     "prewatch:vite": "pnpm run prebuild",

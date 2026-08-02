@@ -114,6 +114,19 @@ In particular, list templates get `ListedPostVo`, which has **no** `content`
 field; SpEL's `?.` guards null but not a missing property, so `post.content?.content` throws EL1008E and
 truncates the response mid-stream. Use `postFinder.content(post.metadata.name)` in list context.
 
+**`cursor: var(--x)` resolves on the element that declares `cursor`, not on the one that redefines `--x`.**
+Custom properties substitute at computed-value time on the element the *declaration* matched; descendants
+inherit the already-substituted value. So the dark-mode cursor override has to redefine `--clay-cursor-*` on
+`html` — the same element `:root { cursor: … }` matches. Redefining the variable on a wrapper further down
+changes nothing for anything that merely inherits the root cursor (elements with their own `cursor`
+declaration, like `a`, *do* pick it up — which makes the bug look like "only some cursors are broken").
+
+**Custom property values are not validated at parse time, so `image-set` cannot be feature-degraded by
+declaring the property twice.** The later declaration always wins, even in a browser that cannot parse it,
+and `cursor` then falls to invalid-at-computed-value-time → inherit. `generate-cursor-css.ts` therefore emits
+the whole retina layer inside `@supports`. The same trap applies to any future `var()`-delivered value that
+needs a capability fallback.
+
 ## Architecture
 
 Vite 8 + Tailwind v4 + Alpine.js, bundling with rolldown. Three custom Vite plugins in `plugins/`: Thymeleaf-safe HTML minification, Tailwind class-name mangling, and generated-CSS comment cleanup.
@@ -170,6 +183,16 @@ overlapping `unicode-range`, which is what routes ordinary text to the single co
 silently makes every page pull rare slices. See `docs/DESIGN.md` §15 for the measurements.
 
 CJK sans stays on system fonts — every target OS ships a usable one, so there is no equivalent gap to close.
+
+**The cursor set is generated, and its selector table is shared with the upload path.**
+`src/scripts/generate-cursor-css.ts` (run from `prebuild`, output gitignored under `src/generated/`) holds the
+13 shapes once and expands them across light/dark × 1x/2x into `--clay-cursor-*` declarations. Which element
+gets which cursor lives separately, in `_runtime/global/cursors/selectors.css`, so the `custom` mode only has
+to override the same variables — it does not restate the selectors. Edit shapes in the script, never the
+generated CSS. Every selector carries a keyword fallback (`var(--clay-cursor-text, text)`) because in `custom`
+mode most variables are undefined.
+Colours are per light/dark only, not per preset: the cursor is the theme's signature, and the blue/gray
+presets are variants of the same theme. 57 KB raw compresses to 1.5 KB brotli — the data URIs are near-identical.
 
 ## Configuration policy
 

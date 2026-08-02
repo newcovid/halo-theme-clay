@@ -115,6 +115,11 @@ function getBuildInputs(extraEntries: BuildEntryMap = {}): BuildEntryMap {
       import.meta.dirname,
       "src/templates/components/custom-cursor-style/template.html",
     ),
+    "components-cursor-clay-style": resolve(
+      import.meta.dirname,
+      "src/templates/components/cursor-clay-style/template.html",
+    ),
+    "components-click-effect": resolve(import.meta.dirname, "src/templates/components/click-effect/template.html"),
     "components-header-logo-style": resolve(
       import.meta.dirname,
       "src/templates/components/header-logo-style/template.html",

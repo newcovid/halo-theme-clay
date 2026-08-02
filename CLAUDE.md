@@ -198,7 +198,12 @@ It is split into one 410 KB common tier plus 58 rare-character slices, each with
 typical page fetches exactly one file and a Latin-only site fetches none. **Rare slices are declared *before*
 the common tier on purpose**: CSS font matching gives the *last* declared `@font-face` priority for an
 overlapping `unicode-range`, which is what routes ordinary text to the single common file. Reordering them
-silently makes every page pull rare slices. See `docs/DESIGN.md` §15 for the measurements.
+silently makes every page pull rare slices. The rare windows tile contiguously so the character table has no
+gaps, but each window is **clipped to the CJK blocks**: `unicode-range` states what a slice *contains*, and a
+slice that claims codepoints it has no glyphs for is still downloaded in full before the browser falls through
+to the next family. Emitting a window as one cross-block span made the last two slices claim the Private Use
+Area (where icon fonts live) and all of Hangul — a single icon glyph pulled 52.9 KB of Chinese.
+See `docs/DESIGN.md` §15 for the measurements.
 
 CJK sans stays on system fonts — every target OS ships a usable one, so there is no equivalent gap to close.
 

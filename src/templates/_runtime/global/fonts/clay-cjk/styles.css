@@ -15,7 +15,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("./rare-00.woff2") format("woff2");
-  unicode-range: U+2E80-4E26;
+  unicode-range: U+2E80-2EFF, U+2F00-2FDF, U+2FF0-2FFF, U+3000-303F, U+3040-30FF, U+3100-312F, U+3190-319F, U+31A0-31BF, U+31C0-31EF, U+3200-32FF, U+3300-33FF, U+3400-4DBF, U+4E00-4E26;
 }
 
 @font-face {
@@ -519,7 +519,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("./rare-56.woff2") format("woff2");
-  unicode-range: U+9E58-F9CA;
+  unicode-range: U+9E58-9FFF, U+F900-F9CA;
 }
 
 @font-face {
@@ -528,7 +528,7 @@
   font-style: normal;
   font-weight: 400;
   src: url("./rare-57.woff2") format("woff2");
-  unicode-range: U+F9CB-FFEF;
+  unicode-range: U+F9CB-FAFF, U+FE10-FE1F, U+FE30-FE4F, U+FF00-FFEF;
 }
 
 @font-face {

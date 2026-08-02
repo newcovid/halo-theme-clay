@@ -175,6 +175,16 @@ def ranges(codepoints: list[int]) -> str:
     return ", ".join(out)
 
 
+def clipped(lower: int, upper: int) -> str:
+    """把窗口 [lower, upper] 裁进 BLOCKS，落在块外的部分丢掉。"""
+    out: list[str] = []
+    for a, b in BLOCKS:
+        lo, hi = max(lower, a), min(upper, b)
+        if lo <= hi:
+            out.append(f"U+{lo:X}" if lo == hi else f"U+{lo:X}-{hi:X}")
+    return ", ".join(out)
+
+
 def face(src_name: str, unicode_range: str) -> str:
     return (
         "@font-face {\n"
@@ -206,6 +216,12 @@ def main() -> None:
     # 生僻档先声明。窗口按码位连续铺满，相邻窗口首尾相接不留缝：
     # 缝里的码位（字表之外的生僻字）没有任何 @font-face 认领，会直接回落到系统字体，
     # 那样中文标题里会混进一个黑体字。让窗口连续，至少能保证「要么有字，要么整体回落」。
+    #
+    # 铺满只在 BLOCKS 之内成立。窗口若原样写成一个跨块的大区间，就会把块与块之间的
+    # 非中日韩码位一并认领——谚文音节、代理区、私用区（图标字体的码位就在这里）、
+    # 阿拉伯与拉丁表现形式，全落在最后两个窗口里。本档对这些码位一个字形都没有，
+    # 认领它们只会让浏览器先下一片几十 KB、发现没有字形、再回落到本来就会用的字体。
+    # unicode-range 描述的是「这一片有什么」，不是「这一片负责什么」——所以逐块裁剪。
     chunks = [rare[i : i + RARE_CHUNK] for i in range(0, len(rare), RARE_CHUNK)]
     lower = BLOCKS[0][0]
     for index, chunk in enumerate(chunks):
@@ -213,7 +229,7 @@ def main() -> None:
         upper = BLOCKS[-1][1] if index == len(chunks) - 1 else chunk[-1]
         size = write_subset(src, chunk, OUT / name)
         total += size
-        faces.append(face(name, f"U+{lower:X}-{upper:X}"))
+        faces.append(face(name, clipped(lower, upper)))
         lower = upper + 1
 
     # 常用档后声明，精确 unicode-range——重叠处后声明者优先，

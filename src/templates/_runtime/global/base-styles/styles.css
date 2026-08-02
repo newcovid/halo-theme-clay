@@ -12,6 +12,7 @@
        ascent 15 / descent 2，上重得多）；带下伸部的成段正文不适用，那种情况墨迹中心
        本来就更靠近盒中心。与图标自身尺寸无关，故用 em 跟随字号。 */
     --clay-icon-optical-shift: -0.04em;
+    --clay-paragraph-gap: 0.65em;
     --clay-radius-2xl: 32px;
     --clay-radius-lg: 16px;
     --clay-radius-md: 12px;
@@ -113,6 +114,7 @@
     & .h6 {
       margin-block: 2.5rem 0.75rem;
     }
+
 
     & h1,
     & .h1,
@@ -242,7 +244,14 @@
       }
     }
 
+    /* 标题的边距上面全都调过，段落却一直用着浏览器默认的 1em——从来没被设计过。
+       两者叠在一起就偏松了：行高 1.725 在 17px 上是 29.3px，行内墨迹间距 12.3px，
+       而跨段是 6.2 + 17 + 6.2 = 29.3px，正好 2.38 倍。段落之间比行之间空两倍多，
+       读起来每段都像单独一块，连不成篇。
+       收到 0.65em 后跨段 23.4px、1.90 倍，落在正文常见的 1.8～2.0 区间里。
+       用 em 不用 rem：小字号语境（脚注、评论）里的段距应当同比例收窄。 */
     & p {
+      margin-block: var(--clay-paragraph-gap);
       text-align: start;
     }
 

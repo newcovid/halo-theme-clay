@@ -22,11 +22,11 @@
     body .h1 {
       /*[# th:if="${theme.config?.styles?.heading_margin_top_multiplier != 1
                     and theme.config?.styles?.heading_margin_top_multiplier != '1'}"]*/
-      margin-top: calc(3rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
+      margin-top: calc(4.5rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
       /*[/]*/
       /*[# th:if="${theme.config?.styles?.heading_margin_bottom_multiplier != 1
                     and theme.config?.styles?.heading_margin_bottom_multiplier != '1'}"]*/
-      margin-bottom: calc(1rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
+      margin-bottom: calc(1.25rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
       /*[/]*/
     }
 
@@ -34,11 +34,11 @@
     body .h2 {
       /*[# th:if="${theme.config?.styles?.heading_margin_top_multiplier != 1
                     and theme.config?.styles?.heading_margin_top_multiplier != '1'}"]*/
-      margin-top: calc(2rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
+      margin-top: calc(4rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
       /*[/]*/
       /*[# th:if="${theme.config?.styles?.heading_margin_bottom_multiplier != 1
                     and theme.config?.styles?.heading_margin_bottom_multiplier != '1'}"]*/
-      margin-bottom: calc(0.5rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
+      margin-bottom: calc(1rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
       /*[/]*/
     }
 
@@ -52,11 +52,11 @@
     body .h6 {
       /*[# th:if="${theme.config?.styles?.heading_margin_top_multiplier != 1
                     and theme.config?.styles?.heading_margin_top_multiplier != '1'}"]*/
-      margin-top: calc(0.9rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
+      margin-top: calc(2.5rem * /*[(${theme.config?.styles?.heading_margin_top_multiplier ?: 1})]*/ 1);
       /*[/]*/
       /*[# th:if="${theme.config?.styles?.heading_margin_bottom_multiplier != 1
                     and theme.config?.styles?.heading_margin_bottom_multiplier != '1'}"]*/
-      margin-bottom: calc(0.5rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
+      margin-bottom: calc(0.75rem * /*[(${theme.config?.styles?.heading_margin_bottom_multiplier ?: 1})]*/ 1);
       /*[/]*/
     }
     /*[/]*/
@@ -68,11 +68,11 @@
     body p {
       /*[# th:if="${theme.config?.styles?.paragraph_margin_top_multiplier != 1
                     and theme.config?.styles?.paragraph_margin_top_multiplier != '1'}"]*/
-      margin-block-start: calc(1em * /*[(${theme.config?.styles?.paragraph_margin_top_multiplier ?: 1})]*/ 1);
+      margin-block-start: calc(var(--clay-paragraph-gap) * /*[(${theme.config?.styles?.paragraph_margin_top_multiplier ?: 1})]*/ 1);
       /*[/]*/
       /*[# th:if="${theme.config?.styles?.paragraph_margin_bottom_multiplier != 1
                     and theme.config?.styles?.paragraph_margin_bottom_multiplier != '1'}"]*/
-      margin-block-end: calc(1em * /*[(${theme.config?.styles?.paragraph_margin_bottom_multiplier ?: 1})]*/ 1);
+      margin-block-end: calc(var(--clay-paragraph-gap) * /*[(${theme.config?.styles?.paragraph_margin_bottom_multiplier ?: 1})]*/ 1);
       /*[/]*/
     }
     /*[/]*/

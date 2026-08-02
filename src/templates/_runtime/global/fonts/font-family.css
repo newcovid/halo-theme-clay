@@ -9,9 +9,12 @@
     "Microsoft YaHei", helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
   /* 拉丁字面在前（自托管的只有拉丁子集，CJK 会逐字回落到后面的中文衬线）。
-     中文段按装机率排：思源宋体的三个常见族名 → macOS 自带 → Windows 兜底。
-     我们不自托管 CJK 字体——常用字子集也要 1～2 MB，相对整站 ~40 KB 的体量不成比例。 */
+     Clay Serif SC 是自托管的中文衬线（Noto Serif SC 子集，分档按需加载，
+     见 components/font-cjk-serif）——排在系统字体之前，好让所有访客的中文标题
+     落在同一套字面上，而不是各自设备里恰好装了什么。
+     后面的系统族名是它没启用或加载失败时的兜底：
+     思源宋体的三个常见族名 → macOS 自带 → Windows 兜底。 */
   --clay-font-serif:
-    "Source Serif 4", "Iowan Old Style", "Palatino Linotype", georgia, "Source Han Serif SC", "Noto Serif CJK SC",
-    "Noto Serif SC", "Songti SC", "STSong", simsun, serif;
+    "Source Serif 4", "Clay Serif SC", "Iowan Old Style", "Palatino Linotype", georgia, "Source Han Serif SC",
+    "Noto Serif CJK SC", "Noto Serif SC", "Songti SC", "STSong", simsun, serif;
 }

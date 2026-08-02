@@ -17,7 +17,7 @@ spec:
   issues: "https://github.com/newcovid/halo-theme-clay/issues"
   settingName: halo-theme-clay-setting
   configMapName: halo-theme-clay-configmap
-  version: 0.1.2
+  version: 0.2.0
   requires: ">=2.25.0"
   license:
     - name: "MIT"

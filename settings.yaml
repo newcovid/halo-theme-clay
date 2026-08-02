@@ -141,6 +141,12 @@ spec:
       label: 总体样式
       formSchema:
         - $formkit: switch
+          name: is_cjk_serif_webfont_enable
+          key: is_cjk_serif_webfont_enable
+          label: 内置中文衬线字体
+          value: true
+          help: 主题的展示级标题与引用使用衬线字体，但中文衬线是否存在取决于访客设备——Windows、macOS、iOS 自带，安卓不带，中文标题在安卓上会显示成黑体。启用后由主题自行提供（思源宋体子集，SIL OFL 1.1），所有访客字面一致。字体按用字分档加载，含中文的页面首次访问约 410 KB，之后走缓存；纯外文站点不会产生任何下载。关闭则回退到访客设备自带的中文衬线。
+        - $formkit: switch
           name: is_custom_font_files_enable
           key: is_custom_font_files_enable
           label: 启用自定义字体文件

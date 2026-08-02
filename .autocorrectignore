@@ -1,2 +1,7 @@
 /templates/assets/
 pnpm-lock.yaml
+
+# 字表是数据不是文案。autocorrect 会在中西文之间补空格、把全角符号换成半角，
+# 落到这个文件上就是把字频顺序改乱、还凭空插进空格字符。
+scripts/fonts/
+src/templates/_runtime/global/fonts/clay-cjk/

@@ -141,6 +141,12 @@ spec:
       label: Style
       formSchema:
         - $formkit: switch
+          name: is_cjk_serif_webfont_enable
+          key: is_cjk_serif_webfont_enable
+          label: Bundled CJK Serif Font
+          value: true
+          help: Display headings and blockquotes use a serif face, but whether a Chinese serif exists at all depends on the visitor's device — Windows, macOS and iOS ship one, Android does not, so Chinese headings fall back to sans there. Enable this to have the theme supply one (a Noto Serif SC subset, SIL OFL 1.1) so every visitor sees the same letterforms. The font is tiered by character usage, so a page containing Chinese costs roughly 410 KB on first visit and is cached afterwards; sites without CJK text download nothing. Disable to fall back to whatever serif the visitor's device provides.
+        - $formkit: switch
           name: is_custom_font_files_enable
           key: is_custom_font_files_enable
           label: Enable Custom Font Files

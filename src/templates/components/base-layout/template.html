@@ -150,6 +150,20 @@
       <!--/* Custom Font font-family Declarations end */-->
     </th:block>
     <!--/* Custom Font Declarations end */-->
+    <!--/* CJK Serif Webfont Declarations start */-->
+    <!--/*
+      自托管中文衬线。放在自定义字体之后声明，保证用户上传的字体仍然压得住它。
+      分档的 @font-face 只是声明，unicode-range 决定实际请求哪一片——
+      纯拉丁站点一个字节都不会下载。
+
+      用 `?: true` 而不是直接取值：Halo 只对**从未保存过**的配置项套用默认值，
+      老站点升上来这一项是 null，写成真值判断就成了默认关闭。
+    */-->
+    <th:block
+      th:if="${theme.config?.styles?.is_cjk_serif_webfont_enable ?: true}"
+      th:insert="~{components/font-cjk-serif/template :: head}"
+    ></th:block>
+    <!--/* CJK Serif Webfont Declarations end */-->
     <!--/* WebKit Detection start */-->
     <script>
       (function (userAgent) {

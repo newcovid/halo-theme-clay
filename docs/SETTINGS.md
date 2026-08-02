@@ -5,12 +5,12 @@
 
 <!-- markdownlint-disable -->
 
-共 18 个分组、309 个配置项。
+共 18 个分组、310 个配置项。
 
 | 分组 | 标签 | 配置项数 |
 | --- | --- | --- |
 | `global` | 全局 | 19 |
-| `styles` | 总体样式 | 125 |
+| `styles` | 总体样式 | 126 |
 | `index_styles` | 首页样式 | 47 |
 | `post_styles` | 文章页样式 | 31 |
 | `categories_page_styles` | 分类集合页样式 | 6 |
@@ -60,6 +60,7 @@
 
 | 配置项 | 类型 | 标签 | 默认值 | 说明 |
 | --- | --- | --- | --- | --- |
+| `is_cjk_serif_webfont_enable` | 开关 | 内置中文衬线字体 | 开 | 主题的展示级标题与引用使用衬线字体，但中文衬线是否存在取决于访客设备——Windows、macOS、iOS 自带，安卓不带，中文标题在安卓上会显示成黑体。启用后由主题自行提供（思源宋体子集，SIL OFL 1.1），所有访客字面一致。… |
 | `is_custom_font_files_enable` | 开关 | 启用自定义字体文件 | 关 | 如启用此项，将使用上传的自定义字体文件替换默认字体。 |
 | `custom_font_configs` | 对象数组 | 自定义字体文件 | — | （仅当 `$is_custom_font_files_enable === true` 时显示） |
 | └ `font_style` | 下拉 | 字体样式 | `normal` | https://developer.mozilla.org/zh-CN/docs/Web/CSS/Reference/At-rules/@font-face/font-style |
@@ -200,7 +201,7 @@
 | `is_random_sentence_show` | 开关 | 自定义随机显示一句话 | 关 |  |
 | `random_sentence_list` | 对象数组 | 自定义句子内容 | — | （仅当 `$is_random_sentence_show === true` 时显示） |
 | └ `sentence` | 文本 | 一句话 | — |  |
-| `is_resume_show` | 开关 | 个人简介/公告栏 | 关 |  |
+| `is_resume_show` | 开关 | 个人简介/公告栏 | 开 |  |
 | `resume` | 代码 | 个人简介/公告栏内容 | — | 支持 HTML 代码块（仅当 `$is_resume_show === true` 时显示） |
 | `is_i18n_resume_show` | 开关 | 多语言个人简介/公告栏支持 | 关 |  |
 | `i18n_resume` | 对象数组 | 自定义多语言公告栏内容 | — | （仅当 `$is_i18n_resume_show === true` 时显示） |
@@ -266,9 +267,9 @@
 | `toc_max_width` | 文本 | 侧边目录最大宽度 | `20rem` | 控制文章右侧边栏目录的最大宽度。允许全部 CSS 长度单位，如：20rem, 300px, 30vw。（仅当 `$is_custom_toc_max_width === true` 时显示） |
 | `is_dividing_line_at_the_end_of_post_show` | 开关 | 文章末尾的的分隔线 | 开 |  |
 | `is_post_upvote_button_show` | 开关 | 文章底部的点赞按钮 | 关 |  |
-| `post_upvote_button_width` | 文本 | 点赞按钮宽度 | `1rem` | 设置点赞按钮的宽度。允许使用所有 CSS 长度单位，如：5px, 1rem。（仅当 `$is_post_upvote_button_show === true` 时显示） |
-| `post_upvote_button_height` | 文本 | 点赞按钮高度 | `1rem` | 设置点赞按钮的高度。允许使用所有 CSS 长度单位，如：5px, 1rem。（仅当 `$is_post_upvote_button_show === true` 时显示） |
-| `is_show_post_upvote_count` | 开关 | 展示文章获赞数 | 关 | （仅当 `$is_post_upvote_button_show === true` 时显示） |
+| `post_upvote_button_width` | 文本 | 点赞图标宽度 | `1em` | 设置心形图标的宽度（按钮本身是内容宽度的胶囊）。允许使用所有 CSS 长度单位；1em 表示跟随按钮字号。（仅当 `$is_post_upvote_button_show === true` 时显示） |
+| `post_upvote_button_height` | 文本 | 点赞图标高度 | `1em` | 设置心形图标的高度（按钮本身是内容宽度的胶囊）。允许使用所有 CSS 长度单位；1em 表示跟随按钮字号。（仅当 `$is_post_upvote_button_show === true` 时显示） |
+| `is_show_post_upvote_count` | 开关 | 展示文章获赞数 | 开 | （仅当 `$is_post_upvote_button_show === true` 时显示） |
 | `post_upvote_button_position` | 下拉 | 点赞按钮位置 | `center` | （仅当 `$is_post_upvote_button_show === true` 时显示） |
 | `is_post_recommended_articles_show` | 开关 | 文章底部的推荐文章 | 关 | 开启后将在文章底部显示推荐文章列表。 |
 | `post_recommended_articles_count` | 数字 | 推荐文章数量 | `3` | 设置文章底部显示的推荐文章数量（仅当 `$is_post_recommended_articles_show === true` 时显示） |

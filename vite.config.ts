@@ -102,6 +102,7 @@ function getBuildInputs(extraEntries: BuildEntryMap = {}): BuildEntryMap {
       import.meta.dirname,
       "src/templates/components/custom-font-face-style/template.html",
     ),
+    "components-font-cjk-serif": resolve(import.meta.dirname, "src/templates/components/font-cjk-serif/template.html"),
     "components-custom-color-schema-style": resolve(
       import.meta.dirname,
       "src/templates/components/custom-color-schema-style/template.html",

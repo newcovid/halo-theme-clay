@@ -27,9 +27,13 @@
                 target="_blank"
                 rel="noopener"
               >
-                <span class="tw:absolute tw:-inset-x-4 tw:-inset-y-2 tw:z-20 tw:sm:-inset-x-6 tw:sm:rounded-2xl"></span>
+                <!--/* 与文章列表同一套：蒙层铺满卡片让任意位置可点，标题文字抬到它之上，
+                       规则线才只认标题自己的悬停。见 styles.css。 */-->
                 <span
-                  class="tw:relative tw:z-10"
+                  class="friend-link-overlay tw:absolute tw:-inset-x-4 tw:-inset-y-2 tw:z-20 tw:sm:-inset-x-6 tw:sm:rounded-2xl"
+                ></span>
+                <span
+                  class="friend-title-text tw:relative tw:z-30"
                   th:text="${spec.title}"
                   >文章标题替换位</span
                 >
@@ -125,10 +129,19 @@
                        or (#strings.equals(pageTemplateName, 'friends')
                            and theme.config?.friends_page_styles?.is_show_friend_permalink_text)}"
               aria-hidden="true"
-              class="color-primary tw:relative tw:z-10 tw:mt-4 tw:flex tw:items-center tw:text-sm tw:font-medium"
-              th:text="#{page.friends.postListPermalinkText}"
+              class="friend-more tw:mt-4 tw:flex tw:items-center tw:text-sm tw:font-medium"
             >
-              阅读全文
+              <!--/* 与文章列表同一处理：这行是标题链接的重复品，抬到蒙层之上才收得到自己的悬停，
+                     抬上去之后必须是真链接，否则卡片中间多出一块死区。 */-->
+              <a
+                class="friend-more-link"
+                tabindex="-1"
+                th:href="@{${spec.postLink}}"
+                target="_blank"
+                rel="noopener"
+                th:text="#{page.friends.postListPermalinkText}"
+                >阅读全文</a
+              >
             </div>
           </div>
           <time

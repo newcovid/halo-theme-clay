@@ -24,12 +24,54 @@
   transition-timing-function: var(--clay-ease);
 }
 
-.color-primary {
-  color: var(--color-primary);
-}
-
 .color-base-content-80 {
   color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+}
+
+/* 与文章列表同一处结构问题：铺满卡片的蒙层是 <a> 的后代，a:hover 在整张卡片上都为真；
+   而 <a> 的行内背景又会被 z-index: 0 的卡片悬停底色盖住。规则线因此移到标题文字自身，
+   那个 span 抬到 z-30，在蒙层与底色之上。详见 list-post-summary/styles.css。 */
+.friends-list-summary h2 a {
+  background-image: none;
+}
+
+.friend-title-text {
+  background-image: var(--clay-rule-solid);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 var(--clay-rule-thick);
+  transition: background-size var(--clay-duration) var(--clay-ease);
+
+  &:hover {
+    background-size: 100% var(--clay-rule-thick);
+  }
+}
+
+.friends-list-summary a:focus-visible .friend-title-text {
+  background-size: 100% var(--clay-rule-thick);
+}
+
+/* 「阅读全文」与文章列表统一：静止是弱化的次级线索，悬停落在字上才转向主色。
+   此前它常驻主色、且没有任何悬停反馈——一行不可点的字染着交互色，
+   方向正好和它想说的相反。字号仍随本卡片的 text-sm，那是这张卡自己的尺度。 */
+.friend-more {
+  color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+  font-weight: 400;
+}
+
+.friend-more-link {
+  background-image: none;
+  color: inherit;
+
+  /* 抬到蒙层之上，悬停才落在字上而不是整张卡片 */
+  position: relative;
+  text-decoration: none;
+  transition: color var(--clay-duration) var(--clay-ease);
+  z-index: 30;
+
+  &:hover {
+    color: var(--color-primary);
+  }
 }
 
 .friend-author {

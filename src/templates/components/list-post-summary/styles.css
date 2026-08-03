@@ -24,10 +24,6 @@
   transition-timing-function: var(--clay-ease);
 }
 
-.color-primary {
-  color: var(--color-primary);
-}
-
 .color-base-content-80 {
   color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
 }
@@ -48,7 +44,7 @@
   & .group > h2,
   & .group > p,
   & .group > img,
-  & .group > div[aria-hidden="true"] {
+  & .group > .post-more {
     flex-basis: 100%;
   }
 
@@ -73,16 +69,62 @@
     max-width: var(--text-width-body);
   }
 
+  /* 卡片整体是一个点击区，实现方式是 <a> 里塞一层铺满卡片的透明蒙层。
+     代价有两处，都得在这里还回来：
+
+     一、蒙层是 <a> 的后代，指针落在卡片任何位置 a:hover 都为真。挂在 <a> 上的规则线
+         于是会在指针停在摘要、日期甚至空白处时自己充满——那不是这条线要说的事。
+     二、<a> 不是定位元素，它的背景画在行内层；卡片悬停底色是 z-index: 0 的定位元素，
+         按绘制次序压在行内层之上，而且不透明。线充满之后随即被盖掉，
+         看着就是「充能完成后又消失」。
+
+     所以规则线改挂到标题文字自身：那个 span 被抬到 z-30，既在蒙层之上（悬停收得住），
+     也在底色之上（画得出来）。 */
+  & h2 a {
+    background-image: none;
+  }
+
+  & .post-title-text {
+    background-image: var(--clay-rule-solid);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 var(--clay-rule-thick);
+    transition: background-size var(--clay-duration) var(--clay-ease);
+
+    &:hover {
+      background-size: 100% var(--clay-rule-thick);
+    }
+  }
+
+  /* 键盘走到标题时给同一条线：焦点落在 <a> 上，线画在它里面的文字上 */
+  & a:focus-visible .post-title-text {
+    background-size: 100% var(--clay-rule-thick);
+  }
+
   /* 「阅读全文」不做成强调色块，弱化为次级线索 */
-  & .group > div[aria-hidden="true"] {
+  & .post-more {
     color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
     font-size: var(--text-xs);
     font-weight: 400;
     margin-block: 0.75rem 0;
   }
 
-  & .group:hover > div[aria-hidden="true"] {
-    color: var(--color-primary);
+  & .post-more-link {
+    /* 正文链接那套常驻断线在这里是噪音：这行字是标题链接的重复品，
+       又紧挨着摘要，颜色一档已经够说明它可点。 */
+    background-image: none;
+    color: inherit;
+
+    /* 同样抬到蒙层之上，悬停才落在字上而不是整张卡片；
+       它自己是链接，所以抬上去也不影响点开文章。 */
+    position: relative;
+    text-decoration: none;
+    transition: color var(--clay-duration) var(--clay-ease);
+    z-index: 30;
+
+    &:hover {
+      color: var(--color-primary);
+    }
   }
 }
 

@@ -144,6 +144,22 @@ and `cursor` then falls to invalid-at-computed-value-time → inherit. `generate
 the whole retina layer inside `@supports`. The same trap applies to any future `var()`-delivered value that
 needs a capability fallback.
 
+**The whole-card link in the two summary lists breaks `:hover` scoping and background painting at once.**
+`list-post-summary` and `list-friends-summary` make the entire card clickable by putting an absolutely
+positioned, card-sized `<span>` *inside* the title's `<a>`. Two consequences, both silent:
+
+- The overlay is a descendant, so **`a:hover` is true anywhere in the card** — a rule hung on the `<a>`
+  fills itself while the pointer sits on the excerpt, the date, or blank space.
+- The `<a>` is not positioned, so its background paints in the inline layer; the hover wash
+  (`.post-card-hover`, `position: absolute; z-index: 0`) is a *positioned* box and by CSS 2.1 Appendix E
+  paints **above** it — and it is opaque. The rule fills, then is covered. The symptom reads as
+  "charges up, then vanishes", which sounds like an animation bug and is not one.
+
+Anything that must respond to its own hover has to sit above the overlay (`z-30`), and anything raised
+above it stops being covered by the card-wide click target — so it needs to be a link in its own right, or
+it becomes a dead patch in the middle of a clickable card. That is why `.post-more-link` is a real `<a>`
+(`aria-hidden` on the wrapper, `tabindex="-1"` on the link) rather than a styled `<div>`.
+
 ## Architecture
 
 Vite 8 + Tailwind v4 + Alpine.js, bundling with rolldown. Three custom Vite plugins in `plugins/`: Thymeleaf-safe HTML minification, Tailwind class-name mangling, and generated-CSS comment cleanup.

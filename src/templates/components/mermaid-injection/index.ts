@@ -17,7 +17,7 @@ type MermaidRuntimeConfig = {
 
 const MERMAID_CONFIG_HINT =
   "Please provide a Mermaid config as a JS object literal string such as { startOnLoad: false }.";
-const MERMAID_LOG_PREFIX = "[Higan Haozi][mermaid-injection]";
+const MERMAID_LOG_PREFIX = "[Clay][mermaid-injection]";
 let mermaidRenderId = 0;
 
 function isMermaidConfig(value: unknown): value is MermaidConfig {
@@ -279,10 +279,24 @@ async function renderMermaid(
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     const errorElement = document.querySelector<HTMLElement>(`#${renderId}`);
-    const errorMarkup = errorElement?.outerHTML ?? "";
 
-    sourceElement.innerHTML = `${errorMarkup}<br>
-<div style="text-align: left"><small>${errorMessage.replace(/\n/g, "<br>")}</small></div>`;
+    // mermaid 的解析错误会把出错的那几行图源原样回显在 message 里。
+    // 把它拼进 innerHTML，等于把作者写在图里的标记还原成 DOM——
+    // 一个解析失败的代码块就足以构成存储型 XSS，而写代码块并不需要多高的权限。
+    // 所以错误文本一律走 textContent，换行交给 white-space，不再替换成 <br>。
+    const message = document.createElement("small");
+    message.textContent = errorMessage;
+    message.style.whiteSpace = "pre-wrap";
+
+    const box = document.createElement("div");
+    box.style.textAlign = "left";
+    box.append(message);
+
+    sourceElement.replaceChildren();
+    if (errorElement) {
+      sourceElement.append(errorElement.cloneNode(true), document.createElement("br"));
+    }
+    sourceElement.append(box);
     errorElement?.parentElement?.remove();
   }
 }

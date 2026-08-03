@@ -253,9 +253,12 @@
           const executeCustomCode = (code, element) => {
             if (code) {
               try {
-                eval(code.replace(/this/g, "element"));
+                // <!--/* 原来是把代码里的 "this" 文本替换成 "element" 再 eval—— */-->
+                // <!--/* 这是文本替换，"thistle"、字符串字面量里的 this 一样会被改坏。 */-->
+                // <!--/* 用 call 绑定 this，不必改写源码。 */-->
+                new Function(code).call(element);
               } catch (error) {
-                console.error("[Higan Haozi][photos] Error executing custom code:", error);
+                console.error("[Clay][photos] Error executing custom code:", error);
               }
             }
           };

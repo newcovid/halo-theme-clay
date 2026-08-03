@@ -355,6 +355,16 @@ export default defineConfig((): UserConfig => {
             ? "src/templates/_runtime/global/fonts/font-family.tiny.css"
             : "src/templates/_runtime/global/fonts/font-family.css",
         ),
+        // tiny 的字体栈只写系统族名，一个 webfont 都不引（Source Serif 4 也不在里面）。
+        // 自托管的 CJK 衬线必须跟着一起去掉：族名没人引用，@font-face 却照样声明，
+        // 结果是 tiny 构建产出 2.8 MB 的 woff2 分片和 24 KB 的 @font-face 表，
+        // 一个字形也匹配不上——最小资产集反而付了全额字体成本。
+        "$font-cjk-serif": resolve(
+          import.meta.dirname,
+          useTinyFont
+            ? "src/templates/components/font-cjk-serif/index.tiny.ts"
+            : "src/templates/components/font-cjk-serif/index.ts",
+        ),
         $instantpage: resolve(
           import.meta.dirname,
           useTinyInjection
@@ -411,7 +421,11 @@ export default defineConfig((): UserConfig => {
       },
     },
     build: {
-      target: ["chrome111", "edge111", "firefox114", "safari16.4"],
+      // Firefox 的下限是 121 而不是 114：主题在六个文件里依赖 :has()，
+      // 而 Firefox 到 121 才支持它。选择器列表不容错——只要列表里有一个 :has()
+      // 解析不了，整条规则都会被丢掉，首页的衬线主视觉、空简介的折叠都会失效。
+      // 声明 114 只是让支持范围看起来更宽，实际早就不成立了；ESR 115 也已停止维护。
+      target: ["chrome111", "edge111", "firefox121", "safari16.4"],
       outDir: resolve(import.meta.dirname, "templates"),
       emptyOutDir: true,
       manifest: buildManifest,

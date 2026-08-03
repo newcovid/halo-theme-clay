@@ -97,17 +97,47 @@
         updateThemeIcon(theme);
       }
 
+      // <!--/* `typeof Storage` 判断不了存储可用性：禁用存储的环境里 Storage 接口照样有定义， */-->
+      // <!--/* 真正抛异常的是访问 window.localStorage 本身——被拦截三方 Cookie 的跨站 iframe、 */-->
+      // <!--/* Safari 的存储隔离都会抛 SecurityError。而这段脚本在 <head> 里同步执行，一旦抛出去， */-->
+      // <!--/* 后面两个 DOMContentLoaded 注册都不会执行：图标停在 display:none、点击也没绑定， */-->
+      // <!--/* 按钮变成一个看不见又点不动的东西。所以三处访问一律 try/catch。 */-->
+      const PREF_KEY = "pref-theme";
+
+      function readPref() {
+        try {
+          return localStorage.getItem(PREF_KEY);
+        } catch {
+          // <!--/* 读不到就按浏览器偏好走，静默降级 */-->
+          return null;
+        }
+      }
+
+      function writePref(value) {
+        try {
+          localStorage.setItem(PREF_KEY, value);
+        } catch (error) {
+          console.log("[Clay][theme-toggle-button] Web storage is unavailable; the choice will not persist.", error);
+        }
+      }
+
+      function clearPref() {
+        try {
+          localStorage.removeItem(PREF_KEY);
+        } catch {
+          // <!--/* 存储不可用时本来就没有要清的东西 */-->
+        }
+      }
+
       function applyTheme(theme) {
-        if (is_save_color_scheme_settings_to_browser === true && typeof Storage !== "undefined") {
-          localStorage.setItem("pref-theme", themeColorSchemeMap[theme]);
-        } else if (typeof Storage === "undefined") {
-          console.log("[Higan Haozi][base-layout] Sorry, your browser does not support web storage...");
+        if (is_save_color_scheme_settings_to_browser === true) {
+          writePref(themeColorSchemeMap[theme]);
         }
         applyThemeNoSave(theme);
       }
 
       function getPreferredTheme() {
-        const storedTheme = localStorage.getItem("pref-theme");
+        const storedTheme = readPref();
         if (storedTheme) {
           return storedTheme;
         }
@@ -117,8 +147,8 @@
         return "light";
       }
 
-      if (is_save_color_scheme_settings_to_browser !== true && typeof Storage !== "undefined") {
-        localStorage.removeItem("pref-theme");
+      if (is_save_color_scheme_settings_to_browser !== true) {
+        clearPref();
       }
       const is_auto_switch_color_scheme_based_on_browser_settings =
         dataset?.autoSwitchColorSchemeBasedOnBrowserSettings === "true";

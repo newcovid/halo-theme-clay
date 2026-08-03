@@ -18,7 +18,7 @@
       th:title="${photo.spec.displayName}"
       th:alt="${photo.spec.description}"
       loading="lazy"
-      th:style="${'display: none; ' + extraStyle + 'width: 100%; height: auto; transition: box-shadow 0.1s ease-in, box-shadow 0.3s ease-out; border-radius:' + theme.config?.photos_styles?.img_border_radius + ';'}"
+      th:style="${'display: none; ' + extraStyle + 'width: 100%; height: auto; transition: box-shadow 0.3s cubic-bezier(.4, 0, .2, 1); border-radius:' + theme.config?.photos_styles?.img_border_radius + ';'}"
       th:data-img-onmouseover="${theme.config?.photos_styles?.img_onmouseover}"
       th:data-img-onmouseout="${theme.config?.photos_styles?.img_onmouseout}"
     />

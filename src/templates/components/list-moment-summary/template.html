@@ -223,8 +223,8 @@
                           or (#strings.equals(pageTemplateName, 'moments')
                               and theme.config?.moments_styles?.is_show_post_estimated_reading_time)}"
                 th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                        ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html)
-                                        : #strings.length(moment.spec.content?.html) / 2 }"
+                                        ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html ?: '')
+                                        : #strings.length(moment.spec.content?.html ?: '') / 2 }"
                 th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
               >
                 <span class="tw:iconify tw:mdi--clock-outline"></span>
@@ -247,8 +247,8 @@
                           or (#strings.equals(pageTemplateName, 'moments') 
                               and theme.config?.moments_styles?.is_show_post_word_count)}"
                 th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                        ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html)
-                                        : #strings.length(moment.spec.content?.html) / 2 }"
+                                        ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html ?: '')
+                                        : #strings.length(moment.spec.content?.html ?: '') / 2 }"
                 th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
               >
                 <span class="tw:iconify tw:mdi--format-text"></span>

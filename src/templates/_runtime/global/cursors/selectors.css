@@ -165,3 +165,12 @@ input[type="range"],
 [aria-disabled="true"] {
   cursor: var(--clay-cursor-not-allowed, not-allowed);
 }
+
+/* 「排在最后」只压得过同权重的。上面那条是 (0,1,0)，而前面的
+   input[type="submit"] / input[type="text"] 之类带了属性选择器，是 (0,1,1)，
+   权重更高——于是禁用的 <button> 正常、禁用的 <input> 仍然是手型或工字光标，
+   看上去像是时灵时不灵。这里用同样带属性的写法 (0,2,1) 把它压回来。 */
+input[type]:disabled,
+input[type][aria-disabled="true"] {
+  cursor: var(--clay-cursor-not-allowed, not-allowed);
+}

@@ -20,7 +20,12 @@ search-modal {
   /* 层级靠字号与字重，不靠投影 */
   --halo-search-widget-kbd-shadow: none;
   --halo-search-widget-modal-bg-color: var(--color-base-100);
-  --halo-search-widget-modal-layer-color: color-mix(in oklab, var(--color-base-content) 35%, transparent);
+
+  /* 遮罩必须两种配色下都是压暗的，不能跟着前景色翻转：
+     深色方案里 base-content 是近白，35% 混出来是一层白纱，
+     打开搜索反而把背后的页面提亮，深色面板浮在发白的底上。
+     固定用主题的近黑——浅色方案下 base-content 本来就是这个值，观感不变。 */
+  --halo-search-widget-modal-layer-color: color-mix(in oklab, #141413 35%, transparent);
   --halo-search-widget-muted-color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
   --halo-search-widget-primary-color: var(--color-primary);
 }

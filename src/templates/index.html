@@ -273,7 +273,7 @@
     <th:block th:if="${theme.config?.index_styles?.list_layout == 'post-list-summary'}">
       <h1 th:if="${theme.config?.index_styles?.is_show_index_post_list_title}">
         <a
-          th:href="@{/archives}"
+          th:href="@{{prefix}(prefix = ${site.routes.archivesUri})}"
           th:text="#{page.index.postListTitle}"
           >首页文章列表标题替换位</a
         >
@@ -285,7 +285,7 @@
     <th:block th:if="${theme.config?.index_styles?.list_layout == 'simple-post-list'}">
       <h1 th:if="${theme.config?.index_styles?.is_show_index_post_list_title}">
         <a
-          th:href="@{/archives}"
+          th:href="@{{prefix}(prefix = ${site.routes.archivesUri})}"
           th:text="#{page.index.postListTitle}"
           >首页文章列表标题替换位</a
         >

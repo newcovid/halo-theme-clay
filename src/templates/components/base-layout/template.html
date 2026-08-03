@@ -139,16 +139,13 @@
         或只覆盖了部分字符时，落到的是系统默认而非主题设计的字面，中文族名也一并丢失。
         引用变量后兜底自动与 font-family.css 保持一致。
 
-        Safari（.webkit，已排除 Chrome 的 webkit/537.36）原本是 `custom !important` 且不带任何兜底，
-        custom 一旦不可用该变量就无法解析。上游为何要给 Safari 单独一条已不可考，
-        这里保留这条规则的存在，只把兜底补上。
+        上游还给 Safari（.webkit）单独写过一条 `custom !important`、不带兜底的规则。
+        补上兜底之后它和上面那条逐字相同，成了纯粹的空转：`.webkit` 再无第二个使用者，
+        而给它打标记的 UA 嗅探脚本是在自定义字体开关之外的，无论开没开都要在每个页面跑一遍。
+        既然规则本身已经没有区别，标记和嗅探一并去掉。
       */-->
       <style>
         :root {
-          --clay-font-family: custom, var(--clay-font-sans) !important;
-        }
-
-        :root.webkit {
           --clay-font-family: custom, var(--clay-font-sans) !important;
         }
       </style>
@@ -169,15 +166,6 @@
       th:insert="~{components/font-cjk-serif/template :: head}"
     ></th:block>
     <!--/* CJK Serif Webfont Declarations end */-->
-    <!--/* WebKit Detection start */-->
-    <script>
-      (function (userAgent) {
-        if (!/(apple)?webkit\/537\.36/i.test(userAgent) && /(apple)?webkit/i.test(userAgent)) {
-          document.documentElement.classList.add("webkit");
-        }
-      })(navigator.userAgent);
-    </script>
-    <!--/* WebKit Detection end */-->
     <!--/* footer-sidebar head start */-->
     <th:block
       th:insert="~{components/footer-sidebar/template :: head(
@@ -196,7 +184,16 @@
       用 `?: 'clay'` 而不是直接取值：Halo 只对**从未保存过**的配置项套用默认值，
       老站点升上来这一项是 null，直接比较就三档都不中，等于默认关掉了内置光标。
     */-->
-    <th:block th:with="cursor_style = ${theme.config?.styles?.cursor_style ?: 'clay'}">
+    <!--/*
+      cursor_style 取代了 v0.1.0 的开关 is_custom_cursor_files_enable。老站点升上来时
+      新键是 null，只写 `?: 'clay'` 的话，那些已经传好整套光标文件、并且把老开关打开了的站点
+      会静默回到内置光标——文件还在，却一个都不生效。所以 null 时回读老键。
+      老开关关着的站点不迁移：内置光标组本来就是要默认打开的，那是新版的预期行为，不是丢配置。
+    */-->
+    <th:block
+      th:with="cursor_style = ${theme.config?.styles?.cursor_style
+                                ?: (theme.config?.styles?.is_custom_cursor_files_enable ? 'custom' : 'clay')}"
+    >
       <th:block
         th:if="${cursor_style == 'clay'}"
         th:insert="~{components/cursor-clay-style/template :: head}"
@@ -828,6 +825,11 @@
             if (resume.style.display === "none") {
               resume.style.display = ""; // <!--/* 清空 display 样式 */-->
             }
+            // <!--/* 显示出来之后它就是「那条简介」，不再是被藏起来的兜底副本。 */-->
+            // <!--/* 首页的主视觉链把 .default-resume 整个排除在外（因为它按约定是隐藏的）， */-->
+            // <!--/* 不摘掉这个类，兜底简介会以弱化正文的样子出现，而随机句/一言反倒被提为主视觉， */-->
+            // <!--/* 把「简介 > 随机句 > 一言」的优先级倒过来。 */-->
+            resume.classList.remove("default-resume");
           });
         } else {
           // <!--/* targetElementList.length !== 0 的情况下，移除所有 class="default-resume" 的元素 */-->

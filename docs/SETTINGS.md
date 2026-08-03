@@ -5,12 +5,12 @@
 
 <!-- markdownlint-disable -->
 
-共 18 个分组、310 个配置项。
+共 18 个分组、312 个配置项。
 
 | 分组 | 标签 | 配置项数 |
 | --- | --- | --- |
 | `global` | 全局 | 19 |
-| `styles` | 总体样式 | 126 |
+| `styles` | 总体样式 | 128 |
 | `index_styles` | 首页样式 | 47 |
 | `post_styles` | 文章页样式 | 31 |
 | `categories_page_styles` | 分类集合页样式 | 6 |
@@ -71,43 +71,45 @@
 | └ `font_unicode_range` | 文本 | 字体 Unicode 范围 | — | 指定字体所支持的 Unicode 范围，例如：U+000-5FF（拉丁文和基本拉丁文补充）、U+4E00-9FFF（汉字）等。留空则表示支持所有 Unicode 字符。相关文档：https://developer.mozilla.or… |
 | └ `font_file` | 附件 | 选择字体文件 | — | 上传 .woff2/.woff/.ttf/.otf/.eot/.ttc/.otc/.sfnt 字体文件，主题会优先使用这些文件替换默认字体 |
 | `custom_font_name` | 文本 | 自定义字体名称 | — | 请填写上传字体文件内部声明的“字体全名 (nameID=4)”或“PostScript 名 (nameID=6)”，如：My Custom Font Regular 或 MyCustomFont-Regular；如果不知道也可以置空。… |
-| `is_custom_cursor_files_enable` | 开关 | 启用自定义光标文件 | 关 | 如启用此项，将使用上传的自定义光标替换默认光标组。 |
-| `is_show_unused_cursor_files` | 开关 | 展示未使用的光标文件配置项 | 关 | 一般无需启用此项。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_auto` | 附件 | 选择自动指针文件（CSS 声明为 auto） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换自动指针。描述：根据上下文自动选择合适的指针，可设定为默认指针。（仅当 `$is_custom_cursor_files_enable === true &… |
-| `custom_cursor_files_default` | 附件 | 选择默认指针文件（CSS 声明为 default） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换默认指针。描述：默认指针，通常是箭头。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_context_menu` | 附件 | 选择菜单指针文件（CSS 声明为 context-menu） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换菜单指针。描述：指针下有可用内容目录。（仅当 `$is_custom_cursor_files_enable === true && $is_show_un… |
-| `custom_cursor_files_help` | 附件 | 选择帮助指针文件（CSS 声明为 help） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换帮助指针。描述：指示帮助。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_pointer` | 附件 | 选择指针文件（CSS 声明为 pointer） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换指针。描述：悬浮于连接上时，通常为手。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_progress` | 附件 | 选择进度指针文件（CSS 声明为 progress） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换进度指针。描述：程序后台繁忙，用户仍可交互（与 wait 相反）。（仅当 `$is_custom_cursor_files_enable === true … |
-| `custom_cursor_files_wait` | 附件 | 选择等待指针文件（CSS 声明为 wait） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换等待指针。描述：程序繁忙，用户不可交互（与 progress 相反）。图标一般为沙漏或者表。（仅当 `$is_custom_cursor_files_ena… |
-| `custom_cursor_files_cell` | 附件 | 选择单元格指针文件（CSS 声明为 cell） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换单元格指针。描述：指示单元格可被选中。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_crosshair` | 附件 | 选择十字指针文件（CSS 声明为 crosshair） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换十字指针。描述：交叉指针，通常指示位图中的框选。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_text` | 附件 | 选择文本指针文件（CSS 声明为 text） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换文本指针。描述：指示文字可被选中。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_vertical_text` | 附件 | 选择垂直文本指针文件（CSS 声明为 vertical-text） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换垂直文本指针。描述：指示垂直文字可被选中。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_alias` | 附件 | 选择别名指针文件（CSS 声明为 alias） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换别名指针。描述：复制或快捷方式将要被创建。（仅当 `$is_custom_cursor_files_enable === true && $is_show_… |
-| `custom_cursor_files_copy` | 附件 | 选择复制指针文件（CSS 声明为 copy） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换复制指针。描述：指示可复制。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_move` | 附件 | 选择移动指针文件（CSS 声明为 move） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换移动指针。描述：被悬浮的物体可被移动。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_no_drop` | 附件 | 选择禁止拖放指针文件（CSS 声明为 no-drop） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换禁止拖放指针。描述：当前位置不能扔下。（仅当 `$is_custom_cursor_files_enable === true && $is_show_un… |
-| `custom_cursor_files_not_allowed` | 附件 | 选择不允许指针文件（CSS 声明为 not-allowed） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换不允许指针。描述：不能执行。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_grab` | 附件 | 选择抓取指针文件（CSS 声明为 grab） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换抓取指针。描述：可抓取。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_grabbing` | 附件 | 选择抓取中指针文件（CSS 声明为 grabbing） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换抓取中指针。描述：抓取中。（仅当 `$is_custom_cursor_files_enable === true` 时显示） |
-| `custom_cursor_files_all_scroll` | 附件 | 选择全滚动指针文件（CSS 声明为 all-scroll） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换全滚动指针。描述：元素可任意方向滚动（平移）。（仅当 `$is_custom_cursor_files_enable === true && $is_sho… |
-| `custom_cursor_files_col_resize` | 附件 | 选择列调整指针文件（CSS 声明为 col-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换列调整指针。描述：元素可被重设宽度。通常被渲染为中间有一条竖线分割的左右两个箭头。（仅当 `$is_custom_cursor_files_enable =… |
-| `custom_cursor_files_row_resize` | 附件 | 选择行调整指针文件（CSS 声明为 row-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换行调整指针。描述：元素可被重设高度。通常被渲染为中间有一条横线分割的上下两个箭头。（仅当 `$is_custom_cursor_files_enable =… |
-| `custom_cursor_files_n_resize` | 附件 | 选择北调整指针文件（CSS 声明为 n-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enable… |
-| `custom_cursor_files_e_resize` | 附件 | 选择东调整指针文件（CSS 声明为 e-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enable… |
-| `custom_cursor_files_s_resize` | 附件 | 选择南调整指针文件（CSS 声明为 s-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enable… |
-| `custom_cursor_files_w_resize` | 附件 | 选择西调整指针文件（CSS 声明为 w-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enable… |
-| `custom_cursor_files_ne_resize` | 附件 | 选择东北调整指针文件（CSS 声明为 ne-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enabl… |
-| `custom_cursor_files_nw_resize` | 附件 | 选择西北调整指针文件（CSS 声明为 nw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enabl… |
-| `custom_cursor_files_se_resize` | 附件 | 选择东南调整指针文件（CSS 声明为 se-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enabl… |
-| `custom_cursor_files_sw_resize` | 附件 | 选择西南调整指针文件（CSS 声明为 sw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$is_custom_cursor_files_enabl… |
-| `custom_cursor_files_ew_resize` | 附件 | 选择东西调整指针文件（CSS 声明为 ew-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东西调整指针。描述：指示双向重新设置大小。（仅当 `$is_custom_cursor_files_enable === true && $is_show_… |
-| `custom_cursor_files_ns_resize` | 附件 | 选择南北调整指针文件（CSS 声明为 ns-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换南北调整指针。描述：指示双向重新设置大小。（仅当 `$is_custom_cursor_files_enable === true && $is_show_… |
-| `custom_cursor_files_nesw_resize` | 附件 | 选择东北西南调整指针文件（CSS 声明为 nesw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东北西南调整指针。描述：指示双向重新设置大小。（仅当 `$is_custom_cursor_files_enable === true && $is_sho… |
-| `custom_cursor_files_nwse_resize` | 附件 | 选择西北东南调整指针文件（CSS 声明为 nwse-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西北东南调整指针。描述：指示双向重新设置大小。（仅当 `$is_custom_cursor_files_enable === true && $is_sho… |
-| `custom_cursor_files_zoom_in` | 附件 | 选择放大指针文件（CSS 声明为 zoom-in） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换放大指针。描述：指示可被放大。（仅当 `$is_custom_cursor_files_enable === true && $is_show_unused… |
-| `custom_cursor_files_zoom_out` | 附件 | 选择缩小指针文件（CSS 声明为 zoom-out） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换缩小指针。描述：指示可被缩小。（仅当 `$is_custom_cursor_files_enable === true && $is_show_unused… |
+| `is_click_effect_enable` | 开关 | 启用点击特效 | 开 | 按下鼠标时在指针处画一圈发丝线并扩散淡出。触摸操作不触发；访客在系统里开启了“减弱动态效果”时自动跳过。 |
+| `is_click_effect_secondary_enable` | 开关 | 右键也显示点击特效 | 开 | 左键画圆，右键画圆角方——正是站点标识拆开的两半。关闭后仅左键有特效。（仅当 `$is_click_effect_enable === true` 时显示） |
+| `cursor_style` | 下拉 | 光标样式 | `clay` | 内置光标组是随主题设计的一套 SVG 指针，共 13 种，浅色深色各一套，随配色方案自动切换，不产生额外请求。 |
+| `is_show_unused_cursor_files` | 开关 | 展示未使用的光标文件配置项 | 关 | 一般无需启用此项。这些指针在本主题中没有对应的应用位置，上传后不会生效。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_auto` | 附件 | 选择自动指针文件（CSS 声明为 auto） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换自动指针。描述：根据上下文自动选择合适的指针，可设定为默认指针。（仅当 `$cursor_style === 'custom' && $is_show_un… |
+| `custom_cursor_files_default` | 附件 | 选择默认指针文件（CSS 声明为 default） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换默认指针。描述：默认指针，通常是箭头。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_context_menu` | 附件 | 选择菜单指针文件（CSS 声明为 context-menu） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换菜单指针。描述：指针下有可用内容目录。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor_f… |
+| `custom_cursor_files_help` | 附件 | 选择帮助指针文件（CSS 声明为 help） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换帮助指针。描述：指示帮助。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_pointer` | 附件 | 选择指针文件（CSS 声明为 pointer） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换指针。描述：悬浮于连接上时，通常为手。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_progress` | 附件 | 选择进度指针文件（CSS 声明为 progress） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换进度指针。描述：程序后台繁忙，用户仍可交互（与 wait 相反）。（仅当 `$cursor_style === 'custom' && $is_show_u… |
+| `custom_cursor_files_wait` | 附件 | 选择等待指针文件（CSS 声明为 wait） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换等待指针。描述：程序繁忙，用户不可交互（与 progress 相反）。图标一般为沙漏或者表。（仅当 `$cursor_style === 'custom'`… |
+| `custom_cursor_files_cell` | 附件 | 选择单元格指针文件（CSS 声明为 cell） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换单元格指针。描述：指示单元格可被选中。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_crosshair` | 附件 | 选择十字指针文件（CSS 声明为 crosshair） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换十字指针。描述：交叉指针，通常指示位图中的框选。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_text` | 附件 | 选择文本指针文件（CSS 声明为 text） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换文本指针。描述：指示文字可被选中。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_vertical_text` | 附件 | 选择垂直文本指针文件（CSS 声明为 vertical-text） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换垂直文本指针。描述：指示垂直文字可被选中。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_alias` | 附件 | 选择别名指针文件（CSS 声明为 alias） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换别名指针。描述：复制或快捷方式将要被创建。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor… |
+| `custom_cursor_files_copy` | 附件 | 选择复制指针文件（CSS 声明为 copy） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换复制指针。描述：指示可复制。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor_files … |
+| `custom_cursor_files_move` | 附件 | 选择移动指针文件（CSS 声明为 move） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换移动指针。描述：被悬浮的物体可被移动。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_no_drop` | 附件 | 选择禁止拖放指针文件（CSS 声明为 no-drop） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换禁止拖放指针。描述：当前位置不能扔下。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor_f… |
+| `custom_cursor_files_not_allowed` | 附件 | 选择不允许指针文件（CSS 声明为 not-allowed） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换不允许指针。描述：不能执行。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_grab` | 附件 | 选择抓取指针文件（CSS 声明为 grab） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换抓取指针。描述：可抓取。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_grabbing` | 附件 | 选择抓取中指针文件（CSS 声明为 grabbing） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换抓取中指针。描述：抓取中。（仅当 `$cursor_style === 'custom'` 时显示） |
+| `custom_cursor_files_all_scroll` | 附件 | 选择全滚动指针文件（CSS 声明为 all-scroll） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换全滚动指针。描述：元素可任意方向滚动（平移）。（仅当 `$cursor_style === 'custom' && $is_show_unused_curs… |
+| `custom_cursor_files_col_resize` | 附件 | 选择列调整指针文件（CSS 声明为 col-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换列调整指针。描述：元素可被重设宽度。通常被渲染为中间有一条竖线分割的左右两个箭头。（仅当 `$cursor_style === 'custom' && $i… |
+| `custom_cursor_files_row_resize` | 附件 | 选择行调整指针文件（CSS 声明为 row-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换行调整指针。描述：元素可被重设高度。通常被渲染为中间有一条横线分割的上下两个箭头。（仅当 `$cursor_style === 'custom' && $i… |
+| `custom_cursor_files_n_resize` | 附件 | 选择北调整指针文件（CSS 声明为 n-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' && … |
+| `custom_cursor_files_e_resize` | 附件 | 选择东调整指针文件（CSS 声明为 e-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' && … |
+| `custom_cursor_files_s_resize` | 附件 | 选择南调整指针文件（CSS 声明为 s-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' && … |
+| `custom_cursor_files_w_resize` | 附件 | 选择西调整指针文件（CSS 声明为 w-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' && … |
+| `custom_cursor_files_ne_resize` | 附件 | 选择东北调整指针文件（CSS 声明为 ne-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' &&… |
+| `custom_cursor_files_nw_resize` | 附件 | 选择西北调整指针文件（CSS 声明为 nw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西北调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' &&… |
+| `custom_cursor_files_se_resize` | 附件 | 选择东南调整指针文件（CSS 声明为 se-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' &&… |
+| `custom_cursor_files_sw_resize` | 附件 | 选择西南调整指针文件（CSS 声明为 sw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西南调整指针。描述：某条边将被移动。例如元素盒的东南角被移动时使用 se-resize。（仅当 `$cursor_style === 'custom' &&… |
+| `custom_cursor_files_ew_resize` | 附件 | 选择东西调整指针文件（CSS 声明为 ew-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东西调整指针。描述：指示双向重新设置大小。应用于滑块（input[type=range]）。（仅当 `$cursor_style === 'custom'`… |
+| `custom_cursor_files_ns_resize` | 附件 | 选择南北调整指针文件（CSS 声明为 ns-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换南北调整指针。描述：指示双向重新设置大小。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor… |
+| `custom_cursor_files_nesw_resize` | 附件 | 选择东北西南调整指针文件（CSS 声明为 nesw-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换东北西南调整指针。描述：指示双向重新设置大小。（仅当 `$cursor_style === 'custom' && $is_show_unused_curs… |
+| `custom_cursor_files_nwse_resize` | 附件 | 选择西北东南调整指针文件（CSS 声明为 nwse-resize） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换西北东南调整指针。描述：指示双向重新设置大小。（仅当 `$cursor_style === 'custom' && $is_show_unused_curs… |
+| `custom_cursor_files_zoom_in` | 附件 | 选择放大指针文件（CSS 声明为 zoom-in） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换放大指针。描述：指示可被放大。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor_files… |
+| `custom_cursor_files_zoom_out` | 附件 | 选择缩小指针文件（CSS 声明为 zoom-out） | — | 上传 .cur/.png/.svg 等格式光标文件，主题会优先使用这些文件替换缩小指针。描述：指示可被缩小。（仅当 `$cursor_style === 'custom' && $is_show_unused_cursor_files… |
 | `color_schema` | 下拉 | 配色方案 | `auto` | 若启用“深浅色模式切换按钮”，这项决定了网站刚加载完成时的配色方案。 |
 | `custom_color_schema_init_id` | 数字 | 自定义配色方案识别码 | — | 请先创建自定义配色方案，随后在此填写自定义配色方案识别码（仅当 `$color_schema === 'custom'` 时显示） |
 | `custom_color_schema` | 对象数组 | 自定义配色方案 | — |  |

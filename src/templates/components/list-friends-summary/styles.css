@@ -51,7 +51,11 @@
     color-mix(in oklab, var(--color-base-content) 60%, transparent) 0.3125rem,
     color-mix(in oklab, var(--color-base-content) 60%, transparent)
   );
-  color: var(--color-time);
+
+  /* --color-time 是上游调色板的遗留名，Clay 的令牌表里没有它，
+     写在这里是「计算值时无效」→ 回落成继承正文色，静默失去弱化处理。
+     改用本文件上方已有的 80% 弱化写法。 */
+  color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
 
   &:hover {
     background-image: linear-gradient(

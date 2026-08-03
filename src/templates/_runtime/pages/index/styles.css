@@ -16,7 +16,8 @@
      .blog-description 个人简介 / 公告栏（含 i18n 的 matched-resume）
    主视觉不能只认其中一种，否则只开了一言或随机句的站点就完全没有主视觉。
    优先级：简介 > 随机句 > 一言——简介是站长写死的主张，另两者是轮换的点缀。
-   .default-resume 是 i18n 的兜底副本，模板给了 display:none，不参与。 */
+   .default-resume 是 i18n 的兜底副本，模板给了 display:none，不参与。
+   兜底真的被启用时，base-layout 的脚本会把这个类摘掉，于是它按普通简介参与排序。 */
 /* stylelint-disable selector-id-pattern -- id 沿用上游模板与脚本，不能改名 */
 #about {
   padding-block: clamp(2.5rem, 5vw, 6rem) clamp(2rem, 4vw, 4rem);

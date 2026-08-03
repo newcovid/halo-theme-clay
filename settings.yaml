@@ -291,6 +291,7 @@ spec:
             - label: "自定义上传光标文件"
               value: "custom"
         - $el: div
+          key: cursor_style_custom_hint
           if: "$cursor_style === 'custom'"
           children:
             - $el: span

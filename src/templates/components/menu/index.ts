@@ -15,8 +15,14 @@ document.addEventListener("DOMContentLoaded", (): void => {
 
       // 读取属性工具函数（避免重复 getAttribute）
       const getAttr = (name: string) => link.getAttribute(name) || "";
-      // 拆分子菜单属性（以 ||| 分隔）
-      const splitAttr = (name: string) => getAttr(name).split("|||").filter(Boolean);
+      // 拆分子菜单属性（以 ||| 分隔）。
+      // 属性为空表示没有子菜单——split 对空串会给出 [""]，所以这一种单独返回 []。
+      // 其余情况必须保留空串：某个子项缺 target 时它那一格是空的，
+      // 一旦被滤掉，这一列就比另外两列短，撞上下面的数量一致性校验，整个子菜单失效。
+      const splitAttr = (name: string) => {
+        const raw = getAttr(name);
+        return raw === "" ? [] : raw.split("|||");
+      };
       // 数字属性转换（字符串 -> number）
       const toInt = (name: string, fallback = 0) => parseInt(getAttr(name) || `${fallback}`, 10);
 
@@ -35,7 +41,7 @@ document.addEventListener("DOMContentLoaded", (): void => {
 
       // 数据一致性校验：子菜单数量必须与 count 匹配
       if (count === 0 || hrefs.length !== count - 1 || targets.length !== count - 1 || labels.length !== count - 1) {
-        console.error("[Higan Haozi][shared] Submenu data is inconsistent");
+        console.error("[Clay][shared] Submenu data is inconsistent");
         return;
       }
 

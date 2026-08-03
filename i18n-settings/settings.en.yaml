@@ -291,6 +291,7 @@ spec:
             - label: "Custom uploaded cursor files"
               value: "custom"
         - $el: div
+          key: cursor_style_custom_hint
           if: "$cursor_style === 'custom'"
           children:
             - $el: span

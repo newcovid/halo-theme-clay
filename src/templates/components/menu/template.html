@@ -181,9 +181,9 @@
         th:attr="data-parent-href=${item?.status?.href},
                 data-parent-target=${item?.spec?.target?.value},
                 data-parent-label=${item?.status?.displayName},
-                data-submenu-hrefs=${#strings.arrayJoin(item.children.![status.href].toArray(), '|||')},
-                data-submenu-targets=${#strings.arrayJoin(item.children.![spec.target.value].toArray(), '|||')},
-                data-submenu-labels=${#strings.arrayJoin(item.children.![status.displayName].toArray(), '|||')},
+                data-submenu-hrefs=${#strings.arrayJoin(item.children.![status?.href ?: ''].toArray(), '|||')},
+                data-submenu-targets=${#strings.arrayJoin(item.children.![spec?.target?.value ?: ''].toArray(), '|||')},
+                data-submenu-labels=${#strings.arrayJoin(item.children.![status?.displayName ?: ''].toArray(), '|||')},
                 data-submenu-index='0',
                 data-submenu-count=${#lists.size(item.children) + 1}"
         >菜单项填充位置</a

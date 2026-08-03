@@ -1,6 +1,6 @@
 import "./styles.css";
 
-const SHARE_LOG_PREFIX = "[Higan Haozi][share]";
+const SHARE_LOG_PREFIX = "[Clay][share]";
 
 document.addEventListener("click", (event: Event): void => {
   const nativeShareLink =

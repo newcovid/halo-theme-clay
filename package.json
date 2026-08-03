@@ -89,7 +89,7 @@
     "defaults",
     "Chrome >= 111",
     "Edge >= 111",
-    "Firefox >= 114",
+    "Firefox >= 121",
     "Safari >= 16.4"
   ],
   "engines": {

@@ -9,7 +9,7 @@
  *   element for inclusion in the TOC.
  */
 export function initTOCs(contentSelector: string, tocSelectors: string[], headingSelector = "h1, h2, h3, h4"): void {
-  const logPrefix = "[Higan Haozi][toc]";
+  const logPrefix = "[Clay][toc]";
   const contentRootDom = document.querySelector<HTMLElement>(contentSelector);
 
   if (!contentRootDom) {
@@ -190,9 +190,12 @@ export function initTOCs(contentSelector: string, tocSelectors: string[], headin
     // replace
     tocRoot.replaceChildren(createTOCContainer());
 
-    // Cache corresponding TOC links
+    // Cache corresponding TOC links.
+    // 只有「原本没有 id」的标题才会走 slugify，正文里自带 id 的标题是原样保留的，
+    // 所以 id 里可能有引号或反斜杠。直接拼进属性选择器会抛 DOMException，
+    // 而这里是 map 回调，一抛就把整个模块打断：后面的滚动高亮和标题锚点都不会再注册。
     const tocLinks = reversedOriginalHeadings.map((h) =>
-      tocRoot.querySelector<HTMLElement>(`.toc-link[href="#${h.id}"]`),
+      tocRoot.querySelector<HTMLElement>(`.toc-link[href="#${CSS.escape(h.id)}"]`),
     );
 
     let lastActiveLink: HTMLElement | null = null; // Cache the previously active TOC item

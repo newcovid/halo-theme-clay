@@ -1,4 +1,4 @@
-const UPVOTE_LOG_PREFIX = "[Higan Haozi][upvote-runtime]";
+const UPVOTE_LOG_PREFIX = "[Clay][upvote-runtime]";
 
 interface UpvoteRuntimeConfig {
   countSelector: string;

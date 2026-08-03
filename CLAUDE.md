@@ -100,6 +100,12 @@ Don't chase it as a theme bug, and don't judge "the toggle does nothing" from on
 `screenshot.png` into the theme root does nothing until Halo restarts (or the theme is reinstalled).
 Verify with `GET /apis/api.console.halo.run/v1alpha1/themes` and check `status.screenshot`.
 
+**The declared browser floor cannot be widened below Firefox 121.** Six stylesheets rely on `:has()`, which
+Firefox only shipped in 121. A CSS selector list is non-forgiving: one unparseable selector drops the *whole*
+rule, so on an older Firefox the homepage serif hero and the empty-`#about` collapse simply vanish — silently,
+with no console error. `browserslist` in `package.json` and `build.target` in `vite.config.ts` must stay in
+step; lowering either to advertise broader support makes the claim false rather than making the theme work.
+
 **`pnpm lint` rewrites CJK data files unless they are excluded.** The `autocorrect` step treats every file as
 prose: it inserts spaces at CJK/Latin boundaries and normalises full-width punctuation. Run against
 `scripts/fonts/noto-serif-sc.order.txt` (a bare character-frequency list) it silently reordered the data and

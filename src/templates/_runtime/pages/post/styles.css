@@ -256,7 +256,11 @@
       align-items: center;
       border-bottom: 1px solid color-mix(in oklab, var(--color-base-content) 40%, transparent);
       display: flex;
-      font-size: var(--text-lg);
+
+      /* Tailwind 的字号标尺被 `--text-*: initial` 清空了，--text-lg 并不存在，
+         写它等于不写（回落成继承的正文字号）。用字号档里真实存在的一级，
+         顺带跟着「文字大小」设置一起缩放。 */
+      font-size: var(--text-h4);
       font-weight: 500;
       justify-content: space-between;
       margin-bottom: 1rem;

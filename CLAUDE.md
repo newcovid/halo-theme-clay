@@ -266,3 +266,23 @@ The decision is to **keep it broadly intact** — strong configurability is a fe
 
 The corollary: after any visual change, settings combinations need re-verification. A token or layout edit can break a preset nobody exercised.
 Options with `if:` conditions **must** also declare `key:`, or Vue reuses DOM nodes and values leak between states.
+
+## Publishing policy
+
+This repo, its releases and its packaged zips are public. Nothing that identifies the machine or the
+session may appear in them.
+
+**Release notes, tag messages and commit messages must not carry agent-session trailers** — no
+`Claude-Session:` line, no `🤖 Generated with …` block, no `claude.ai/code/session_…` URL. Those are
+machine-specific identifiers, and a release page is the most visible surface the project has. The default
+git-trailer convention does not apply here; this repo overrides it. Check before publishing:
+
+```bash
+gh release view <tag> --json body --jq .body | grep -c "claude.ai/code/session"   # must be 0
+git log -1 --format=%B | grep -c "Claude-Session"                                 # must be 0
+```
+
+Also out of the published tree: `.agents/`, `.claude/`, `skills-lock.json` (all gitignored), local absolute
+paths, and credentials — `scripts/regression/` and `scripts/fixtures/` read `HALO_USERNAME` / `HALO_PASSWORD`
+from the environment for exactly this reason. `scripts/package-theme.py` uses an explicit include list rather
+than a glob so engineering files cannot drift into the zip.

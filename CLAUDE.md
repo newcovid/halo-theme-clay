@@ -144,6 +144,30 @@ and `cursor` then falls to invalid-at-computed-value-time → inherit. `generate
 the whole retina layer inside `@supports`. The same trap applies to any future `var()`-delivered value that
 needs a capability fallback.
 
+**The `[hash]` in an asset's file name does not cover the bytes that ship.** rolldown freezes asset file
+names before `generateBundle`, and two plugins keep editing content after that — the Tailwind class mangler
+and the generated-comment cleanup. So a CSS file whose *source* is unchanged keeps its URL while its bytes
+change, because the mangler's short-name table is ordered by global frequency: adding or removing a utility
+anywhere renumbers unrelated buckets.
+
+The failure is not "stale styles", it is **no styles**. `vite-plugin-sri3` computes `integrity` over the
+final content, so a returning visitor whose cache holds the old bytes for that URL fails the integrity check
+and the browser **drops the stylesheet entirely** — `link.sheet` is `null`, and the page collapses to
+near-unstyled flow. It is latent: v0.2.4 → v0.3.0 had 0 of 40 same-named CSS files differ; v0.3.0 → v0.3.1
+had **19 of 54**, and every returning visitor lost the hero, the icons and the post header.
+
+`plugins/vite-plugin-asset-content-version.ts` stamps `?v=<sha256 of final content>` onto every template
+asset reference, so the URL moves whenever the bytes move. It **must stay after `sri()`** in
+`vite.config.ts`: sri3 resolves each `href` against the bundle to hash it, and a query string added earlier
+makes that lookup fail the build. Renaming the asset instead is not an option — rolldown rejects adding or
+deleting bundle keys in `generateBundle`, and mutating only `fileName` leaves later lookups pointing at a
+file that no longer exists.
+
+Diagnosis, when styles vanish after an update: in the page, look for
+`[...document.querySelectorAll('link[rel=stylesheet]')].filter(l => l.sheet === null)` — a non-empty result
+with HTTP 200 responses means integrity, not routing. Assets fetched `identity` will hash correctly on the
+server; the mismatch lives in the client cache.
+
 **The whole-card link in the two summary lists breaks `:hover` scoping and background painting at once.**
 `list-post-summary` and `list-friends-summary` make the entire card clickable by putting an absolutely
 positioned, card-sized `<span>` *inside* the title's `<a>`. Two consequences, both silent:

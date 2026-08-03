@@ -9,6 +9,7 @@ import { compression, defineAlgorithm } from "vite-plugin-compression2";
 import { sri } from "vite-plugin-sri3";
 
 import pkg from "./package.json" with { type: "json" };
+import assetContentVersion from "./plugins/vite-plugin-asset-content-version.ts";
 import cleanupGeneratedCssComments from "./plugins/vite-plugin-cleanup-generated-css-comments.ts";
 import tailwindcssMangleSignaturesPlugin from "./plugins/vite-plugin-tailwindcss-mangle-signatures.ts";
 import thymeleafMinify from "./plugins/vite-plugin-thymeleaf-minify.ts";
@@ -402,6 +403,13 @@ export default defineConfig((): UserConfig => {
       }),
       // Generate Subresource Integrity (SRI) hashes for all output files
       sri(),
+      // Stamp `?v=<content hash>` onto template asset references.
+      // Must stay AFTER sri(): the file-name hash is frozen before the mangle/cleanup
+      // passes rewrite the bytes, so a URL can outlive the content it names — and a
+      // stale cached copy then fails SRI and is dropped outright. See the plugin header.
+      assetContentVersion({
+        base: themeBase,
+      }),
       // precompress assets using specified algorithms for optimal delivery
       ...(precompressAlgorithms.length > 0
         ? [

@@ -578,12 +578,12 @@ spec:
               value: "light-blue"
             - label: "暗色 · 蓝"
               value: "dark-blue"
-            - label: "浅色 · 灰"
-              value: "gray"
-            - label: "暗色 · 灰"
-              value: "dark-gray"
             - label: "跟随系统 · 灰"
               value: "auto-gray"
+            - label: "浅色 · 灰"
+              value: "light-gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -770,12 +770,12 @@ spec:
               value: "light-blue"
             - label: "暗色 · 蓝"
               value: "dark-blue"
-            - label: "浅色 · 灰"
-              value: "gray"
-            - label: "暗色 · 灰"
-              value: "dark-gray"
             - label: "跟随系统 · 灰"
               value: "auto-gray"
+            - label: "浅色 · 灰"
+              value: "light-gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -806,12 +806,12 @@ spec:
               value: "light-blue"
             - label: "暗色 · 蓝"
               value: "dark-blue"
-            - label: "浅色 · 灰"
-              value: "gray"
-            - label: "暗色 · 灰"
-              value: "dark-gray"
             - label: "跟随系统 · 灰"
               value: "auto-gray"
+            - label: "浅色 · 灰"
+              value: "light-gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -842,12 +842,12 @@ spec:
               value: "light-blue"
             - label: "暗色 · 蓝"
               value: "dark-blue"
-            - label: "浅色 · 灰"
-              value: "gray"
-            - label: "暗色 · 灰"
-              value: "dark-gray"
             - label: "跟随系统 · 灰"
               value: "auto-gray"
+            - label: "浅色 · 灰"
+              value: "light-gray"
+            - label: "暗色 · 灰"
+              value: "dark-gray"
             - label: "自定义配色"
               value: "custom"
         - $formkit: number
@@ -1121,6 +1121,51 @@ spec:
           key: footer_copyright_custom_name
           label: 版权信息自定义署名
           help: "如果不填写，则使用站点标题作为署名"
+        - $formkit: switch
+          name: is_footer_beian_show
+          key: is_footer_beian_show
+          label: 页面底部备案信息
+          help: "面向中国大陆站点。填写后由主题按当前配色渲染，不必再往“页面底部内容”里手写一段带固定颜色的 HTML。"
+          value: false
+        - $formkit: text
+          name: footer_beian_icp
+          key: footer_beian_icp
+          if: "$is_footer_beian_show === true"
+          label: ICP 备案号
+          # autocorrect-disable -- 例子给的就是备案号的确切写法，不能被插空格
+          help: "照工信部系统里的写法填，例如 京ICP备12345678号-1。留空则不显示这一条。"
+          # autocorrect-enable
+          value: ""
+        - $formkit: text
+          name: footer_beian_icp_url
+          key: footer_beian_icp_url
+          if: "$is_footer_beian_show === true"
+          label: ICP 备案号链接
+          help: "留空则指向工信部备案管理系统 https://beian.miit.gov.cn/"
+          value: "https://beian.miit.gov.cn/"
+        - $formkit: text
+          name: footer_beian_police
+          key: footer_beian_police
+          if: "$is_footer_beian_show === true"
+          label: 公安网备号
+          # autocorrect-disable -- 同上
+          help: "照公安备案回执上的写法填，例如 京公网安备11010502030143号。留空则不显示这一条。"
+          # autocorrect-enable
+          value: ""
+        - $formkit: text
+          name: footer_beian_police_url
+          key: footer_beian_police_url
+          if: "$is_footer_beian_show === true"
+          label: 公安网备号链接
+          help: "留空则指向全国互联网安全管理服务平台 https://beian.mps.gov.cn/"
+          value: "https://beian.mps.gov.cn/"
+        - $formkit: attachmentInput
+          name: footer_beian_police_icon
+          key: footer_beian_police_icon
+          if: "$is_footer_beian_show === true"
+          label: 公安网备号左侧图标
+          help: "可选。上传备案时取得的警徽图标，显示在公安网备号左侧；留空则只显示文字。"
+          value: ""
         - $formkit: switch
           name: is_footer_force_bottom
           key: is_footer_force_bottom

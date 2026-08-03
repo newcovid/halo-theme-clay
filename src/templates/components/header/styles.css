@@ -74,22 +74,22 @@
         flex-direction: column;
       }
 
+      /* 导航静止不挂线（顶部一排断线会比正文还吵），悬停用与正文同一道自左向右的实线。
+         导航的交互色是 primary 不是 accent，改一个变量即可，不必重抄一遍写法。 */
       & a {
+        background-image: linear-gradient(var(--color-primary) 0 0);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0 var(--clay-rule-thick);
         color: var(--color-base-content);
         font-size: var(--text);
         margin-right: 0.9375rem;
 
         @media (width >= 640px) {
+          transition: background-size var(--clay-duration) var(--clay-ease);
+
           &:hover {
-            background-image: linear-gradient(
-              transparent,
-              transparent 0.3125rem,
-              var(--color-primary) 0.3125rem,
-              var(--color-primary)
-            );
-            background-position: bottom;
-            background-repeat: repeat-x;
-            background-size: 100% 0.375rem;
+            background-size: 100% var(--clay-rule-thick);
           }
         }
       }

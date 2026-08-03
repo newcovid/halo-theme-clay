@@ -1,3 +1,10 @@
+<!--/*
+  data-color-scheme 的归类只看前缀：配色方案取值一律是 light / dark / auto 三者之一，
+  或以它们为前缀（light-blue、dark-gray、…）。此前是一条十层三元链逐个列举，
+  每加一个预设就得补一层，而灰色档当初叫 gray 不叫 light-gray，正是靠那条链单独兜住的。
+  #strings.startsWith 的第一个参数不能是 null（内部 Validate.notNull），
+  而 color_schema 在「配置从未保存过」时就是 null，所以要 ?: '' 兜底。
+*/-->
 <html
   xmlns:th="http://www.thymeleaf.org"
   th:with="color_schema = ${theme.config?.styles?.color_schema},
@@ -20,16 +27,9 @@
                                 ? {color_schema, theme_auto, theme_light, theme_dark}
                                 : {color_schema}}"
   th:lang="${page_language}"
-  th:attr="data-color-scheme = ${color_schema} == 'custom' ? 'auto' :
-                               (${color_schema} == 'auto' ? 'auto' :
-                               (${color_schema} == 'light' ? 'light' :
-                               (${color_schema} == 'dark' ? 'dark' :
-                               (${color_schema} == 'auto-blue' ? 'auto' :
-                               (${color_schema} == 'light-blue' ? 'light' :
-                               (${color_schema} == 'dark-blue' ? 'dark' :
-                               (${color_schema} == 'gray' ? 'light' :
-                               (${color_schema} == 'dark-gray' ? 'dark' :
-                               (${color_schema} == 'auto-gray' ? 'auto' : 'auto'))))))))),
+  th:attr="data-color-scheme = ${color_schema == 'custom' ? 'auto'
+                               : (#strings.startsWith(color_schema ?: '', 'light') ? 'light'
+                               : (#strings.startsWith(color_schema ?: '', 'dark') ? 'dark' : 'auto'))},
            theme = ${color_schema} != 'custom' ? ${color_schema} : 'theme-'+${custom_color_schema_init_id}"
   th:fragment="html"
 >
@@ -288,7 +288,7 @@
     <th:block
       th:if="${selected_schemes.contains('light')
                or selected_schemes.contains('light-blue')
-               or selected_schemes.contains('gray')}"
+               or selected_schemes.contains('light-gray')}"
       th:insert="~{components/color-scheme-light/template :: head}"
     ></th:block>
     <th:block
@@ -334,8 +334,8 @@
       th:insert="~{components/theme-dark-gray/template :: head}"
     ></th:block>
     <th:block
-      th:if="${selected_schemes.contains('gray')}"
-      th:insert="~{components/theme-gray/template :: head}"
+      th:if="${selected_schemes.contains('light-gray')}"
+      th:insert="~{components/theme-light-gray/template :: head}"
     ></th:block>
     <th:block
       th:if="${selected_schemes.contains('light')}"
@@ -1090,6 +1090,47 @@
                     th:text="${#strings.defaultString(theme.config?.styles?.footer_copyright_custom_name, site?.title)}"
                   ></span>
                 </span>
+              </div>
+              <!--/*
+                备案信息。此前只能靠「页面底部内容」手写一段 HTML 注入，而那段 HTML 里的颜色
+                是写死的（常见抄法是 color: #888），换配色、切深色都不跟着走。
+                这里走的是 #footer a 那套样式，配色由预设决定。
+
+                链接地址用 isEmpty 判空而不是 #strings.defaultString：后者只在 null 时回落，
+                用户把输入框清空得到的是 ""，那会渲染出 href=""——指回当前页。
+              */-->
+              <div
+                class="footer-beian"
+                th:if="${theme.config?.styles?.is_footer_beian_show}"
+                th:object="${theme.config?.styles}"
+              >
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  th:href="*{#strings.isEmpty(footer_beian_icp_url)
+                            ? 'https://beian.miit.gov.cn/'
+                            : footer_beian_icp_url}"
+                  th:text="*{footer_beian_icp}"
+                  th:unless="*{#strings.isEmpty(footer_beian_icp)}"
+                ></a>
+                <a
+                  class="beian-police"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  th:href="*{#strings.isEmpty(footer_beian_police_url)
+                            ? 'https://beian.mps.gov.cn/'
+                            : footer_beian_police_url}"
+                  th:unless="*{#strings.isEmpty(footer_beian_police)}"
+                >
+                  <img
+                    alt=""
+                    aria-hidden="true"
+                    class="beian-police-icon"
+                    th:src="*{footer_beian_police_icon}"
+                    th:unless="*{#strings.isEmpty(footer_beian_police_icon)}"
+                  />
+                  <span th:text="*{footer_beian_police}"></span>
+                </a>
               </div>
             </div>
             <div

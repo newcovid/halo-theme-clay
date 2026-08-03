@@ -1,4 +1,7 @@
 @import "tailwindcss/theme.css" layer(theme) prefix(tw);
+
+/* 配色令牌的兜底档，见 generate-theme-css.ts 末尾。进 base 层，任何预设块都盖得住它。 */
+@import "../../../generated/theme-fallback.css" layer(base);
 @import "./base-styles/styles.css";
 @import "./scrollbar/styles.css";
 @import "./iconify/styles.css";

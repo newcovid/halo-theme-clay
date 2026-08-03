@@ -121,22 +121,19 @@ article {
         font-size: var(--text-xs);
         margin: calc(var(--text) * 1.725) 0;
 
+        /* 断线取 currentcolor，自动跟到这里的 80% 弱化色——原先是同一个 color-mix 抄两遍。 */
         & a {
-          background-image: linear-gradient(
-            transparent,
-            transparent 0.3125rem,
-            color-mix(in oklab, var(--color-base-content) 80%, transparent) 0.3125rem,
-            color-mix(in oklab, var(--color-base-content) 80%, transparent)
-          );
+          background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
+          background-position: 0 100%;
+          background-repeat: no-repeat, repeat-x;
+          background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
           color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+          transition:
+            background-size var(--clay-duration) var(--clay-ease),
+            color var(--clay-duration) var(--clay-ease);
 
           &:hover {
-            background-image: linear-gradient(
-              transparent,
-              transparent 0.25rem,
-              var(--color-accent) 0.25rem,
-              var(--color-accent)
-            );
+            background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
             color: var(--color-accent);
           }
         }

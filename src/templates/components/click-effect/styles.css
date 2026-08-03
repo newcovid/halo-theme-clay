@@ -35,8 +35,14 @@
   border-radius: 50%;
 }
 
+/*
+  右键那一半改用 --color-accent。形状仍是主要的区分手段（见上），
+  颜色只是再补一层：两个变量在每个预设里都是一对（静止色 / 悬停色），
+  于是左右键的落点和该预设下「可点」与「正在交互」的两种颜色对得上。
+*/
 #clay-click-effect > .secondary {
   animation: clay-click-secondary var(--clay-click-duration) var(--clay-ease) forwards;
+  border-color: var(--color-accent);
   border-radius: 26%;
 }
 

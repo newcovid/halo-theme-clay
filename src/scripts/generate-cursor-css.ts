@@ -10,8 +10,14 @@
   哪些元素用哪种光标由 _runtime/global/cursors/selectors.css 决定，那份是三种光标模式共用的。
   「自定义上传」模式只需要覆写同名变量，不必再抄一遍选择器列表。
 
-  配色只分浅深两档，不跟随七个配色预设。光标是主题的签名，蓝色预设是同一套主题的变体，
-  没有理由让指针也跟着变蓝；clay 取的是对应明暗档 --color-primary 的字面值。
+  交互色跟随配色预设，取自 theme-tokens.ts 的同一张表（即各预设的 --color-primary），
+  不再抄一份 clay 字面值——此前蓝、灰预设下页面变了色而指针还是橙的，就是抄那一份的代价。
+  但**只有交互色跟随**：轮廓与主体填充仍按明暗两档取 theme-light / theme-dark 的
+  base-100 / base-content。六个预设的 base-100 只有两个取值，base-content 之间也只差灰阶一档，
+  24px 上分辨不出，为此把整套形状再铺四遍不值当（产物会从 58 KB 涨到 175 KB）。
+  于是产物分两层：明暗两档铺全部形状，各预设只覆写用到交互色的那几个——
+  哪几个由 usesInteractiveColor() 探测，不是手写清单，改形状时不会漏。
+  设计上这也更说得通：指针的轮廓是主题的签名，跟着预设变的是它身上的那点强调色。
 
   描边一律用 paint-order='stroke'：同一条路径先描边后填充，描边只露出填充之外的一半，
   于是一条 path 就同时得到实心主体和 1.5px 轮廓。轮廓色永远是填充色的反色，
@@ -20,8 +26,10 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
+import { COLOR_PRESETS, DARK_TOKENS, LIGHT_TOKENS, presetSelector, type ThemeTokens } from "./theme-tokens.ts";
+
 export interface CursorPalette {
-  /** 交互色，取所在明暗档 --color-primary 的字面值 */
+  /** 交互色，取所在预设 --color-primary 的字面值 */
   clay: string;
   /** 主体填充 */
   fill: string;
@@ -43,8 +51,19 @@ export interface CursorShape {
   width: number;
 }
 
-const LIGHT: CursorPalette = { clay: "#c0502b", fill: "#141413", muted: "#8a867d", outline: "#faf9f5" };
-const DARK: CursorPalette = { clay: "#d97757", fill: "#faf9f5", muted: "#8a867d", outline: "#141413" };
+function paletteOf(tokens: ThemeTokens): CursorPalette {
+  return {
+    clay: tokens["--color-primary"],
+    fill: tokens["--color-base-content"],
+    /* 失效态与等待态的轨道色。不跟随预设：它要表达的是「这里没有交互」，
+       正好是交互色的反面，跟着交互色走会把两种语义搅在一起。 */
+    muted: "#8a867d",
+    outline: tokens["--color-base-100"],
+  };
+}
+
+const LIGHT = paletteOf(LIGHT_TOKENS);
+const DARK = paletteOf(DARK_TOKENS);
 
 /* 描边总宽 3，paint-order 之后露出 1.5 */
 const OUTLINE_WIDTH = 3;
@@ -146,6 +165,9 @@ export const CURSOR_SHAPES: CursorShape[] = [
     width: 26,
   },
   {
+    /* 进度弧不是直接压在轨道上，而是先垫一层轮廓色的同形状描边：
+       弧与轨道之间因此永远隔着一条发丝线，两者的分辨不依赖亮度差。
+       灰色预设里交互色本身就在灰阶上，少了这条线就只剩一个几乎均匀的圆环。 */
     fallback: "wait",
     height: 24,
     hotspot: [12, 12],
@@ -153,8 +175,7 @@ export const CURSOR_SHAPES: CursorShape[] = [
     render: (p) =>
       `<circle cx='12' cy='12' r='7.5' fill='none' stroke='${p.outline}' stroke-width='${2.6 + HALO_EXTRA}'/>` +
       `<circle cx='12' cy='12' r='7.5' fill='none' stroke='${p.muted}' stroke-width='2.6'/>` +
-      `<path d='M12 4.5A7.5 7.5 0 0 1 19.5 12' fill='none' stroke='${p.clay}'` +
-      ` stroke-width='2.6' stroke-linecap='round'/>`,
+      stroked("M12 4.5A7.5 7.5 0 0 1 19.5 12", p.clay, 2.6, p),
     width: 24,
   },
   {
@@ -241,6 +262,19 @@ export const CURSOR_SHAPES: CursorShape[] = [
 ];
 
 /*
+  哪些形状身上带交互色，靠探测而不是靠手写清单：用四个不可能出现在颜色值里的哨兵
+  跑一遍 render，看产物里有没有 clay 那一个。新增形状、或者给旧形状加一笔交互色，
+  预设覆写层会自动跟上，不会出现「改了形状但只有默认预设变了」这种半截生效。
+*/
+export function usesInteractiveColor(shape: CursorShape): boolean {
+  return shape
+    .render({ clay: "__CLAY__", fill: "__FILL__", muted: "__MUTED__", outline: "__OUTLINE__" })
+    .includes("__CLAY__");
+}
+
+const INTERACTIVE_SHAPES = CURSOR_SHAPES.filter((shape) => usesInteractiveColor(shape));
+
+/*
   data: URI 里只需要转义会提前终止 url("...") 或被 CSS 当成注释/结构记号的字符。
   形状里统一用单引号写属性，于是双引号根本不会出现。% 必须最先换，否则会把后面
   刚插进去的 %23 再编码一次。
@@ -289,26 +323,87 @@ function cursorValue(shape: CursorShape, palette: CursorPalette, retina: boolean
   );
 }
 
-function block(selector: string, palette: CursorPalette, retina: boolean, indent: string): string {
-  const declarations = CURSOR_SHAPES.map(
-    (shape) => `${indent}  --clay-cursor-${shape.name}: ${cursorValue(shape, palette, retina)};`,
-  ).join("\n");
+function block(
+  selectors: string[],
+  shapes: CursorShape[],
+  palette: CursorPalette,
+  retina: boolean,
+  indent: string,
+): string {
+  const declarations = shapes
+    .map((shape) => `${indent}  --clay-cursor-${shape.name}: ${cursorValue(shape, palette, retina)};`)
+    .join("\n");
 
-  return `${indent}${selector} {\n${declarations}\n${indent}}\n`;
+  return `${indent}${selectors.join(",\n" + indent)} {\n${declarations}\n${indent}}\n`;
 }
 
 /*
-  深色档挂在 [data-color-scheme]（<html> 上恒有，自定义配色方案也会写这个属性），
-  而不是挂在 [theme]：后者有七个预设值再加任意多个自定义 id，逐个列举既冗长又会漏。
+  预设覆写层。按「明暗档 + 交互色」归并选择器：同族的 light-blue 与 auto-blue 共用一条规则，
+  auto-blue 的深色档另外进 @media。与默认预设同交互色的（light / dark / auto）不出现在这里，
+  它们已经由下面的基础层覆盖。
+*/
+interface OverrideRule {
+  clay: string;
+  half: "dark" | "light";
+  selectors: string[];
+}
+
+function collectOverrides(): { media: OverrideRule[]; unconditional: OverrideRule[] } {
+  const unconditional = new Map<string, OverrideRule>();
+  const media = new Map<string, OverrideRule>();
+
+  const push = (bucket: Map<string, OverrideRule>, half: "dark" | "light", clay: string, selector: string) => {
+    if (clay === (half === "dark" ? DARK : LIGHT).clay) {
+      return;
+    }
+    const key = `${half}|${clay}`;
+    const existing = bucket.get(key);
+    if (existing) {
+      existing.selectors.push(selector);
+    } else {
+      bucket.set(key, { clay, half, selectors: [selector] });
+    }
+  };
+
+  for (const preset of COLOR_PRESETS) {
+    const selector = presetSelector(preset.value);
+
+    if (preset.darkTokens) {
+      push(unconditional, "light", preset.tokens["--color-primary"], selector);
+      push(media, "dark", preset.darkTokens["--color-primary"], selector);
+      continue;
+    }
+
+    push(unconditional, preset.scheme === "dark" ? "dark" : "light", preset.tokens["--color-primary"], selector);
+  }
+
+  return { media: [...media.values()], unconditional: [...unconditional.values()] };
+}
+
+function overrideBlock(rule: OverrideRule, retina: boolean, indent: string): string {
+  const palette = { ...(rule.half === "dark" ? DARK : LIGHT), clay: rule.clay };
+  return block(rule.selectors, INTERACTIVE_SHAPES, palette, retina, indent);
+}
+
+/*
+  基础层挂在 [data-color-scheme]（<html> 上恒有，自定义配色方案也会写这个属性），
+  而不是挂在 [theme]：后者有九个预设值再加任意多个自定义 id，逐个列举既冗长又会漏。
+  覆写层才按 [theme] 精确点名，两者特异性相同（都是 html + 一个属性），靠源码顺序分先后，
+  所以覆写层必须排在基础层之后——@media 内外各自成序，故两层都要各带一份 @media 块。
 */
 function layer(retina: boolean, indent: string): string {
+  const { media, unconditional } = collectOverrides();
+  const nested = `${indent}  `;
+
   return (
-    block(":root", LIGHT, retina, indent) +
+    block([":root"], CURSOR_SHAPES, LIGHT, retina, indent) +
     "\n" +
-    block('html[data-color-scheme="dark"]', DARK, retina, indent) +
+    block(['html[data-color-scheme="dark"]'], CURSOR_SHAPES, DARK, retina, indent) +
     "\n" +
+    unconditional.map((rule) => overrideBlock(rule, retina, indent) + "\n").join("") +
     `${indent}@media (prefers-color-scheme: dark) {\n` +
-    block('html[data-color-scheme="auto"]', DARK, retina, `${indent}  `) +
+    block(['html[data-color-scheme="auto"]'], CURSOR_SHAPES, DARK, retina, nested) +
+    media.map((rule) => "\n" + overrideBlock(rule, retina, nested)).join("") +
     `${indent}}\n`
   );
 }

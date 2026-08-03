@@ -229,7 +229,10 @@ function getBuildInputs(extraEntries: BuildEntryMap = {}): BuildEntryMap {
       import.meta.dirname,
       "src/templates/components/theme-light-blue/template.html",
     ),
-    "components-theme-gray": resolve(import.meta.dirname, "src/templates/components/theme-gray/template.html"),
+    "components-theme-light-gray": resolve(
+      import.meta.dirname,
+      "src/templates/components/theme-light-gray/template.html",
+    ),
     "components-theme-dark-gray": resolve(
       import.meta.dirname,
       "src/templates/components/theme-dark-gray/template.html",

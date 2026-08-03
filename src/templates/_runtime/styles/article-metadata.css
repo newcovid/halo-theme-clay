@@ -1,16 +1,26 @@
 /* 文章标签 分类 样式开始 */
 /* 用于多元文章列表和文章页开头信息展示 */
+/* 标签与分类也是链接，走同一套断→整，于是它们第一次有了悬停反馈。
+
+   此前这里的渐变停在 0.625rem，而背景盒只有 0.375rem 高：彩色段整个落在盒子外面，
+   这条常驻下划线一直没画出来过。和标题链接悬停线是同一类错——
+   改 background-size 或改停靠点时没有一起核对另一个，而两处都不报错、只是不显示。
+   现在盒高由 --clay-rule-thin / --clay-rule-thick 直接给出，没有第二个数可以对不上。 */
+/* 静止不挂断线，只在悬停时铺展。分界线是「这条链接靠什么被认出来」：
+   正文里嵌在句子中间的链接非有常驻标记不可，否则找不着；而标签、分类、导航、标题
+   本身已经有图标、# 号、字号在标记自己，再给每条加一道断线，元信息行会比正文还密。
+   标题与导航同理，见 base-styles 与 header。 */
 .article-tag .tag-link,
 .article-category .category-link {
-  background-image: linear-gradient(
-    transparent,
-    transparent 0.625rem,
-    var(--color-accent) 0.625rem,
-    var(--color-accent)
-  );
-  background-position: bottom;
-  background-repeat: repeat-x;
-  background-size: 100% 0.375rem;
+  background-image: var(--clay-rule-solid);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 var(--clay-rule-thick);
+  transition: background-size var(--clay-duration) var(--clay-ease);
+
+  &:hover {
+    background-size: 100% var(--clay-rule-thick);
+  }
 }
 
 .article-tag .tag-link {

@@ -5,12 +5,12 @@
 
 <!-- markdownlint-disable -->
 
-共 18 个分组、312 个配置项。
+共 18 个分组、318 个配置项。
 
 | 分组 | 标签 | 配置项数 |
 | --- | --- | --- |
 | `global` | 全局 | 19 |
-| `styles` | 总体样式 | 128 |
+| `styles` | 总体样式 | 134 |
 | `index_styles` | 首页样式 | 47 |
 | `post_styles` | 文章页样式 | 31 |
 | `categories_page_styles` | 分类集合页样式 | 6 |
@@ -167,6 +167,12 @@
 | `footer_theme_info_halo_version_name` | 单选 | 页面底部主题信息所展示的 Halo 版本 | `Halo` | （仅当 `$is_footer_theme_info_show === true` 时显示） |
 | `is_footer_copyright_show` | 开关 | 页面底部版权信息 | 开 |  |
 | `footer_copyright_custom_name` | 文本 | 版权信息自定义署名 | — | 如果不填写，则使用站点标题作为署名（仅当 `$is_footer_copyright_show === true` 时显示） |
+| `is_footer_beian_show` | 开关 | 页面底部备案信息 | 关 | 面向中国大陆站点。填写后由主题按当前配色渲染，不必再往“页面底部内容”里手写一段带固定颜色的 HTML。 |
+| `footer_beian_icp` | 文本 | ICP 备案号 | — | 照工信部系统里的写法填，例如 京 ICP 备 12345678 号 -1。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_icp_url` | 文本 | ICP 备案号链接 | `https://beian.miit.gov.cn/` | 留空则指向工信部备案管理系统 https://beian.miit.gov.cn/（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_police` | 文本 | 公安网备号 | — | 照公安备案回执上的写法填，例如 京公网安备 11010502030143 号。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_police_url` | 文本 | 公安网备号链接 | `https://beian.mps.gov.cn/` | 留空则指向全国互联网安全管理服务平台 https://beian.mps.gov.cn/（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_police_icon` | 附件 | 公安网备号左侧图标 | — | 可选。上传备案时取得的警徽图标，显示在公安网备号左侧；留空则只显示文字。（仅当 `$is_footer_beian_show === true` 时显示） |
 | `is_footer_force_bottom` | 开关 | 强制页脚在页面底部 | 开 |  |
 | `is_footer_menu_show` | 开关 | 页面底部菜单 | 开 |  |
 | `is_footer_content_show` | 开关 | 添加内容到页面最底部/侧边栏 | 关 | 开启后，可在“内容显示位置”中选择显示为页面底部内容（内联）或悬浮侧边栏（角落）。 |

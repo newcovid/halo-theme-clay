@@ -1,6 +1,13 @@
 @layer base {
   /* Clay 度量令牌：行宽与圆角阶取自 claude.com 实测，缓动为其压倒性主导的那一条 */
   :root {
+    /* 主题唯一的一条状态过渡时长，和 --clay-ease 配成一对。
+       缓动是从 claude.com 实测出来的（那条曲线出现 15 次，压倒性主导）；时长则没有实测值，
+       但主题自己早有事实标准——改造前全站 26 处 transition 无一例外都是二百毫秒。
+       所以这里取自家惯例而不是另拍一个数：链接规则线最初写了 220ms，和周围每一处差
+       20 毫秒，肉眼无差别，却让「这个主题有几种时长」这个问题多出一个答案。
+       点击特效的 420ms 是刻意的例外，它要的是余韵而不是即时反馈，见 DESIGN.md §14。 */
+    --clay-duration: 0.2s;
     --clay-ease: cubic-bezier(0.4, 0, 0.2, 1);
     --clay-ease-emphasized: cubic-bezier(0.32, 0.72, 0, 1);
 
@@ -19,6 +26,40 @@
     --clay-radius-sm: 8px;
     --clay-radius-xl: 24px;
     --clay-radius-xs: 4px;
+
+    /* 链接规则线：静止是一条断线，悬停时实线自左向右把它补齐。
+       变化落在形状和方向上，颜色只是搭在上面——灰色预设里静止色与强调色的明度差只有
+       20 上下（clay 档是 30 以上还外加色相跳变），纯靠颜色的悬停几乎给不出反馈；
+       而「断 → 整」在任何配色、任何色觉条件下都读得出来。
+       这也不是新造的修辞：内置光标里 grab → grabbing 就是空心圆角方 → 实心圆角方，
+       同一句「未定 → 落定」，只是换到了下划线上。
+
+       几何用绝对单位。这是发丝级的细节，跟着字号缩放会让页脚的断线细成噪点、
+       让大标题的断线粗成栅栏。断线也和 abbr[title] 的 1px 点线明确拉开：
+       点线是「此处有释义」，断线是「此处可跳转」，两者不能长得像。
+
+       currentcolor 让断线自动跟随所在语境的文字色（页脚是 80% 弱化色，正文是全色），
+       省掉了此前散在七八个文件里各写一遍的 color-mix。 */
+    /* 6 实 3 空而不是更碎的比例：要读成「同一条线被打断了」，悬停时它被补齐；
+       实段短于空段就成了缝线或点线，那是另一种东西。 */
+    --clay-rule-dash: 6px;
+    --clay-rule-dashes: repeating-linear-gradient(
+      90deg,
+      currentcolor 0 var(--clay-rule-dash),
+      transparent var(--clay-rule-dash) var(--clay-rule-period)
+    );
+    --clay-rule-period: 9px;
+
+    /* 颜色直接写死成 accent，不再经一层 --clay-rule-color 中转。
+       自定义属性按**已代换的计算值**继承：这条声明挂在 :root 上，里面的 var() 就在 :root
+       上代换完了，后代再改那个中转变量一点用没有——导航因此会静默画成 accent。
+       （同一个坑在 `cursor: var(--clay-cursor-*)` 上踩过一次，见 CLAUDE.md。）
+       所以要用 primary 的地方直接写 linear-gradient(var(--color-primary) 0 0)，
+       别再引一层变量。断线那条里的 currentcolor 不受影响：它不是 var()，
+       代换阶段原样留着，最终在用到它的元素上解析。 */
+    --clay-rule-solid: linear-gradient(var(--color-accent) 0 0);
+    --clay-rule-thick: 2px;
+    --clay-rule-thin: 1px;
     --text-width-body: 60ch;
     --text-width-headline: 30ch;
     --text-width-narrow: 20ch;
@@ -128,21 +169,23 @@
     & .h5,
     & h6,
     & .h6 {
+      /* 标题静止态不挂任何规则线——层级由字号与字重建立，不靠线。
+         但悬停用的是与正文链接同一道自左向右的实线，两者读起来是同一套东西。
+
+         此前这里的渐变是 `transparent 0.375rem, accent 0.375rem, accent`，
+         而背景盒本身就是 0.375rem 高：彩色段从盒底开始、到盒底结束，高度为零。
+         也就是说标题链接的悬停下划线一直没画出来过。 */
       & a {
-        background: none;
+        background-image: var(--clay-rule-solid);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0 var(--clay-rule-thick);
         color: inherit;
         text-decoration: none;
+        transition: background-size var(--clay-duration) var(--clay-ease);
 
         &:hover {
-          background-image: linear-gradient(
-            transparent,
-            transparent 0.375rem,
-            var(--color-accent) 0.375rem,
-            var(--color-accent)
-          );
-          background-position: bottom;
-          background-repeat: repeat-x;
-          background-size: 100% 0.375rem;
+          background-size: 100% var(--clay-rule-thick);
         }
       }
     }
@@ -260,7 +303,7 @@
     & spoiler {
       cursor: var(--clay-cursor-pointer, pointer);
       filter: blur(0.3125rem);
-      transition: filter 0.2s var(--clay-ease);
+      transition: filter var(--clay-duration) var(--clay-ease);
 
       /* 鼠标悬停时，元素被聚焦时，文本被选中时去除模糊 */
       &:hover,
@@ -275,7 +318,7 @@
         background-color: var(--color-base-content);
         color: transparent;
         filter: none;
-        transition: all 0.2s var(--clay-ease);
+        transition: all var(--clay-duration) var(--clay-ease);
 
         &:hover,
         &:focus,
@@ -324,26 +367,20 @@
       hyphens: manual;
     }
 
+    /* 正文链接。两层背景共用底边：断线 1px 常驻，实线 2px 从零宽度铺开盖住它，
+       铺展方向是阅读方向。文字色不参与——正文里一片变色的链接太吵，
+       线本身已经把状态说清楚了。 */
     & a:not(:is(h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6) a) {
-      background-image: linear-gradient(
-        transparent,
-        transparent 0.3125rem,
-        var(--color-base-content) 0.3125rem,
-        var(--color-base-content)
-      );
-      background-position: bottom;
-      background-repeat: repeat-x;
-      background-size: 100% 0.375rem;
+      background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
+      background-position: 0 100%;
+      background-repeat: no-repeat, repeat-x;
+      background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
       color: var(--color-base-content);
       text-decoration: none;
+      transition: background-size var(--clay-duration) var(--clay-ease);
 
       &:hover {
-        background-image: linear-gradient(
-          transparent,
-          transparent 0.25rem,
-          var(--color-accent) 0.25rem,
-          var(--color-accent)
-        );
+        background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
       }
 
       &:has(code) {
@@ -443,38 +480,68 @@
       }
     }
 
+    /* 页脚里的链接——主题信息的两条外链、备案号、页脚菜单、侧栏子菜单——原本静止态就是
+       容器色，悬停只从 80% 淡到 60%：既跟周围的纯文本分不开，悬停又是「更淡」，
+       方向和「这里可以点」相反，而且整条路径上没有一处取自配色预设。
+       现在与正文用同一套断→整，只是文字色也一并转向强调色：页脚字号小、语境弱，
+       多给一层反馈是值当的。断线颜色由 currentcolor 自动跟到这里的 80% 弱化色。 */
     & a {
-      background-image: none;
+      background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
+      background-position: 0 100%;
+      background-repeat: no-repeat, repeat-x;
+      background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
       color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
-      text-decoration: underline;
+      text-decoration: none;
+      transition:
+        background-size var(--clay-duration) var(--clay-ease),
+        color var(--clay-duration) var(--clay-ease);
 
       &:hover {
-        color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+        background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
+        color: var(--color-accent);
       }
     }
 
     & .submenu-container {
       & .submenu-toggle {
         color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+        transition: color var(--clay-duration) var(--clay-ease);
 
         &:hover {
-          color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+          color: var(--color-accent);
         }
       }
 
       & .submenu-link {
-        color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
         margin-right: 0;
-
-        &:hover {
-          color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
-        }
       }
     }
 
     & .footer-left {
       line-height: 1.25rem;
       vertical-align: middle;
+    }
+
+    /* 备案信息自成一行居中。两条之间用间距而不是 #footer li 那道竖线分开——
+       竖线是给页脚菜单那种短词条准备的，备案号本身就长，再加竖线只是噪音。
+       颜色与下划线全部继承上面的 #footer a，所以它跟着配色预设走。 */
+    & .footer-beian {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3125rem 1.25rem;
+      justify-content: center;
+      line-height: 1.25rem;
+      margin-top: 0.3125rem;
+
+      /* 警徽图标随字号缩放，用 vertical-align 而不是把 <a> 改成 inline-flex：
+         上面那条 `a img { display: inherit !important }` 会把 img 的 display
+         拽成父级的计算值，父级一旦是 inline-flex，图标就成了弹性容器。 */
+      & .beian-police-icon {
+        height: 1em;
+        margin-right: 0.375rem;
+        vertical-align: -0.15em;
+        width: auto;
+      }
     }
 
     & .footer-bottom {
@@ -514,5 +581,15 @@
      参考：VitePress 同名规则 */
   [lang]:where(:is(:lang(zh), :lang(ja), :lang(ko))) :is(h1, h2, h3, h4, h5, h6, p, li) {
     line-break: strict;
+  }
+
+  /* 关掉过渡这个动作，但保留状态差本身——链接的「断 → 整」是给低对比配色和色觉障碍的
+     那份反馈，不是装饰，不能跟着动效一起省掉。改时长而不是 transition: none：
+     全站每一处 transition 都取这个令牌，所以一处生效，卡片悬停、图标淡入、
+     侧栏浮现一并停下，不必逐个去写 reduce 分支。 */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --clay-duration: 1ms;
+    }
   }
 }

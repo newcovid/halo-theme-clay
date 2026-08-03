@@ -568,22 +568,22 @@ spec:
           options:
             - label: "Follow system"
               value: "auto"
-            - label: "Dark"
-              value: "dark"
             - label: "Light"
               value: "light"
+            - label: "Dark"
+              value: "dark"
             - label: "Follow system · Blue"
               value: "auto-blue"
-            - label: "Dark · Blue"
-              value: "dark-blue"
             - label: "Light · Blue"
               value: "light-blue"
-            - label: "Light · Gray"
-              value: "gray"
-            - label: "Dark · Gray"
-              value: "dark-gray"
+            - label: "Dark · Blue"
+              value: "dark-blue"
             - label: "Follow system · Gray"
               value: "auto-gray"
+            - label: "Light · Gray"
+              value: "light-gray"
+            - label: "Dark · Gray"
+              value: "dark-gray"
             - label: "Custom Color Scheme"
               value: "custom"
         - $formkit: number
@@ -770,12 +770,12 @@ spec:
               value: "light-blue"
             - label: "Dark · Blue"
               value: "dark-blue"
-            - label: "Light · Gray"
-              value: "gray"
-            - label: "Dark · Gray"
-              value: "dark-gray"
             - label: "Follow system · Gray"
               value: "auto-gray"
+            - label: "Light · Gray"
+              value: "light-gray"
+            - label: "Dark · Gray"
+              value: "dark-gray"
             - label: "Custom Color Scheme"
               value: "custom"
         - $formkit: number
@@ -806,12 +806,12 @@ spec:
               value: "light-blue"
             - label: "Dark · Blue"
               value: "dark-blue"
-            - label: "Light · Gray"
-              value: "gray"
-            - label: "Dark · Gray"
-              value: "dark-gray"
             - label: "Follow system · Gray"
               value: "auto-gray"
+            - label: "Light · Gray"
+              value: "light-gray"
+            - label: "Dark · Gray"
+              value: "dark-gray"
             - label: "Custom Color Scheme"
               value: "custom"
         - $formkit: number
@@ -842,12 +842,12 @@ spec:
               value: "light-blue"
             - label: "Dark · Blue"
               value: "dark-blue"
-            - label: "Light · Gray"
-              value: "gray"
-            - label: "Dark · Gray"
-              value: "dark-gray"
             - label: "Follow system · Gray"
               value: "auto-gray"
+            - label: "Light · Gray"
+              value: "light-gray"
+            - label: "Dark · Gray"
+              value: "dark-gray"
             - label: "Custom Color Scheme"
               value: "custom"
         - $formkit: number
@@ -1121,6 +1121,51 @@ spec:
           key: footer_copyright_custom_name
           label: Custom copyright signature
           help: "If left blank, the site title will be used as the signature"
+        - $formkit: switch
+          name: is_footer_beian_show
+          key: is_footer_beian_show
+          label: Footer ICP filing information
+          help: "For sites hosted in mainland China. The theme renders it in the current color scheme, so there is no need to hand-write a fixed-color HTML snippet into the footer content."
+          value: false
+        - $formkit: text
+          name: footer_beian_icp
+          key: footer_beian_icp
+          if: "$is_footer_beian_show === true"
+          label: ICP filing number
+          # autocorrect-disable -- the example is the exact literal format; spacing it breaks the point
+          help: "Copy it exactly as issued, e.g. 京ICP备12345678号-1. Leave blank to hide this line."
+          # autocorrect-enable
+          value: ""
+        - $formkit: text
+          name: footer_beian_icp_url
+          key: footer_beian_icp_url
+          if: "$is_footer_beian_show === true"
+          label: ICP filing number link
+          help: "Defaults to the MIIT filing system at https://beian.miit.gov.cn/"
+          value: "https://beian.miit.gov.cn/"
+        - $formkit: text
+          name: footer_beian_police
+          key: footer_beian_police
+          if: "$is_footer_beian_show === true"
+          label: Public security filing number
+          # autocorrect-disable -- ditto
+          help: "Copy it exactly as issued, e.g. 京公网安备11010502030143号. Leave blank to hide this line."
+          # autocorrect-enable
+          value: ""
+        - $formkit: text
+          name: footer_beian_police_url
+          key: footer_beian_police_url
+          if: "$is_footer_beian_show === true"
+          label: Public security filing number link
+          help: "Defaults to the national internet security service platform at https://beian.mps.gov.cn/"
+          value: "https://beian.mps.gov.cn/"
+        - $formkit: attachmentInput
+          name: footer_beian_police_icon
+          key: footer_beian_police_icon
+          if: "$is_footer_beian_show === true"
+          label: Icon shown before the public security number
+          help: "Optional. Upload the badge image issued with the filing; leave blank for text only."
+          value: ""
         - $formkit: switch
           name: is_footer_force_bottom
           key: is_footer_force_bottom

@@ -182,13 +182,22 @@ CJK 字形逐字回落到字体栈后段的系统字体。实测（Windows 11 / 
 
 上游每套预设是 12 个语义 token 的单一 `:root` 块（`src/templates/_runtime/styles/themes/*.css`，由 `generate-theme-css.ts` 解析，格式必须严格保持）。已按 §4.3 语义层重写全部 5 套：
 
-| 预设文件 | Clay 含义 | base-100 | primary |
-| --- | --- | --- | --- |
-| `theme-light.css` | Clay 亮色（签名） | `#faf9f5` | `#c6613f` |
-| `theme-dark.css` | Clay 暗色（签名） | `#141413` | `#d97757` |
-| `theme-gray.css` | Clay 静默（暖中性，无橙） | `#faf9f5` | `#5e5d59` |
-| `theme-light-blue.css` | Clay Sky 亮色 | `#faf9f5` | `#4a7fae` |
-| `theme-dark-blue.css` | Clay Sky 暗色 | `#141413` | `#6a9bcc` |
+| 预设文件 | Clay 含义 | base-100 | primary | accent |
+| --- | --- | --- | --- | --- |
+| `theme-light.css` | Clay 亮色（签名） | `#faf9f5` | `#c0502b` | `#9f4224` |
+| `theme-dark.css` | Clay 暗色（签名） | `#141413` | `#d97757` | `#de8b6f` |
+| `theme-light-blue.css` | Clay Sky 亮色 | `#faf9f5` | `#3c76b0` | `#326292` |
+| `theme-dark-blue.css` | Clay Sky 暗色 | `#141413` | `#6a9bcc` | `#88afd6` |
+| `theme-light-gray.css` | Clay 静默亮色（暖中性，无橙） | `#faf9f5` | `#73726c` | `#5e5d59` |
+| `theme-dark-gray.css` | Clay 静默暗色 | `#141413` | `#9c9a92` | `#b0aea5` |
+
+三个 `auto-*` 档由同族的浅深一对合成，没有自己的源文件。
+
+灰档的 `primary` / `accent` 一直是全表唯二不落在 §4.1 灰阶上的值，而且 `accent` 干脆还留着
+clay 的 `#9f4224` / `#de8b6f`——于是选了灰配色，导航链接变灰而图标悬停、标题悬停、标签下划线
+仍是橙的（那些位置取 `accent`）。现已按 clay 档的**明度结构**放回灰阶：
+`primary` 取 clay primary 同明度的一档（L\* 48 / 62），`accent` 取 clay accent 同明度的一档
+（L\* 40 / 71），于是「浅底变暗、深底变亮」的方向规则在灰档同样成立，只是靠明度而不是色相。
 
 `secondary` 承担「近黑主按钮」语义（亮色 `#141413` / 暗色 `#f5f4ed`）。
 
@@ -898,6 +907,8 @@ UA 默认的 `1em`，主题从未声明。两者叠起来就偏松：
 「绿」对应的取值是 `auto` / `light` / `dark`，即本主题的陶土色 `#c0502b` / `#d97757`——
 整套配色里没有一点绿。「灰粉」对应 `gray`，实测 `#5e5d59` / `#262624`，是暖中性灰，没有粉。
 两个名字都来自上游 higan-hz 的调色板，随代码一起 fork 过来。
+
+（该取值此后已改名为 `light-gray`，与 `light-blue` / `dark-gray` 对齐；不兼容旧值。）
 
 主「配色方案」那个下拉此前改过，但「深浅色模式切换按钮」下面的三个漏了。
 同一份枚举分散在四处、改一处不改其余，是这类漂移的固定成因——见下方第三点。

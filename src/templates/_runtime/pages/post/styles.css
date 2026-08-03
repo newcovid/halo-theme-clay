@@ -89,19 +89,16 @@
         line-height: 0.9375rem;
 
         & a {
+          background-image: linear-gradient(var(--color-primary) 0 0);
+          background-position: 0 100%;
+          background-repeat: no-repeat;
+          background-size: 0 var(--clay-rule-thick);
           color: var(--color-base-content);
           margin-right: 0.9375rem;
+          transition: background-size var(--clay-duration) var(--clay-ease);
 
           &:hover {
-            background-image: linear-gradient(
-              transparent,
-              transparent 0.3125rem,
-              var(--color-primary) 0.3125rem,
-              var(--color-primary)
-            );
-            background-position: bottom;
-            background-repeat: repeat-x;
-            background-size: 100% 0.375rem;
+            background-size: 100% var(--clay-rule-thick);
           }
         }
 
@@ -202,7 +199,7 @@
     }
 
     & .is-collapsible {
-      transition: all 0.2s var(--clay-ease);
+      transition: all var(--clay-duration) var(--clay-ease);
     }
   }
 
@@ -378,7 +375,7 @@
       left: 0;
       position: fixed;
       right: 0;
-      transition: opacity 0.2s var(--clay-ease);
+      transition: opacity var(--clay-duration) var(--clay-ease);
       width: 100%;
       z-index: 5000000;
 
@@ -401,19 +398,16 @@
         text-align: center;
 
         & a {
+          background-image: linear-gradient(var(--color-primary) 0 0);
+          background-position: 0 100%;
+          background-repeat: no-repeat;
+          background-size: 0 var(--clay-rule-thick);
           color: var(--color-primary);
           font-size: 1em;
+          transition: background-size var(--clay-duration) var(--clay-ease);
 
           &:hover {
-            background-image: linear-gradient(
-              transparent,
-              transparent 0.3125rem,
-              var(--color-primary) 0.3125rem,
-              var(--color-primary)
-            );
-            background-position: bottom;
-            background-repeat: repeat-x;
-            background-size: 100% 0.375rem;
+            background-size: 100% var(--clay-rule-thick);
           }
         }
 

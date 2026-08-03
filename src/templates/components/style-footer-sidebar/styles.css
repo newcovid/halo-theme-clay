@@ -33,7 +33,7 @@
     flex-shrink: 0;
     opacity: var(--footer-sidebar-opacity, 100%);
     position: sticky;
-    transition: opacity 0.2s var(--clay-ease);
+    transition: opacity var(--clay-duration) var(--clay-ease);
 
     &:hover {
       opacity: 100%;

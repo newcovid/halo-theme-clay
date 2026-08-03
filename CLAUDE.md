@@ -120,12 +120,23 @@ In particular, list templates get `ListedPostVo`, which has **no** `content`
 field; SpEL's `?.` guards null but not a missing property, so `post.content?.content` throws EL1008E and
 truncates the response mid-stream. Use `postFinder.content(post.metadata.name)` in list context.
 
-**`cursor: var(--x)` resolves on the element that declares `cursor`, not on the one that redefines `--x`.**
-Custom properties substitute at computed-value time on the element the *declaration* matched; descendants
-inherit the already-substituted value. So the dark-mode cursor override has to redefine `--clay-cursor-*` on
-`html` — the same element `:root { cursor: … }` matches. Redefining the variable on a wrapper further down
-changes nothing for anything that merely inherits the root cursor (elements with their own `cursor`
-declaration, like `a`, *do* pick it up — which makes the bug look like "only some cursors are broken").
+**A `var()` inside a token declared on `:root` is substituted *at* `:root`; descendants inherit the resolved
+literal.** Custom properties substitute at computed-value time on the element the *declaration* matched, so
+"define a token that reads a second token, then override the second one further down" silently does nothing.
+This has bitten twice:
+
+- `cursor: var(--clay-cursor-*)` — the dark-mode override has to redefine the variables on `html`, the same
+  element `:root { cursor: … }` matches. Redefining them on a wrapper changes nothing for anything that merely
+  *inherits* the root cursor; elements with their own `cursor` declaration (like `a`) *do* pick it up, which
+  makes the bug look like "only some cursors are broken".
+- `--clay-rule-solid: linear-gradient(var(--clay-rule-color) 0 0)` — the nav set `--clay-rule-color:
+  var(--color-primary)` on the link and still painted `--color-accent`, because the gradient had already
+  been resolved at `:root`. Fixed by dropping the indirection: sites needing a different colour write
+  `linear-gradient(var(--color-primary) 0 0)` themselves.
+
+`currentcolor` is **not** subject to this — it is a keyword, not a `var()`, so it survives substitution and
+resolves against the element that finally uses the value. That is what lets one `--clay-rule-dashes` token
+track the footer's 80% dimmed text colour and the article's full-strength one.
 
 **Custom property values are not validated at parse time, so `image-set` cannot be feature-degraded by
 declaring the property twice.** The later declaration always wins, even in a browser that cannot parse it,
@@ -143,14 +154,21 @@ each *setting* (`text-size-small`, `theme-dark`, `layout-max-width-style`, …) 
 It is how a 2500-line settings surface still ships ~70 KiB per page.
 **Adding a template requires registering it in `getBuildInputs()`** — it will not be discovered automatically.
 
-**Adding a colour preset touches six places**: the token source under `_runtime/styles/themes/`, the
-`staticThemes` / `autoThemes` tables in `generate-theme-css.ts`, a `components/theme-<name>/` trio, a
-`getBuildInputs()` entry, two `th:if` lines in `base-layout` (the `color-scheme-*` group and the
-`theme-*` group, both keyed off `selected_schemes`), and the `themeColorSchemeMap` in
-`theme-toggle-button`. Plus the option lists in **four** selects × two languages. The `selected_schemes`
-variable in `base-layout`'s root `th:with` exists to keep the template side at two lines instead of six —
-before it, the dispatch was duplicated across "toggle button off / on" branches, which is how upstream's
-stale preset labels survived so long.
+**Adding a colour preset touches five places**: the token source under `_runtime/styles/themes/`, the
+`COLOR_PRESETS` table in `src/scripts/theme-tokens.ts`, a `components/theme-<name>/` trio, a
+`getBuildInputs()` entry, and two `th:if` lines in `base-layout` (the `color-scheme-*` group and the
+`theme-*` group, both keyed off `selected_schemes`). Plus the option lists in **four** selects × two
+languages. The `selected_schemes` variable in `base-layout`'s root `th:with` exists to keep the template
+side at two lines instead of six — before it, the dispatch was duplicated across "toggle button off / on"
+branches, which is how upstream's stale preset labels survived so long.
+
+`COLOR_PRESETS` is the single source of truth for *which presets exist*: both `generate-theme-css.ts`
+and `generate-cursor-css.ts` read it. It used to live only in the theme generator while the cursor
+generator kept its own copy of clay's two hex values — which is why the blue and gray presets recoloured
+the page but left the pointer orange. Two other places that used to enumerate presets no longer do:
+`base-layout`'s `data-color-scheme` attribute now classifies by the `light` / `dark` / `auto` **prefix**
+instead of a ten-deep ternary chain, and `theme-toggle-button`'s `themeColorSchemeMap` still needs the
+new key (it also carries runtime-registered custom-scheme ids, so it stays an explicit map).
 
 Four build modes (`default` / `dev` / `full` / `tiny`) select scope, precompression, minification, and manifest via `BUILD_MODE`.
 
@@ -167,9 +185,9 @@ A 404 on `/moments` is expected until that page is created.
 
 Tokens live in two places, both derived from `docs/DESIGN.md`:
 
-- `src/templates/_runtime/styles/themes/*.css` — six sources (light / dark / light-blue / dark-blue / gray /
-  dark-gray), each a single `:root` block of exactly 12 semantic tokens, parsed by
-  `src/scripts/generate-theme-css.ts` (which requires that exact shape and alphabetical property order).
+- `src/templates/_runtime/styles/themes/*.css` — six sources (light / dark / light-blue / dark-blue /
+  light-gray / dark-gray), each a single `:root` block of exactly 12 semantic tokens, parsed by
+  `src/scripts/theme-tokens.ts` (which requires that exact shape and alphabetical property order).
   The three `auto-*` presets are *synthesised* from a light + dark pair, not authored. `primary` is the
   resting interactive color, `accent` the hover step.
   **Only 7 of the 12 tokens are referenced anywhere** — `primary-content`, `accent-content`, `neutral`,
@@ -177,8 +195,16 @@ Tokens live in two places, both derived from `docs/DESIGN.md`:
   Nothing consumes these through Tailwind utilities either, only hand-written `var()`. So a preset's real
   reach is smaller than its token diff suggests: the blue presets change exactly `primary` + `accent`.
   Body links are `--color-base-content` with an underline that turns `--color-accent` on hover — if a preset
-  sets those two to the same value the hover loses its colour cue (that was the gray preset's bug).
-  The light gray's value is `gray`, not `light-gray`: renaming it would invalidate saved configs.
+  sets those two to the same value the hover loses its colour cue.
+  **A preset that leaves `accent` alone is half a preset.** The gray preset shipped for a long time with
+  `primary` grey but `accent` still clay, so icons, heading-link hovers, post-title hovers and tag
+  underlines stayed orange while the nav went grey — `primary` and `accent` split the interactive
+  surface roughly evenly, and only `accent` shows up in hover states. Both are now placed on the
+  DESIGN.md warm ramp at the *same lightness steps* clay uses (L\* ≈ 48 → 40 light, 62 → 71 dark), so the
+  "darken on light, lighten on dark" direction rule holds in a monochrome preset too.
+  The light gray's value used to be `gray`; it is now `light-gray`, and the old value is **not** accepted —
+  saved configs holding `gray` fall through to `src/generated/theme-fallback.css` (the signature light
+  palette on `:root`, in the `base` layer) rather than to twelve undefined tokens.
 - `src/templates/_runtime/global/fonts/font-family.css` — three font roles: `--clay-font-sans`,
   `--clay-font-serif`, `--clay-font-mono`. `--clay-font-family` aliases sans and is what `body` uses.
 
@@ -220,8 +246,18 @@ gets which cursor lives separately, in `_runtime/global/cursors/selectors.css`, 
 to override the same variables — it does not restate the selectors. Edit shapes in the script, never the
 generated CSS. Every selector carries a keyword fallback (`var(--clay-cursor-text, text)`) because in `custom`
 mode most variables are undefined.
-Colours are per light/dark only, not per preset: the cursor is the theme's signature, and the blue/gray
-presets are variants of the same theme. 57 KB raw compresses to 1.5 KB brotli — the data URIs are near-identical.
+**Only the interactive colour follows the preset; the silhouette does not.** Outline and body fill come from
+`theme-light` / `theme-dark`'s `base-100` / `base-content` for the two halves — all six presets share just two
+`base-100` values, and their `base-content`s differ by one ramp step, which is invisible at 24px. So the
+product is two layers: light/dark blocks carrying all 13 shapes, then per-preset blocks carrying only the
+shapes that actually paint with the interactive colour. **Which shapes those are is probed, not listed** —
+`usesInteractiveColor()` renders each shape with sentinel colours and checks the output, so adding a clay
+stroke to an existing shape can't silently apply to the default preset only. Emitting all 13 per preset would
+be 175 KB instead of 107 KB. Raw grew 58 → 107 KB, brotli 1.5 → 2.0 KB: the extra blocks are near-duplicates.
+Preset blocks are `html[theme="…"]` and the base blocks are `html[data-color-scheme="…"]` — **equal
+specificity**, so the preset blocks must stay after the base ones, inside and outside the retina `@supports`
+alike. `muted` deliberately does *not* follow the preset: it means "no interaction here", the opposite of what
+the interactive colour means.
 
 ## Configuration policy
 

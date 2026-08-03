@@ -75,19 +75,18 @@
         }
       }
 
+      /* 常驻下划线对密集清单太吵，静止不挂线，悬停给同一道自左向右的实线 */
       & > a {
-        /* 常驻下划线对密集清单太吵，只在悬停时给 */
-        background-image: none;
+        background-image: var(--clay-rule-solid);
+        background-position: 0 100%;
+        background-repeat: no-repeat;
+        background-size: 0 var(--clay-rule-thick);
+        transition:
+          background-size var(--clay-duration) var(--clay-ease),
+          color var(--clay-duration) var(--clay-ease);
 
         &:hover {
-          background-image: linear-gradient(
-            transparent,
-            transparent calc(100% - 0.125rem),
-            var(--color-accent) calc(100% - 0.125rem)
-          );
-          background-position: bottom;
-          background-repeat: repeat-x;
-          background-size: 100% 100%;
+          background-size: 100% var(--clay-rule-thick);
           color: var(--color-accent);
         }
       }

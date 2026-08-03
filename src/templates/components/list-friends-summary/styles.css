@@ -12,15 +12,15 @@
   opacity: 100%;
   transform: scale(0.95);
   transition:
-    color 0.2s,
-    background-color 0.2s,
-    border-color 0.2s,
-    text-decoration-color 0.2s,
-    fill 0.2s,
-    stroke 0.2s,
-    opacity 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
+    color var(--clay-duration),
+    background-color var(--clay-duration),
+    border-color var(--clay-duration),
+    text-decoration-color var(--clay-duration),
+    fill var(--clay-duration),
+    stroke var(--clay-duration),
+    opacity var(--clay-duration),
+    box-shadow var(--clay-duration),
+    transform var(--clay-duration);
   transition-timing-function: var(--clay-ease);
 }
 
@@ -45,24 +45,18 @@
 }
 
 .friend-author-link {
-  background-image: linear-gradient(
-    transparent,
-    transparent 0.3125rem,
-    color-mix(in oklab, var(--color-base-content) 60%, transparent) 0.3125rem,
-    color-mix(in oklab, var(--color-base-content) 60%, transparent)
-  );
+  background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
+  background-position: 0 100%;
+  background-repeat: no-repeat, repeat-x;
+  background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
 
   /* --color-time 是上游调色板的遗留名，Clay 的令牌表里没有它，
      写在这里是「计算值时无效」→ 回落成继承正文色，静默失去弱化处理。
      改用本文件上方已有的 80% 弱化写法。 */
   color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
+  transition: background-size var(--clay-duration) var(--clay-ease);
 
   &:hover {
-    background-image: linear-gradient(
-      transparent,
-      transparent 0.3125rem,
-      var(--color-accent) 0.3125rem,
-      var(--color-accent)
-    );
+    background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
   }
 }

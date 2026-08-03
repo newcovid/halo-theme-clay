@@ -12,15 +12,15 @@
   opacity: 100%;
   transform: scale(0.95);
   transition:
-    color 0.2s,
-    background-color 0.2s,
-    border-color 0.2s,
-    text-decoration-color 0.2s,
-    fill 0.2s,
-    stroke 0.2s,
-    opacity 0.2s,
-    box-shadow 0.2s,
-    transform 0.2s;
+    color var(--clay-duration),
+    background-color var(--clay-duration),
+    border-color var(--clay-duration),
+    text-decoration-color var(--clay-duration),
+    fill var(--clay-duration),
+    stroke var(--clay-duration),
+    opacity var(--clay-duration),
+    box-shadow var(--clay-duration),
+    transform var(--clay-duration);
   transition-timing-function: var(--clay-ease);
 }
 

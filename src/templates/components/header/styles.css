@@ -1,5 +1,11 @@
 #header-component {
   margin: 0 auto 2rem;
+
+  /* 移动端菜单按钮是绝对定位的，锚点必须是页眉本身。
+     原先没有这一行，按钮就落到「碰巧被定位过的某个祖先」上，位置只能靠
+     top: 4.8125rem 这样的魔数去凑——站点标题换行、或打开站点图标把这一行撑高，
+     按钮都不会跟着走。 */
+  position: relative;
   width: 100%;
 
   & .h1 {
@@ -19,7 +25,10 @@
     margin-block: 0;
 
     @media (width < 640px) {
-      margin-right: 5rem;
+      /* 只给菜单按钮让出它实际占的宽度（图标 1.75rem + 一个间距），
+         5rem 是按钮内缩 31px 时代的补偿值，现在按钮贴着右边缘，站点标题不必再退这么多。
+         min-height 保留：它撑住的是站点图标那一行的高度，图标关掉时页眉高度也不跳。 */
+      margin-right: 3rem;
       min-height: 3.125rem;
     }
 
@@ -71,7 +80,12 @@
       padding: 0;
 
       @media (width < 640px) {
+        align-items: stretch;
         flex-direction: column;
+
+        /* 桌面端那行 0.9375rem 是给「一排横排链接」定的行高，竖排下会把每一项压扁。 */
+        line-height: 1.5;
+        margin-top: 0;
       }
 
       /* 导航静止不挂线（顶部一排断线会比正文还吵），悬停用与正文同一道自左向右的实线。
@@ -90,6 +104,19 @@
 
           &:hover {
             background-size: 100% var(--clay-rule-thick);
+          }
+        }
+
+        @media (width < 640px) {
+          /* 整行可点：触屏上没有指针，命中区域就是唯一的可用性来源。
+             上下 0.6875rem + 1.5 行高 ≈ 44px，正好是触摸目标的下限。 */
+          display: block;
+          margin-right: 0;
+          padding-block: 0.6875rem;
+
+          /* 触屏没有悬停，按下时给一次颜色反馈——这是这一层唯一能给的状态差。 */
+          &:active {
+            color: var(--color-primary);
           }
         }
       }
@@ -126,27 +153,39 @@
 
           /* display: none; 为了覆盖上面的 display: inline-block; */
           display: none;
+          margin-right: 0;
 
           &:not(:first-child) {
             font-size: 1rem;
-            padding-left: 4.375rem;
-            padding-top: 1rem;
+
+            /* 菜单项对齐到正文列的左边缘，和站点标题、下面的文章列表同一条竖线上。
+               原先是 padding-left: 4.375rem——那个缩进不对齐页面上的任何东西，
+               展开后读起来像掉进空白处的一段散字，而不是一份目录。 */
+            padding-left: 0;
           }
 
-          /* 菜单按钮样式 */
+          /* 菜单按钮：贴住页眉右边缘（和正文列右边缘同一条线），
+             纵向对齐到站点图标那一行的中线。
+             原先 right: 1rem 之外还叠着 a 的 margin-right: 0.9375rem，实际内缩 31px，
+             比页面上任何一条右边界都往里，看着就是「浮在半空」。 */
           &.icon {
-            display: inline-block;
+            align-items: center;
+            display: flex;
+            height: 3.125rem;
             position: absolute;
-            right: 1rem;
-            top: 4.8125rem;
+            right: 0;
+            top: 0;
 
-            &.iconify {
+            /* 展开态与文章页顶部菜单同一套表达：图标转为主色。 */
+            & a[aria-expanded="true"] {
               color: var(--color-primary);
             }
           }
 
           &.has-submenu {
             & .submenu-container {
+              /* 链接在移动端拿到了上下内边距，切换箭头要跟着居中，否则整行的基线是歪的 */
+              align-items: center;
               align-self: flex-start;
               display: flex;
               flex-direction: row;

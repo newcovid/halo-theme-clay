@@ -36,12 +36,6 @@
       class="tw:mr-8"
     >
       <div class="tw:flex tw:items-center tw:justify-end">
-        <span
-          id="nav"
-          class="tw:hidden tw:lg:block"
-        >
-          <th:block th:insert="~{components/menu/template :: menu(showIcon=false)}"></th:block>
-        </span>
         <a
           id="menu-icon"
           href="#"
@@ -55,6 +49,15 @@
           <span class="iconify-middle tw:iconify tw:material-symbols--menu"></span>
         </a>
       </div>
+      <!--/* 菜单链接排在开关按钮下方，而不是它左边：右上角这一族（开关、菜单、操作图标、目录）
+             因此收成同一列右对齐的边栏。横排时这一行有近 300px 宽，正文列外的页边放不下，
+             于是伸进正文列里——标题和元信息有避让逻辑接住，正文没有。 */-->
+      <span
+        id="nav"
+        class="tw:hidden tw:lg:block"
+      >
+        <th:block th:insert="~{components/menu/template :: menu(showIcon=false)}"></th:block>
+      </span>
       <span
         id="actions"
         class="tw:float-right tw:mt-8 tw:mr-8 tw:hidden tw:text-right tw:lg:block"

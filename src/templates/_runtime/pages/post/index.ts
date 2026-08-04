@@ -11,7 +11,11 @@ import { slideUp } from "@runtime/scripts/animations/slide-up";
 
 // Animation durations in milliseconds
 const ANIMATION_DURATION = 200;
-const POST_HEADER_NAV_ANIMATION_DURATION = 50;
+
+// 顶部菜单的显隐时长。原先是 50ms——四分之一个 --clay-duration，快到读不出「展开」这个动作，
+// 只看到内容忽然在那里了。全站过渡都取 0.2s，这里没有理由自成一格。
+// 标题避让的 50ms 是另一回事：那是为了让菜单铺开时不压到标题，收缩要抢在前面，故意留着。
+const POST_HEADER_NAV_ANIMATION_DURATION = ANIMATION_DURATION;
 const POST_HEADER_ARTICLE_AVOIDANCE_GAP = 16;
 const POST_HEADER_ARTICLE_AVOIDANCE_SHRINK_DURATION = 50;
 const POST_HEADER_ARTICLE_AVOIDANCE_RESTORE_DURATION = 200;

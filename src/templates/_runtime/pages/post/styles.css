@@ -78,15 +78,25 @@
       color: var(--color-primary);
     }
 
+    /* 菜单链接：右对齐的一列，和下面的操作图标、目录同属一条边栏。
+       原先是横排一行，在 1280 宽的窗口上有 294px，而正文列外的页边只有 290px——
+       它每次都伸进正文列 77px。竖排后整族的宽度由最长的一项决定（四个汉字约 64px），
+       页边放得下，正文因此不再被压。菜单项多了是往下长，那是空的地方。 */
     & #nav {
       color: var(--color-base-content);
+      display: block;
       font-size: var(--tw-text-sm);
       font-style: normal;
       letter-spacing: 0.01em;
+      margin-top: 1.5rem;
 
       & ul {
-        display: inline-table;
-        line-height: 0.9375rem;
+        align-items: flex-end;
+        display: flex;
+        flex-direction: column;
+
+        /* 横排时的 0.9375rem 是「一行的高度」，竖排下每一项都会被压扁 */
+        line-height: 1.7;
 
         & a {
           background-image: linear-gradient(var(--color-primary) 0 0);
@@ -94,7 +104,6 @@
           background-repeat: no-repeat;
           background-size: 0 var(--clay-rule-thick);
           color: var(--color-base-content);
-          margin-right: 0.9375rem;
           transition: background-size var(--clay-duration) var(--clay-ease);
 
           &:hover {
@@ -103,15 +112,15 @@
         }
 
         & li {
-          border-right: 1px dotted var(--color-primary);
+          /* 点线是横排时的分隔符，竖排下每一项自成一行，不需要它 */
+          border-right: 0;
+          display: block;
+
+          /* 右边距对齐到 #menu-icon 与 #actions 的右边界，边栏才是一条直线 */
+          margin-right: 2rem;
 
           &:last-child {
-            border-right: 0;
-            margin-right: 0;
-
-            & a {
-              margin-right: 0;
-            }
+            margin-right: 2rem;
           }
         }
       }
@@ -543,6 +552,39 @@
   }
 
   /* 文章页正文末尾 推荐文章和相邻导航字体颜色设置 end */
+}
+
+/* 顶部菜单展开/收起的动作：在淡入淡出上叠一小段自上而下的位移，
+   让这一族内容读成「从开关按钮下面落下来」，而不是凭空出现又凭空消失。
+   位移只有 6px——边栏本来就贴着视口右上角，幅度再大就成了甩进来。
+
+   两点必须留在这里：
+   一是这段**不能**放进 @layer base。共享的 .fade-in / .fade-out 是无层的，
+   无层样式整体压过任何 @layer，放进去再高的优先级也不生效。
+   二是只改 animation-name，时长仍由 setupAnimation 内联写入，
+   于是「减少动态效果」那条分支照样管得到它。 */
+@keyframes clay-post-menu-in {
+  from {
+    opacity: 0%;
+    transform: translateY(-0.375rem);
+  }
+}
+
+@keyframes clay-post-menu-out {
+  to {
+    opacity: 0%;
+    transform: translateY(-0.375rem);
+  }
+}
+
+#header-post :is(#nav, #actions, #toc-desktop-panel, #share-list) {
+  &.fade-in {
+    animation-name: clay-post-menu-in;
+  }
+
+  &.fade-out {
+    animation-name: clay-post-menu-out;
+  }
 }
 
 /* Clay 点赞按钮

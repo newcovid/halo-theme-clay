@@ -1,13 +1,42 @@
-/* Offical Comment Widget Colors v3 */
-/* Adapted for https://github.com/halo-dev/plugin-comment-widget */
+/* 评论组件（halo-dev/plugin-comment-widget v3）的公开着色接口。
+   v3 起整个组件跑在 shadow DOM 里，主题的普通选择器进不去；能穿过边界的只有自定义属性，
+   所以这一份是「隔着一层能改的全部」，其余结构性的东西在 index.ts 里补。
+
+   下面这 10 个变量是照着 3.1.2 的产物核出来的（组件里所有 var(--halo-cw-*) 的实际取用点）。
+   原先这里还写了 --halo-cw-primary-2-color 和 --halo-cw-text-2-color，组件里没有任何一处读它们，
+   已删。 */
 comment-widget {
-  --halo-cw-muted-1-color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
-  --halo-cw-muted-2-color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
-  --halo-cw-muted-3-color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  /* 提交按钮的一对反色。--color-secondary / --color-secondary-content 在六个预设里
+     正好就是「浅色下近黑 + 近白字 / 深色下近白 + 近黑字」，即 DESIGN.md 记的主按钮配色
+     （--theme-button-primary-bg: gray-950）。这两个令牌此前全站没有一处引用。
+     悬停朝页面底色掺一点：浅色下按钮变浅、深色下变深，两边都是同一句「按下去了」。 */
+  --clay-cw-button-bg: var(--color-secondary);
+  --clay-cw-button-bg-hover: color-mix(in oklab, var(--color-secondary) 82%, var(--color-base-100));
+  --clay-cw-button-fg: var(--color-secondary-content);
+
+  /* 组件默认是 ui-sans-serif/system-ui 那一串。不设它，评论区就是整页唯一
+     不用主题字体的地方——而且是唯一一处会露出系统字体的地方。 */
+  --halo-cw-base-font-family: var(--clay-font-family);
+
+  /* 默认写死 1rem，不跟「文字大小」设置走 */
+  --halo-cw-base-font-size: var(--text);
+  --halo-cw-base-rounded: var(--clay-radius-sm);
+
+  /* muted 这三档是**面**的颜色，不是字的颜色：组件的默认值是 #cbd5e1 / #e2e8f0 / #f1f5f9，
+     换算成白底上的墨量约 20% / 12% / 6%。此前这里给的是 80% / 60% / 40%——方向对、量级差了四倍，
+     于是编辑框描边成了一条近黑的粗线，工具栏按钮的悬停底色成了近黑的方块。
+     6% / 14% 也正是主题自己那颗次级按钮（.upvote-button）用的量。 */
+  --halo-cw-muted-1-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+  --halo-cw-muted-2-color: color-mix(in oklab, var(--color-base-content) 12%, transparent);
+  --halo-cw-muted-3-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+
+  /* primary-1 只剩下描边用途（编辑框获得焦点、输入框获得焦点），提交按钮的填充在 index.ts 里接管。
+     primary-3 是 3px 的焦点光晕，要的是一层薄色，不是 60% 的实色。 */
   --halo-cw-primary-1-color: var(--color-primary);
-  --halo-cw-primary-2-color: color-mix(in oklab, var(--color-primary) 80%, transparent);
-  --halo-cw-primary-3-color: color-mix(in oklab, var(--color-primary) 60%, transparent);
+  --halo-cw-primary-3-color: color-mix(in oklab, var(--color-primary) 24%, transparent);
   --halo-cw-text-1-color: var(--color-base-content);
-  --halo-cw-text-2-color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
   --halo-cw-text-3-color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+
+  /* 头像的尺寸与圆角保持组件默认：圆形头像指的是人，主题自己那颗圆角方是站点标识，
+     两者本来就不该长成一样。 */
 }

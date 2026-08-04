@@ -1,0 +1,97 @@
+/* 注入到评论组件 shadow root 里的样式。为什么需要它、注入怎么做，见 index.ts。
+
+   只挑组件自己留空的那几个语义钩子（form__footer / form-login / form-logout / form-submit），
+   不碰它的原子类。钩子被上游改名时这里静默失效，评论区回到插件默认样式——
+   降级方向是对的，不会把界面弄坏。
+
+   自定义属性能穿过 shadow 边界，所以 --clay-* / --color-* 在这里都取得到。 */
+
+/* 「登录 / 退出登录」和「提交评论」原本一个在上、一个在下，各占一行。
+   组件把两者放进同一个 .form__footer，但没有给这个盒子任何布局——
+   它是留给主题的钩子，不填就是块级堆叠，看着就是错行。 */
+.form__footer {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  justify-content: space-between;
+}
+
+.form-actions {
+  /* 吃掉剩余宽度，组件自己的 justify-end 才能把提交按钮顶到右边 */
+  flex: 1 1 auto;
+}
+
+/* 次级按钮。和主题里已有的那一颗（.upvote-button）同一套配方：
+   6% 的底、70% 的字、悬停加深，不描边。评论区没有理由再造一种次级按钮。 */
+.form-login,
+.form-logout {
+  background-color: color-mix(in oklab, var(--color-base-content) 6%, transparent);
+  border-color: transparent;
+  border-radius: var(--clay-radius-sm);
+  color: color-mix(in oklab, var(--color-base-content) 70%, transparent);
+  cursor: var(--clay-cursor-pointer, pointer);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.5rem 0.875rem;
+  transition:
+    background-color var(--clay-duration) var(--clay-ease),
+    color var(--clay-duration) var(--clay-ease);
+
+  &:hover {
+    background-color: color-mix(in oklab, var(--color-base-content) 14%, transparent);
+    color: var(--color-base-content);
+
+    /* 组件的 hover:opacity-70 会把整颗按钮连字一起淡掉，和上面的加深正好相反 */
+    opacity: 100%;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* 主按钮：近黑底 + 近白字（深色配色下自动反过来）。
+   组件默认拿 --halo-cw-primary-1-color 当填充，那会是签名橙——DESIGN.md 明确记过这是
+   最容易犯的那个错，橙色填充会把整体气质从克制推向促销。 */
+.form-submit {
+  background-color: var(--clay-cw-button-bg);
+  border-color: var(--clay-cw-button-bg);
+  border-radius: var(--clay-radius-sm);
+
+  /* 组件把字色写死成 text-white，深色配色下按钮是近白底，白字会看不见 */
+  color: var(--clay-cw-button-fg);
+  cursor: var(--clay-cursor-pointer, pointer);
+
+  /* 覆盖 h-12：主题的按钮高度由字号和内边距决定，不写死 3rem */
+  font-size: var(--text-xs);
+  font-weight: 500;
+  height: auto;
+  line-height: 1;
+  padding: 0.625rem 1rem;
+  transition: background-color var(--clay-duration) var(--clay-ease);
+
+  &:hover {
+    background-color: var(--clay-cw-button-bg-hover);
+    border-color: var(--clay-cw-button-bg-hover);
+    opacity: 100%;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: var(--clay-cursor-not-allowed, not-allowed);
+    opacity: 60%;
+  }
+
+  /* 发送图标跟着字号缩放，不再固定 1.25rem */
+  & > i {
+    height: 1.15em;
+    width: 1.15em;
+  }
+}

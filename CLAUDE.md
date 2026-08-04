@@ -201,6 +201,51 @@ above it stops being covered by the card-wide click target — so it needs to be
 it becomes a dead patch in the middle of a clickable card. That is why `.post-more-link` is a real `<a>`
 (`aria-hidden` on the wrapper, `tabindex="-1"` on the link) rather than a styled `<div>`.
 
+**`--clay-duration` does not reach the four JS animation helpers.** The reduced-motion branch works by
+setting `--clay-duration: 1ms`, which covers every `transition` in the theme — but `fadeIn`/`fadeOut`/
+`slideDown`/`slideUp` write `animationDuration` inline in milliseconds and hardcoded `ease-out` in their
+own stylesheets. So the three most visible expand/collapse motions in the theme (post top-right menu,
+mobile header menu, mobile bottom nav) were the only places that used a second easing *and* ignored
+"reduce motion" entirely. Both are now funnelled: the four `styles.css` files take `var(--clay-ease)`, and
+`setupAnimation` / `slideDown` / `slideUp` run their duration through `resolveAnimationDuration()`.
+Anything new that animates via these helpers inherits both; anything that sets `animationDuration` itself
+does not.
+
+**The post page's right-hand rail is `position: fixed` over the article, and only the title is protected.**
+`#header-post` is pinned to `top: 2rem; right: 0`; the article column is centred with a fixed max width, so
+whether the rail clears the text is purely "is half the leftover margin wider than the rail". At 1280 the
+margin is 290px. The rail used to be ~372px because the menu was a horizontal strip, so it cut 77px into
+the text column on every desktop; it is now a right-aligned vertical column whose width is set by the
+longest label. `updatePostHeaderArticleAvoidance` pushes `#article-header > h1` and `.meta` leftward when
+they overlap — **body text has no equivalent**, and cannot have one (you cannot reflow around a fixed
+overlay). Below ~1100px `#actions` and `#toc-desktop-panel` still reach into the column; that is upstream's
+layout, unchanged. Anything added to the rail must be measured against the margin, not against the viewport.
+
+**The comment widget is shadow DOM, so only two things reach it.** `plugin-comment-widget` v3 renders
+through nested Lit elements (`comment-widget > comment-form > base-form > comment-editor > …`), each with
+its own **open** shadow root. Theme selectors cannot cross that boundary; inherited properties and custom
+properties can. Three consequences worth knowing before touching `components/halo-comment-widget/`:
+
+- The widget's own `:host` sets `font-family: var(--halo-cw-base-font-family, ui-sans-serif, system-ui, …)`
+  and `font-size: var(--halo-cw-base-font-size, 1rem)`. Leaving those unset does not mean "inherit the
+  page" — it means the comment area is the one region of the site rendering in the OS font stack at a
+  fixed 1rem, ignoring the 文字大小 setting.
+- **`--halo-cw-muted-1/2/3` are surface colours, not text colours.** The widget's own defaults are
+  `#cbd5e1` / `#e2e8f0` / `#f1f5f9` — roughly 20% / 12% / 6% ink on white. Feeding them text-strength inks
+  (this theme shipped 80/60/40 for a long time) keeps the *direction* right and gets the magnitude wrong
+  by ~4×, which is why the editor had a near-black border and the toolbar's hover chips were near-black
+  squares. Check any new `--halo-cw-*` value against the fallback in the shipped bundle, not against what
+  the name sounds like. Two of the nine the theme used to set (`primary-2`, `text-2`) are not read by
+  3.1.2 at all.
+- Layout cannot be done through variables. `.form__footer` / `.form-login` / `.form-logout` /
+  `.form-submit` / `.form-actions` carry **zero** rules in the plugin bundle — they are hooks left for
+  themes, and with `.form__footer` unstyled the login/account row and the submit button stack instead of
+  sharing a row. `index.ts` therefore appends one constructed stylesheet to every shadow root under
+  `comment-widget` (open roots; Lit assigns `adoptedStyleSheets` once at `createRenderRoot`, and appended
+  sheets sort last, so no `!important` is needed). It walks nested roots and observes each one, because
+  reply forms and comment items are created after interaction. That surface is tied to upstream class
+  names — when they change it degrades to the plugin's own look, which is the acceptable direction.
+
 ## Architecture
 
 Vite 8 + Tailwind v4 + Alpine.js, bundling with rolldown. Three custom Vite plugins in `plugins/`: Thymeleaf-safe HTML minification, Tailwind class-name mangling, and generated-CSS comment cleanup.

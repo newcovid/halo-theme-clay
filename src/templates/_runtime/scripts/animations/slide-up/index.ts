@@ -1,5 +1,5 @@
 import "./styles.css";
-import { hideElement, isVisible } from "../base/index";
+import { hideElement, isVisible, resolveAnimationDuration } from "../base/index";
 
 /**
  * JQuery 风格的滑上动画函数 - 通过高度变化隐藏元素
@@ -24,7 +24,7 @@ export function slideUp(element: HTMLElement, duration = 200): void {
   Object.assign(element.style, {
     height: `${currentHeight}px`, // 设置当前高度并启用 overflow hidden
     overflow: "hidden",
-    animationDuration: `${duration}ms`,
+    animationDuration: `${resolveAnimationDuration(duration)}ms`,
   });
 
   // 移除冲突的类并设置动画

@@ -1,5 +1,5 @@
 import "./styles.css";
-import { isVisible, showElement } from "../base/index";
+import { isVisible, resolveAnimationDuration, showElement } from "../base/index";
 
 /**
  * JQuery 风格的滑下动画函数 - 通过高度变化显示元素
@@ -27,7 +27,7 @@ export function slideDown(element: HTMLElement, duration = 200): void {
   Object.assign(element.style, {
     height: "0px", // 开始时设置高度为 0
     overflow: "hidden",
-    animationDuration: `${duration}ms`,
+    animationDuration: `${resolveAnimationDuration(duration)}ms`,
   });
 
   // 移除冲突的类并设置动画

@@ -14,6 +14,6 @@
 }
 
 .slide-up {
-  animation: slide-up ease-out forwards;
+  animation: slide-up var(--clay-ease) forwards;
   overflow: hidden;
 }

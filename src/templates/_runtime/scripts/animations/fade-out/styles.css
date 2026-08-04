@@ -5,5 +5,5 @@
 }
 
 .fade-out {
-  animation: fade-out ease-out forwards;
+  animation: fade-out var(--clay-ease) forwards;
 }

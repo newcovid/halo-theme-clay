@@ -160,6 +160,18 @@ function cleanupAnimation(element: HTMLElement, className: string, callback?: ()
 }
 
 /**
+ * 「减少动态效果」下的动画时长。
+ *
+ * 全站的 transition 都取 --clay-duration，那个令牌在 reduce 分支里被改成 1ms，一处生效。
+ * 但这些助手把时长写成内联的 animationDuration，走不到那条分支——顶部菜单、移动端菜单、
+ * 底部导航这些最显眼的显隐动效因此是唯一不响应该偏好的地方。
+ * 同样是改时长而不是 animation: none：状态差本身要保留，只是不再花时间过渡。
+ */
+export function resolveAnimationDuration(duration: number): number {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? 1 : duration;
+}
+
+/**
  * 设置 CSS 动画的通用函数
  *
  * @param element - 动画元素
@@ -176,7 +188,7 @@ export function setupAnimation(
   animationCleanupMap.get(element)?.();
 
   element.classList.add(className);
-  element.style.animationDuration = `${duration}ms`;
+  element.style.animationDuration = `${resolveAnimationDuration(duration)}ms`;
 
   const handleAnimationEnd = cleanupAnimation(element, className, onComplete);
   // 动画被提前打断，调用 animationCleanupMap 中的清理函数

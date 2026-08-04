@@ -4,6 +4,9 @@
   }
 }
 
+/* 缓动取全站唯一的那一条。这里原本是 ease-out——四个动画助手各写一次，
+   于是「一条缓动走天下」在所有走 JS 显隐的地方（顶部菜单、移动端菜单、底部导航）
+   都不成立，而这些恰恰是动效最显眼的位置。 */
 .fade-in {
-  animation: fade-in ease-out forwards;
+  animation: fade-in var(--clay-ease) forwards;
 }

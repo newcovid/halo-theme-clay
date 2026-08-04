@@ -43,11 +43,29 @@
     /* 6 实 3 空而不是更碎的比例：要读成「同一条线被打断了」，悬停时它被补齐；
        实段短于空段就成了缝线或点线，那是另一种东西。 */
     --clay-rule-dash: 6px;
+
+    /* 方向是 270deg（自右向左）而不是 90deg：断线那一层的图块靠右对齐、宽度会随悬停收缩，
+       图案的相位锚在图块的**起始边**上。90deg 时起始边是左边，也就是那条会移动的边，
+       断线于是随收缩爬行；270deg 把起始边换成固定不动的右边，图案就钉住了。
+       静止态两者只差一个相位，看上去是同一条断线。 */
     --clay-rule-dashes: repeating-linear-gradient(
-      90deg,
+      270deg,
       currentcolor 0 var(--clay-rule-dash),
       transparent var(--clay-rule-dash) var(--clay-rule-period)
     );
+
+    /* 两层永不重叠：实线自左向右铺开的同时，断线自右向左退让，交界处严丝合缝。
+       此前是断线常驻整宽、实线盖在它上面——看着能盖住，实际盖不干净：
+       两层共用元素底边，缩放比不是整数时这条底边落在设备像素之间，两层都会在同一行做抗锯齿。
+       上层不满 alpha 就挡不住下层，那一行于是按 6 实 3 空的节奏透出深浅差，看着像锯齿。
+       高度差、层序、颜色都救不了——只要重叠就有这一行。所以让它们不重叠。
+
+       四处用到这套（正文链接、页脚链接、引文脚注、友链作者）都取这两个令牌，
+       免得再出现「改了一处、另外三处保持原样」的静默不一致。 */
+    --clay-rule-fill: 100% var(--clay-rule-thick), 0 var(--clay-rule-thin);
+    --clay-rule-idle: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
+    --clay-rule-layers: var(--clay-rule-solid), var(--clay-rule-dashes);
+    --clay-rule-origins: 0 100%, 100% 100%;
     --clay-rule-period: 9px;
 
     /* 颜色直接写死成 accent，不再经一层 --clay-rule-color 中转。
@@ -367,20 +385,20 @@
       hyphens: manual;
     }
 
-    /* 正文链接。两层背景共用底边：断线 1px 常驻，实线 2px 从零宽度铺开盖住它，
+    /* 正文链接。实线 2px 自左向右铺开，断线 1px 同步自右向左退让，两层此消彼长、互不叠压，
        铺展方向是阅读方向。文字色不参与——正文里一片变色的链接太吵，
        线本身已经把状态说清楚了。 */
     & a:not(:is(h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6) a) {
-      background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
-      background-position: 0 100%;
-      background-repeat: no-repeat, repeat-x;
-      background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
+      background-image: var(--clay-rule-layers);
+      background-position: var(--clay-rule-origins);
+      background-repeat: no-repeat;
+      background-size: var(--clay-rule-idle);
       color: var(--color-base-content);
       text-decoration: none;
       transition: background-size var(--clay-duration) var(--clay-ease);
 
       &:hover {
-        background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
+        background-size: var(--clay-rule-fill);
       }
 
       &:has(code) {
@@ -486,10 +504,10 @@
        现在与正文用同一套断→整，只是文字色也一并转向强调色：页脚字号小、语境弱，
        多给一层反馈是值当的。断线颜色由 currentcolor 自动跟到这里的 80% 弱化色。 */
     & a {
-      background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
-      background-position: 0 100%;
-      background-repeat: no-repeat, repeat-x;
-      background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
+      background-image: var(--clay-rule-layers);
+      background-position: var(--clay-rule-origins);
+      background-repeat: no-repeat;
+      background-size: var(--clay-rule-idle);
       color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
       text-decoration: none;
       transition:
@@ -497,7 +515,7 @@
         color var(--clay-duration) var(--clay-ease);
 
       &:hover {
-        background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
+        background-size: var(--clay-rule-fill);
         color: var(--color-accent);
       }
     }

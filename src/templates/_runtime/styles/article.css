@@ -123,17 +123,17 @@ article {
 
         /* 断线取 currentcolor，自动跟到这里的 80% 弱化色——原先是同一个 color-mix 抄两遍。 */
         & a {
-          background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
-          background-position: 0 100%;
-          background-repeat: no-repeat, repeat-x;
-          background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
+          background-image: var(--clay-rule-layers);
+          background-position: var(--clay-rule-origins);
+          background-repeat: no-repeat;
+          background-size: var(--clay-rule-idle);
           color: color-mix(in oklab, var(--color-base-content) 80%, transparent);
           transition:
             background-size var(--clay-duration) var(--clay-ease),
             color var(--clay-duration) var(--clay-ease);
 
           &:hover {
-            background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
+            background-size: var(--clay-rule-fill);
             color: var(--color-accent);
           }
         }

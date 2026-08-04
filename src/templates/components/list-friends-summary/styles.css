@@ -87,10 +87,10 @@
 }
 
 .friend-author-link {
-  background-image: var(--clay-rule-solid), var(--clay-rule-dashes);
-  background-position: 0 100%;
-  background-repeat: no-repeat, repeat-x;
-  background-size: 0 var(--clay-rule-thick), 100% var(--clay-rule-thin);
+  background-image: var(--clay-rule-layers);
+  background-position: var(--clay-rule-origins);
+  background-repeat: no-repeat;
+  background-size: var(--clay-rule-idle);
 
   /* --color-time 是上游调色板的遗留名，Clay 的令牌表里没有它，
      写在这里是「计算值时无效」→ 回落成继承正文色，静默失去弱化处理。
@@ -99,6 +99,6 @@
   transition: background-size var(--clay-duration) var(--clay-ease);
 
   &:hover {
-    background-size: 100% var(--clay-rule-thick), 100% var(--clay-rule-thin);
+    background-size: var(--clay-rule-fill);
   }
 }

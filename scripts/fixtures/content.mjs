@@ -52,7 +52,7 @@ const typography = `
 <pre><code class="language-css">:root {
   --clay-rule-solid: linear-gradient(var(--color-accent) 0 0);
   --clay-rule-dashes: repeating-linear-gradient(
-    90deg,
+    270deg,
     currentcolor 0 var(--clay-rule-dash),
     transparent var(--clay-rule-dash) var(--clay-rule-period)
   );

@@ -144,6 +144,23 @@ and `cursor` then falls to invalid-at-computed-value-time → inherit. `generate
 the whole retina layer inside `@supports`. The same trap applies to any future `var()`-delivered value that
 needs a capability fallback.
 
+**A background layer cannot reliably hide another layer that shares its edge.** The link rule used to paint
+a 1px dashed layer across the full width and slide an opaque 2px solid layer over it. Both layers are
+bottom-anchored to the same box edge, and at any non-integer zoom that edge falls between device pixels — so
+*both* get antialiased into the same pixel row. A partially covered pixel cannot be masked by another
+partially covered pixel: the row composites to `a·solid + (1−a)·(a·dash + (1−a)·bg)`, which differs between
+dash and gap columns. The result is a faint 6-on-3-off shimmer along the bottom of a rule that is supposedly
+solid — visible at some zoom levels and not others, which makes it read as a rendering glitch rather than a
+CSS one. Raising the top layer's height, its opacity, or its z-order does not help; only removing the
+overlap does.
+
+The two layers now tile the line instead of stacking: the solid grows `0 → 100%` from the left while the
+dashes shrink `100% → 0` anchored right (`--clay-rule-idle` / `--clay-rule-fill` / `--clay-rule-origins`).
+The dash gradient runs `270deg` for exactly this reason — a `repeating-linear-gradient` anchors its phase to
+the *start* edge of its tile, so with `90deg` the pattern would crawl as the tile's left edge moved. All four
+consumers (body links, footer links, blockquote footnotes, friend author) read the same three tokens, so the
+four cannot drift apart again.
+
 **The `[hash]` in an asset's file name does not cover the bytes that ship.** rolldown freezes asset file
 names before `generateBundle`, and two plugins keep editing content after that — the Tailwind class mangler
 and the generated-comment cleanup. So a CSS file whose *source* is unchanged keeps its URL while its bytes

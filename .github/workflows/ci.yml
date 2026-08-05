@@ -79,7 +79,7 @@ jobs:
       - name: 资源体积概览
         run: python scripts/report-asset-size.py >> "$GITHUB_STEP_SUMMARY"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: theme-packages
           path: dist/*.zip

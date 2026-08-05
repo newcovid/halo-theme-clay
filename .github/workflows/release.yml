@@ -1,0 +1,101 @@
+# 推一个 v* 标签就发版：构建、打包、校验、建 Release 并挂上两个 zip。
+#
+# 标签的注释就是 Release 正文——发版信息写在 `git tag -a` 里，不在这里维护第二份。
+# 轻量标签（没有注释）会直接失败，因为那样 Release 正文会是空的。
+#
+# 发布脱敏是硬要求，见 CLAUDE.md「Publishing policy」：仓库、release、zip 全是公开的，
+# 标签注释和提交信息里都不能出现 agent 会话标识。这里在建 Release **之前**拦一道，
+# 而不是发完了再去 gh release edit——已经发出去的东西撤不干净。
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  HUSKY: 0
+
+jobs:
+  release:
+    name: 构建并发布
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # 需要标签对象本身才能读到注释，浅克隆默认不带
+          fetch-depth: 0
+
+      - name: 读取标签注释
+        id: tag
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [ "$(git cat-file -t "$TAG")" != "tag" ]; then
+            echo "::error::$TAG 是轻量标签，没有注释可以当 Release 正文。请用 git tag -a 重新打。"
+            exit 1
+          fi
+          BODY="$(git tag -l --format='%(contents)' "$TAG")"
+          if [ -z "${BODY//[[:space:]]/}" ]; then
+            echo "::error::$TAG 的注释是空的。"
+            exit 1
+          fi
+          printf '%s\n' "$BODY" > release-notes.md
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: 发布脱敏检查
+        run: |
+          PREV="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
+          RANGE="${PREV:+$PREV..}${GITHUB_REF_NAME}"
+          {
+            cat release-notes.md
+            git log --format='%B' "$RANGE"
+          } > to-scan.txt
+          if grep -nEi 'claude\.ai/code/session|Claude-Session|Generated with \[Claude Code\]' to-scan.txt; then
+            echo "::error::标签注释或提交信息里带了 agent 会话标识，见上面的匹配行。"
+            exit 1
+          fi
+          rm to-scan.txt
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - run: pip install pyyaml
+
+      - name: 安装依赖
+        run: pnpm install --force
+
+      - name: 构建
+        run: pnpm build
+
+      - name: 打包
+        run: python scripts/package-theme.py
+
+      # theme.yaml 的版本号必须与标签一致。对不上的话装出来的主题会自称另一个版本，
+      # Halo 的升级判断也就跟着错。
+      - name: 校验发行包
+        run: python scripts/verify-package.py --expect-version "${{ steps.tag.outputs.version }}"
+
+      - name: 建 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file release-notes.md \
+            --verify-tag \
+            dist/*.zip

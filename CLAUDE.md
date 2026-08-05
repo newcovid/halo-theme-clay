@@ -25,7 +25,23 @@ pnpm lint              # oxlint + eslint + stylelint + markdownlint + autocorrec
 pnpm fmt               # oxfmt
 ```
 
+```bash
+python scripts/gen-settings-reference.py --lang all   # docs/SETTINGS{,.en}.md — run after editing settings
+python scripts/package-theme.py                       # dist/*.zip, both languages
+python scripts/verify-package.py                      # version / entries / ?v= refs / no engineering files
+python scripts/report-asset-size.py                   # build-output size table (CI writes it to the job summary)
+```
+
 Requires **Node ≥24** and **pnpm ^11.18** (`engineStrict: true` in `pnpm-workspace.yaml` enforces this).
+
+**CI runs in `.github/workflows/`.** `ci.yml` (push / PR) does install → lint → *lint must not have modified
+the tree* → settings reference must be in sync → build → package → `verify-package.py` → size summary.
+`release.yml` fires on a `v*` tag: it reads the **annotated tag's message as the release body** (a lightweight
+tag fails the job), greps that message and the commits since the previous tag for agent-session markers, then
+builds, verifies `--expect-version` against the tag, and creates the release with both zips. So publishing is
+`git tag -a vX.Y.Z && git push --tags`, not a local `gh release create`.
+Anything needing a running Halo — SRI consistency, real page weight, the a11y pass — cannot run in CI and
+stays in `scripts/regression/`.
 
 The local Halo runtime lives **outside** this repo, in a sibling directory referred to below as
 `<halo-runtime>/`:
@@ -113,6 +129,13 @@ injected space characters, changing the generated font tiers on the next build. 
 or `src/templates/_runtime/global/fonts/clay-cjk/` is data, not copy — it is listed in `.autocorrectignore`, and
 new data files need the same treatment. The symptom is a *successful* lint followed by a build whose numbers
 quietly moved.
+
+The same trap catches **generated documents**, and there it produces a loop rather than a silent change:
+`docs/SETTINGS.md` copies `label` / `help` verbatim out of `settings.yaml`, so autocorrect respaces
+`京ICP备12345678号` into `京 ICP 备 12345678 号` in the export while the source keeps the original. Regenerate
+and the diff appears; run lint and it comes back. Both `docs/SETTINGS.md` and `docs/SETTINGS.en.md` are in
+`.autocorrectignore` for that reason — any future export of source strings needs the same line, or CI's
+"lint must not modify the tree" step will fail on a file nobody edited.
 
 **Halo's template/Finder APIs shift between minor versions.** Don't write field accesses from memory —
 check them against the Halo docs for the exact minor version you target.
@@ -384,7 +407,12 @@ gh release view <tag> --json body --jq .body | grep -c "claude.ai/code/session" 
 git log -1 --format=%B | grep -c "Claude-Session"                                 # must be 0
 ```
 
+`release.yml` now runs the same grep over the tag message and every commit since the previous tag, **before**
+creating the release — a hit fails the job rather than publishing and retracting. Treat that as a backstop,
+not a licence to stop checking: it only sees what reaches a tag.
+
 Also out of the published tree: `.agents/`, `.claude/`, `skills-lock.json` (all gitignored), local absolute
 paths, and credentials — `scripts/regression/` and `scripts/fixtures/` read `HALO_USERNAME` / `HALO_PASSWORD`
 from the environment for exactly this reason. `scripts/package-theme.py` uses an explicit include list rather
-than a glob so engineering files cannot drift into the zip.
+than a glob so engineering files cannot drift into the zip, and `scripts/verify-package.py` re-checks the
+built zips for engineering paths, session markers and Windows absolute paths — CI runs it on every push.

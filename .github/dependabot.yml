@@ -1,0 +1,27 @@
+# 只盯两处：工作流用的 action，和构建工具链。
+#
+# 主题的依赖全是构建期的（Vite / Tailwind / lint），没有运行时依赖——发行包里一个
+# node_modules 文件都没有。所以这里的更新影响的是构建产物，不是访客拿到的东西，
+# 一周一次、按批合并就够，不必逐个 PR。
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "chore(ci)"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      lint:
+        patterns: ["*eslint*", "*stylelint*", "oxlint*", "oxfmt", "markdownlint*", "autocorrect*"]
+      build:
+        patterns: ["vite", "vite-plugin-*", "@tailwindcss/*", "tailwindcss*", "lightningcss", "oxc-minify"]

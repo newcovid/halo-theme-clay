@@ -44,8 +44,8 @@
 | `upgrade_insecure_requests` | 开关 | CSP:upgrade-insecure-requests | 关 | 如启用此项，非跳转（non-navigational）的不安全资源请求将会自动升级到 HTTPS（包括第当前域名以及第三方请求） |
 | `anti_mirror_site` | 开关 | 仅允许使用指定域名访问 | 关 | 使用场景：防止站点被恶意镜像后的流量流失 |
 | `allow_site_whitelist` | 对象数组 | 域名白名单列表 | — | （仅当 `$anti_mirror_site === true` 时显示） |
-| └ `input_domain` | 文本 | Base64 编码后的域名 | — | 可使用 Base64 在线编码工具进行编码（编码前的内容仅包括域名，不包括协议（如 https://），端口（如 :8080），路径（如 /archive/1.html）。请在输入框输入编码后的内容！）例 1 编码前：example.c… |
-| `target_url` | 文本 | 目标链接 | — | Base64 编码后的目标链接。检测到当前页面域名不在白名单中，就会跳转到目标链接（编码前的内容包括完整域名。请在输入框仅输入编码后的内容！）示例：编码前 https://example.com 编码后 aHR0cHM6Ly9leG… |
+| └ `input_domain` | 文本 | Base64 编码后的域名 | — | 可使用 Base64 在线编码工具进行编码（编码前的内容仅包括域名，不包括协议（如 https://），端口（如 :8080），路径（如 /archive/1.html）。请在输入框输入编码后的内容！） 例1编码前：example.c… |
+| `target_url` | 文本 | 目标链接 | — | Base64 编码后的目标链接。检测到当前页面域名不在白名单中，就会跳转到目标链接（编码前的内容包括完整域名。请在输入框仅输入编码后的内容！） 示例：编码前 https://example.com 编码后 aHR0cHM6Ly9leG… |
 | `is_keep_path_and_query` | 开关 | 跳转后是否保留路径和查询参数 | 开 | 例：假设当前页面为 localhost/a/b?a=1，目标链接为 https://p.com。关闭此项会跳转到 https://p.com，而开启此项会跳转到 https://p.com/a/b?a=1（仅当 `$anti_mirr… |
 | `is_performance_monitor_enable` | 开关 | 启用性能监测面板 | 关 | 如启用此项，主题将在页面中插入性能监测面板脚本。 |
 | `is_instant_page_enable` | 开关 | instant.page 支持 | 关 | 如启用此项，主题将自动加载 instant.page 脚本，以提升页面加载速度。 |
@@ -168,9 +168,9 @@
 | `is_footer_copyright_show` | 开关 | 页面底部版权信息 | 开 |  |
 | `footer_copyright_custom_name` | 文本 | 版权信息自定义署名 | — | 如果不填写，则使用站点标题作为署名（仅当 `$is_footer_copyright_show === true` 时显示） |
 | `is_footer_beian_show` | 开关 | 页面底部备案信息 | 关 | 面向中国大陆站点。填写后由主题按当前配色渲染，不必再往“页面底部内容”里手写一段带固定颜色的 HTML。 |
-| `footer_beian_icp` | 文本 | ICP 备案号 | — | 照工信部系统里的写法填，例如 京 ICP 备 12345678 号 -1。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_icp` | 文本 | ICP 备案号 | — | 照工信部系统里的写法填，例如 京ICP备12345678号-1。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
 | `footer_beian_icp_url` | 文本 | ICP 备案号链接 | `https://beian.miit.gov.cn/` | 留空则指向工信部备案管理系统 https://beian.miit.gov.cn/（仅当 `$is_footer_beian_show === true` 时显示） |
-| `footer_beian_police` | 文本 | 公安网备号 | — | 照公安备案回执上的写法填，例如 京公网安备 11010502030143 号。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
+| `footer_beian_police` | 文本 | 公安网备号 | — | 照公安备案回执上的写法填，例如 京公网安备11010502030143号。留空则不显示这一条。（仅当 `$is_footer_beian_show === true` 时显示） |
 | `footer_beian_police_url` | 文本 | 公安网备号链接 | `https://beian.mps.gov.cn/` | 留空则指向全国互联网安全管理服务平台 https://beian.mps.gov.cn/（仅当 `$is_footer_beian_show === true` 时显示） |
 | `footer_beian_police_icon` | 附件 | 公安网备号左侧图标 | — | 可选。上传备案时取得的警徽图标，显示在公安网备号左侧；留空则只显示文字。（仅当 `$is_footer_beian_show === true` 时显示） |
 | `is_footer_force_bottom` | 开关 | 强制页脚在页面底部 | 开 |  |

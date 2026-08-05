@@ -42,6 +42,8 @@ EN_OVERRIDES = {
     "settings.yaml": "i18n-settings/settings.en.yaml",
     "theme.yaml": "i18n-settings/theme.en.yaml",
     "annotation-settings.yaml": "i18n-settings/annotation-settings.en.yaml",
+    # 包里只有一个 README。英文包装英文的那份，否则装了英文界面还是读到中文说明。
+    "README.md": "README.en.md",
 }
 
 

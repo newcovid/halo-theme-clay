@@ -5,3 +5,10 @@ pnpm-lock.yaml
 # 落到这个文件上就是把字频顺序改乱、还凭空插进空格字符。
 scripts/fonts/
 src/templates/_runtime/global/fonts/clay-cjk/
+
+# 配置项参考是从 settings.yaml 导出的产物，逐字复制其中的 label / help 文案。
+# autocorrect 会把「京ICP备12345678号」排版成「京 ICP 备 12345678 号」，于是导出文件
+# 和它的来源永远对不上：跑一次生成器出现差异，跑一次 lint 差异又回来。
+# 要改这些文案得改 settings.yaml。
+docs/SETTINGS.md
+docs/SETTINGS.en.md

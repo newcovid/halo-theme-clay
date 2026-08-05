@@ -137,6 +137,19 @@ and the diff appears; run lint and it comes back. Both `docs/SETTINGS.md` and `d
 `.autocorrectignore` for that reason — any future export of source strings needs the same line, or CI's
 "lint must not modify the tree" step will fail on a file nobody edited.
 
+**The build is not byte-reproducible across platforms, and the assets carry SRI.** A Windows build and
+a Linux build of the same commit differ in two places, both benign in isolation and both fatal to cache
+identity: lightningcss rounds `lab()` conversions differently (`lab(6.29246% -.165135 .605816/.35)` on Linux
+vs `-.165142 .605819` on Windows — one CSS asset, one hash), and any working-tree file that is CRLF locally
+is copied verbatim into `templates/`, so the vendored `easy.qrcode.4.6.2.min.js` is 20 bytes larger on
+Windows. `.gitattributes` declares `* text=auto eol=lf`, so a fresh clone is LF — a working tree checked out
+before that attribute landed keeps CRLF, and `git status` says so on every commit.
+
+Consequence: **never publish a locally built zip.** `release.yml` builds on Linux; a package built on Windows
+has different content hashes for the same source, so mixing the two across releases hands returning visitors
+an SRI mismatch — the failure mode described above, where the stylesheet is dropped entirely. Local
+`pnpm build` is for verification, not for release artifacts.
+
 **Halo's template/Finder APIs shift between minor versions.** Don't write field accesses from memory —
 check them against the Halo docs for the exact minor version you target.
 In particular, list templates get `ListedPostVo`, which has **no** `content`

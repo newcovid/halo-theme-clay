@@ -3,8 +3,9 @@ export default {
   extends: [
     "stylelint-config-standard",
     "@dreamsicle.io/stylelint-config-tailwindcss",
+    // HTML 自定义语法：模板里的 <style> 块要靠它才解析得了。仓库里没有 .vue，
+    // 所以上游那条 stylelint-config-recommended-vue 已经移除。
     "stylelint-config-html",
-    "stylelint-config-recommended-vue",
   ],
   plugins: ["stylelint-order"],
   overrides: [

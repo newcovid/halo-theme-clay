@@ -117,7 +117,15 @@
           class="moment-header"
           th:unless="${moment.metadata?.labels?.get('halo-theme-clay/type') == 'github-user-public-event'}"
         >
-          <div class="color-base-content-80">
+          <!--/* 字数口径见 post.html 里的说明，六处表达式必须一致。 */-->
+          <div
+            class="color-base-content-80"
+            th:with="wordCount = ${(moment.spec.content?.html ?: '')
+                                    .replaceAll('(?is)<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>|&amp;#?[a-zA-Z0-9]{1,8};', ' ')
+                                    .replaceAll('[A-Za-z0-9\u00C0-\u024F]+', 'x')
+                                    .replaceAll('[^x\u3041-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uAC00-\uD7A3]', '')
+                                    .length()}"
+          >
             <span>
               <a
                 th:with="authorPage = ${#strings.append('/authors/',moment.owner?.name)}"
@@ -199,9 +207,6 @@
             <span
               class="color-base-content-80 tw:inline-block tw:no-underline"
               th:if="${theme.config?.moments_styles?.is_show_post_estimated_reading_time}"
-              th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                     ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html ?: '')
-                                     : #strings.length(moment.spec.content?.html ?: '') / 2 }"
               th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
             >
               <span class="tw:iconify tw:mdi--clock-outline"></span>
@@ -218,9 +223,6 @@
             <span
               class="color-base-content-80 tw:inline-block tw:no-underline"
               th:if="${theme.config?.moments_styles?.is_show_post_word_count}"
-              th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                     ? extraApiStatsFinder.getContentWordCount(moment.spec.content?.html ?: '')
-                                     : #strings.length(moment.spec.content?.html ?: '') / 2 }"
               th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
             >
               <span class="tw:iconify tw:mdi--format-text"></span>

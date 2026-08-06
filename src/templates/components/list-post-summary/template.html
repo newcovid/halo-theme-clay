@@ -144,40 +144,46 @@
               </th:block>
               <!--/* 列表里的 post 是 ListedPostVo，不带 content——SpEL 的 ?. 只挡 null，
                      挡不住属性不存在，写 post.content?.content 会抛 EL1008E 并把响应截断。
-                     没有 extra-api 插件时改用 postFinder.content()，代价是每篇一次取正文
-                     （4 篇约 +40ms）。装了 extra-api 则走它的统计接口，无此开销。 */-->
-              <th:block th:if="${theme.config?.index_styles?.is_show_post_estimated_reading_time_in_post_list_summary}">
-                <div
-                  class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
-                  th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                         ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
-                                         : #strings.length(postFinder.content(post.metadata.name)?.content ?: '') / 2 }"
-                  th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
-                >
-                  <span class="tw:iconify tw:mdi--clock-outline"></span>
-                  <span
-                    class="readtime"
-                    th:text="#{common.min(${#numbers.formatDecimal(wordCount * 1.0 / 450, 1, 1) + '~' + #numbers.formatDecimal(wordCount * 1.0 / 350, 1, 1)})}"
+                     所以正文只能用 postFinder.content() 现取，代价是每篇一次读库
+                     （4 篇约 +40ms）。下面那层开关判断就是为了两块统计都关掉时不付这笔钱。 */-->
+              <!--/* 字数口径见 post.html 里的说明，六处表达式必须一致。 */-->
+              <th:block
+                th:with="wordCount = ${(theme.config?.index_styles?.is_show_post_estimated_reading_time_in_post_list_summary
+                                        or theme.config?.index_styles?.is_show_post_word_count_in_post_list_summary)
+                                       ? (postFinder.content(post.metadata.name)?.content ?: '')
+                                          .replaceAll('(?is)<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>|&amp;#?[a-zA-Z0-9]{1,8};', ' ')
+                                          .replaceAll('[A-Za-z0-9\u00C0-\u024F]+', 'x')
+                                          .replaceAll('[^x\u3041-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uAC00-\uD7A3]', '')
+                                          .length()
+                                       : 0}"
+              >
+                <th:block th:if="${theme.config?.index_styles?.is_show_post_estimated_reading_time_in_post_list_summary}">
+                  <div
+                    class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
+                    th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
                   >
-                    文章预计阅读时间替换位
+                    <span class="tw:iconify tw:mdi--clock-outline"></span>
+                    <span
+                      class="readtime"
+                      th:text="#{common.min(${#numbers.formatDecimal(wordCount * 1.0 / 450, 1, 1) + '~' + #numbers.formatDecimal(wordCount * 1.0 / 350, 1, 1)})}"
+                    >
+                      文章预计阅读时间替换位
+                    </span>
+                  </div>
+                </th:block>
+                <th:block th:if="${theme.config?.index_styles?.is_show_post_word_count_in_post_list_summary}">
+                  <span
+                    class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
+                    th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
+                  >
+                    <span class="tw:iconify tw:mdi--format-text"></span>
+                    <span
+                      class="word-count"
+                      th:text="${wordCount}"
+                      >文章字数替换位</span
+                    >
                   </span>
-                </div>
-              </th:block>
-              <th:block th:if="${theme.config?.index_styles?.is_show_post_word_count_in_post_list_summary}">
-                <span
-                  class="color-time tw:relative tw:z-10 tw:mt-0.5 tw:mb-0 tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:p-0 tw:align-middle tw:text-sm"
-                  th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                         ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
-                                         : #strings.length(postFinder.content(post.metadata.name)?.content ?: '') / 2 }"
-                  th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
-                >
-                  <span class="tw:iconify tw:mdi--format-text"></span>
-                  <span
-                    class="word-count"
-                    th:text="${wordCount}"
-                    >文章字数替换位</span
-                  >
-                </span>
+                </th:block>
               </th:block>
               <th:block
                 th:if="${theme.config?.index_styles?.is_show_post_excerpt_in_post_list_summary}"

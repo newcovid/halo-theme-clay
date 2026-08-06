@@ -155,6 +155,36 @@ check them against the Halo docs for the exact minor version you target.
 In particular, list templates get `ListedPostVo`, which has **no** `content`
 field; SpEL's `?.` guards null but not a missing property, so `post.content?.content` throws EL1008E and
 truncates the response mid-stream. Use `postFinder.content(post.metadata.name)` in list context.
+Any SpEL parse error does the same — an unbalanced paren in a `th:with` silently cost the rest of the page
+during this work, HTTP 200 and all.
+
+**The word count counts text, and that has to be computed in the template.** Upstream's expression was
+`#strings.length(content) / 2` — the length of the *HTML source*, halved. Markup is counted, so short
+content reads high (a five-character 随想 spends 7 characters on its `<p>` pair alone) and long content
+reads low, with the error tracking markup density rather than any fixed offset; an empty post still
+reports dozens of characters. Measured against the local fixtures: a post whose real count is 214 read
+267, one at 576 read 507, and two moments at 19 / 24 read 27 / 16 — **in opposite directions**, which is
+what makes the symptom look random.
+
+The replacement strips `script`/`style` blocks, then tags, then entities; collapses each Latin/digit run
+to one token; and keeps only CJK characters plus those tokens. So punctuation, whitespace and markup are
+excluded, 「五个字」is 5 and `hello world` is 2. Three things make it work at all:
+
+- **SpEL can call `String.replaceAll`** in Halo templates — verified on 2.25.4. That is the only way to
+  get text out of HTML without a Java helper, since `#strings` has no regex.
+- **Thymeleaf unescapes attribute values before SpEL parses them**, so the entity-stripping branch must be
+  written `&amp;#?…` to arrive as `&#?…`. Probed directly: `${'&amp;nbsp;'.length()}` renders `6`.
+- **The character ranges must stay `\uXXXX`, not literal CJK.** `pnpm lint`'s autocorrect step processes
+  `.html` too, and it inserts spaces at CJK/Latin boundaries — inside a character class that silently
+  changes what the regex matches, and a broken regex here does not throw, it just returns a different number.
+
+The `extraApiStatsFinder` branch is gone from the six per-item sites: a word count that changes definition
+depending on whether a plugin is installed is not a word count. The footer's *site-wide* total still comes
+from `extra-api` (nothing else can produce it) and is still gated on `pluginFinder.available`. The
+expression is duplicated across `post` / `page` / `page-like-post-style` / `moment` / `list-post-summary` /
+`list-moment-summary` — six copies, and they must stay identical. It sits on the two stats' common
+ancestor so reading time and word count share one evaluation; in `list-post-summary` it is additionally
+gated on the two display switches, because there the content costs a `postFinder.content()` read per post.
 
 **A `var()` inside a token declared on `:root` is substituted *at* `:root`; descendants inherit the resolved
 literal.** Custom properties substitute at computed-value time on the element the *declaration* matched, so

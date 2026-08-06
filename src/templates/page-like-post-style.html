@@ -76,15 +76,20 @@
             th:insert="~{components/theme-toggle-button/template :: body}"
           ></th:block>
         </h1>
-        <div class="meta">
+        <!--/* 字数口径见 post.html 里的说明，六处表达式必须一致。 */-->
+        <div
+          class="meta"
+          th:with="wordCount = ${(singlePage.content?.content ?: '')
+                                  .replaceAll('(?is)<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>|&amp;#?[a-zA-Z0-9]{1,8};', ' ')
+                                  .replaceAll('[A-Za-z0-9\u00C0-\u024F]+', 'x')
+                                  .replaceAll('[^x\u3041-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uAC00-\uD7A3]', '')
+                                  .length()}"
+        >
           <!--/* 预计阅读时长 
           inline-flex 保证图标和数字在一行 */-->
           <span
             class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
             th:if="${theme.config?.custom_page_styles?.is_show_post_estimated_reading_time}"
-            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                   ? extraApiStatsFinder.getContentWordCount(singlePage.content?.content ?: '')
-                                   : #strings.length(singlePage.content?.content ?: '') / 2 }"
             th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
           >
             <span class="tw:iconify tw:mdi--clock-outline"></span>
@@ -101,9 +106,6 @@
           <span
             class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
             th:if="${theme.config?.custom_page_styles?.is_show_post_word_count}"
-            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                   ? extraApiStatsFinder.getContentWordCount(singlePage.content?.content ?: '')
-                                   : #strings.length(singlePage.content?.content ?: '') / 2 }"
             th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
           >
             <span class="tw:iconify tw:mdi--format-text"></span>

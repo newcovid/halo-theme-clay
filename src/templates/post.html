@@ -121,7 +121,31 @@
             th:insert="~{components/theme-toggle-button/template :: body}"
           ></th:block>
         </h1>
-        <div class="meta">
+        <!--/* 字数口径：先整块去掉 script / style，再去掉其余标签与 HTML 实体；然后把每段西文
+        （含数字）收成一个记号，最后只留下 CJK 字符和这些记号来取长度。于是标点、空白和标记
+        语言都不计入——「五个字」是 5，"hello world" 是 2。
+
+        上游原来写的是 #strings.length(html) / 2，数的是 HTML 源码长度：标记一起算进去，再整体
+        砍半。短内容因此偏大（一条五个字的随想，光一对 p 标签就占 7 个字符），长内容偏小，
+        误差跟着标记量走而不是固定偏移；空文章也能数出几十个字来。
+
+        原来还有一条 extraApiStatsFinder 分支，一并去掉了：字数不该因为装没装插件就换一套口径。
+        页脚的全站总字数只有 extra-api 给得出，那一处保留。
+
+        字符区间写成 \uXXXX 而不是字面汉字，是为了让整串正则保持 ASCII——autocorrect 会在中西文
+        边界补空格，字面汉字落在这里会被悄悄改坏，而正则改坏了不报错，只是数字变了。
+
+        阅读时长和字数共用这一个值，所以在共同的祖先上算一次。同样的表达式在 page、
+        page-like-post-style、moment、list-post-summary、list-moment-summary 还有五份，
+        六处必须一致。 */-->
+        <div
+          class="meta"
+          th:with="wordCount = ${(post.content?.content ?: '')
+                                  .replaceAll('(?is)<script[^>]*>.*?</script>|<style[^>]*>.*?</style>|<[^>]+>|&amp;#?[a-zA-Z0-9]{1,8};', ' ')
+                                  .replaceAll('[A-Za-z0-9\u00C0-\u024F]+', 'x')
+                                  .replaceAll('[^x\u3041-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uAC00-\uD7A3]', '')
+                                  .length()}"
+        >
           <!--/* 展示文章作者名 */-->
           <span
             class="tw:inline-flex tw:font-bold tw:tracking-wider tw:uppercase"
@@ -255,9 +279,6 @@
           <span
             class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
             th:if="${theme.config?.post_styles?.is_show_post_estimated_reading_time}"
-            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                   ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
-                                   : #strings.length(post.content?.content ?: '') / 2 }"
             th:title="#{page.post.estimated-reading-time(#{common.words(${wordCount})})}"
           >
             <span class="tw:iconify tw:mdi--clock-outline"></span>
@@ -274,9 +295,6 @@
           <span
             class="tw:inline-flex tw:items-center tw:gap-x-[1ch] tw:align-middle"
             th:if="${theme.config?.post_styles?.is_show_post_word_count}"
-            th:with="wordCount = ${pluginFinder.available('extra-api', '3.*')
-                                   ? extraApiStatsFinder.getPostWordCount({name: post.metadata.name})
-                                   : #strings.length(post.content?.content ?: '') / 2 }"
             th:title="|#{page.post.word-count} #{common.words(${wordCount})}|"
           >
             <span class="tw:iconify tw:mdi--format-text"></span>

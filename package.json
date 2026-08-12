@@ -63,7 +63,7 @@
     "husky": "^9.1.7",
     "lightningcss": "^1.33.0",
     "markdownlint-cli": "^0.49.1",
-    "oxc-minify": "^0.142.0",
+    "oxc-minify": "^0.143.0",
     "oxfmt": "^0.61.0",
     "oxlint": "^1.76.0",
     "oxlint-tsgolint": "^7.0.2001",
@@ -74,7 +74,7 @@
     "tailwindcss": "^4.3.3",
     "tailwindcss-patch": "^10.0.2",
     "typescript-eslint": "^8.65.0",
-    "vite": "^8.2.0",
+    "vite": "^8.2.1",
     "vite-plugin-compression2": "^2.5.3",
     "vite-plugin-sri3": "^2.0.0"
   },
